@@ -1,0 +1,14 @@
+{
+	"actions": [
+		{
+			"add": {
+				"alias": "item_fulltext_index_read",
+				"index": "item_fulltext_index_a"
+			},
+			"add": {
+				"alias": "item_fulltext_index_write",
+				"index": "item_fulltext_index_a"
+			}
+		}
+	]
+}
