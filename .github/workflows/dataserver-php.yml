@@ -52,6 +52,7 @@ jobs:
 
     - name: "Determine composer cache directory"
       id: "determine-composer-cache-directory"
+      working-directory: ./dataserver
       run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
 
     - name: "Cache dependencies installed with composer"
