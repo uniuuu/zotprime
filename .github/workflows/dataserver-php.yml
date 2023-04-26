@@ -25,13 +25,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php-version:
+          - "7.4"
+
+        dependencies:
+          - "locked"
+
+
     steps:
     - uses: actions/checkout@v3
     
     - name: Install PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: ${{ matrix.php-version }}
 
     - name: Checkout submodules
       run: git submodule update --init dataserver
@@ -40,15 +49,27 @@ jobs:
       working-directory: ./dataserver
       run: composer validate --strict
 
-    - name: Cache Composer packages
-      id: composer-cache
-#      working-directory: ./dataserver
-      uses: actions/cache@v3
+
+    - name: "Determine composer cache directory"
+      id: "determine-composer-cache-directory"
+      run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+
+    - name: "Cache dependencies installed with composer"
+      uses: "actions/cache@v3"
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/dataserver/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+        path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+        key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
+        restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
+
+
+#    - name: Cache Composer packages
+#      id: composer-cache
+#      uses: actions/cache@v3
+#      with:
+#        path: vendor
+#        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+#        restore-keys: |
+#          ${{ runner.os }}-php-
 
     - name: Install dependencies
       working-directory: ./dataserver
