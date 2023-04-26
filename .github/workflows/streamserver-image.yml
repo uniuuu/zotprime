@@ -25,6 +25,7 @@ jobs:
 #      working-directory: stream-server
 #      run: docker build ./stream-server --tag app-zotprime-streamserver:$(date +%s)
       uses: docker/build-push-action@v2
+      working-directory: stream-server
       with:
         context: ./stream-server
         file: Dockerfile
