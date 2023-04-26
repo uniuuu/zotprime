@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Checkout submodules
-      run: git submodule update stream-server
+      run: git submodule update --init stream-server
     - name: Build the Docker image
       working-directory: ./stream-server
       run: docker build . --tag app-zotprime-streamserver:$(date +%s)
