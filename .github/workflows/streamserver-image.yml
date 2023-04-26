@@ -14,9 +14,9 @@ on:
       - .github/workflows/streamserver-image.yml
 
 
-defaults:
-  run:
-    working-directory: ./stream-server
+#defaults:
+#  run:
+#    working-directory: ./stream-server
 
 jobs:
 
@@ -29,6 +29,7 @@ jobs:
     - name: Checkout submodules
       run: git submodule update stream-server
     - name: Build the Docker image
+      working-directory: ./stream-server
       run: docker build . --tag app-zotprime-streamserver:$(date +%s)
 #      uses: docker/build-push-action@v2
 #      with:
