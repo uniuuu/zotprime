@@ -2,7 +2,12 @@ name: Docker Image CI
 
 on:
   push:
+    paths:
+      - docker/**
+      - Dockerfile
+      - .github/workflows/docker-image.yml
     branches: [ "new_dev" ]
+
   pull_request:
     branches: [ "new_dev" ]
 
