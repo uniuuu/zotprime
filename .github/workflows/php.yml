@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Dataserver PHP Composer
 
 on:
   push:
