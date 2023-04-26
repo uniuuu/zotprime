@@ -27,9 +27,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-#      working-directory: stream-server
-#      run: docker build ./stream-server --tag app-zotprime-streamserver:$(date +%s)
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: Dockerfile
+      run: docker build . --tag app-zotprime-streamserver:$(date +%s)
+#      uses: docker/build-push-action@v2
+#      with:
+#        context: .
+#        file: Dockerfile
