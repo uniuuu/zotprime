@@ -58,8 +58,8 @@ jobs:
     - name: "Cache dependencies installed with composer"
       uses: "actions/cache@v3"
       with:
-        path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
-        key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('dataserver/composer.lock') }}"
+        path: "dataserver/${{ steps.determine-composer-cache-directory.outputs.directory }}"
+        key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
         restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
 
 
