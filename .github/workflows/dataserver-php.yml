@@ -16,9 +16,9 @@ permissions:
 #
 
 
-#defaults:
-#  run:
-#    working-directory: ./dataserver
+defaults:
+  run:
+    working-directory: ./dataserver
 
 jobs:
   build:
