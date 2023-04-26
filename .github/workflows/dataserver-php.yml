@@ -16,9 +16,9 @@ permissions:
 #
 
 
-defaults:
-  run:
-    working-directory: ./dataserver
+#defaults:
+#  run:
+#    working-directory: ./dataserver
 
 jobs:
   build:
@@ -32,12 +32,12 @@ jobs:
       run: git submodule update --init dataserver
 
     - name: Validate composer.json and composer.lock
-#      working-directory: ./dataserver
+      working-directory: ./dataserver
       run: composer validate --strict
 
     - name: Cache Composer packages
       id: composer-cache
-#      working-directory: ./dataserver
+      working-directory: ./dataserver
       uses: actions/cache@v3
       with:
         path: vendor
@@ -46,7 +46,7 @@ jobs:
           ${{ runner.os }}-php-
 
     - name: Install dependencies
-#      working-directory: ./dataserver
+      working-directory: ./dataserver
       run: composer install --prefer-dist --no-progress
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
