@@ -12,7 +12,12 @@ on:
     paths:
       - stream-server/**
       - .github/workflows/streamserver-image.yml
-      
+
+
+defaults:
+  run:
+    working-directory: ./stream-server
+
 jobs:
 
   build:
@@ -26,5 +31,5 @@ jobs:
 #      run: docker build ./stream-server --tag app-zotprime-streamserver:$(date +%s)
       uses: docker/build-push-action@v2
       with:
-        context: ./stream-server
-        file: ./stream-server/Dockerfile
+        context: .
+        file: Dockerfile
