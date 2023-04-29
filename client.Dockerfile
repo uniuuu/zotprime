@@ -5,7 +5,8 @@ RUN set -eux; \
     apk add --update --no-cache git bash curl python3 zip perl rsync \
     && rm -rf /var/cache/apk/*
 WORKDIR /usr/src/app
-COPY . .
+COPY ./client .
+COPY ./.git .
 RUN git submodule update --init --recursive
 WORKDIR /usr/src/app/client/
 RUN set -eux; \
