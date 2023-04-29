@@ -2,7 +2,8 @@
 FROM node:16-alpine as intermediate
 
 RUN set -eux; \ 
-    apk add --update --no-cache git \
+    apk update && apk upgrade && \
+    apk add --update --no-cache git bash curl python3 zip perl rsync \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /usr/src/app

@@ -2,7 +2,8 @@
 FROM node:16-alpine as intermediate
 
 RUN set -eux; \ 
-    apk add --update --no-cache git \
+    apk update && apk upgrade && \
+    apk add --update --no-cache git bash curl python3 zip perl rsync \
     && rm -rf /var/cache/apk/*
 
 WORKDIR /usr/src/app
@@ -23,10 +24,14 @@ RUN set -eux; \
     #cd /usr/src/app/zotero-client && 
     npm run build
 WORKDIR /usr/src/app/client/zotero-standalone-build
-RUN ls -lha
+
+#RUN set -eux; \ 
+#    apk add --update --no-cache  \
+ #   && rm -rf /var/cache/apk/*
+
 RUN set -eux; \
     #cd /usr/src/app/zotero-standalone-build && 
-    ./fetch_xulrunner.sh -p l
+    /bin/bash -c './fetch_xulrunner.sh -p l'
 RUN set -eux; \
     #cd /usr/src/app/zotero-standalone-build && 
     ./fetch_pdftools
