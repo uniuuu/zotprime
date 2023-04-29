@@ -5,9 +5,10 @@ RUN set -eux; \
     apk add --update --no-cache git bash curl python3 zip perl rsync \
     && rm -rf /var/cache/apk/*
 WORKDIR /usr/src/app
-COPY ./client .
-COPY ./.git .
-RUN git submodule update --init --recursive
+COPY . .
+RUN git submodule update --init --recursive client/zotero-build
+RUN git submodule update --init --recursive client/zotero-standalone-build
+RUN git submodule update --init --recursive client/zotero-client
 WORKDIR /usr/src/app/client/
 RUN set -eux; \
     ./config.sh
