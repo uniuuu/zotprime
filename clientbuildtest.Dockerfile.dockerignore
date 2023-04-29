@@ -1,13 +1,11 @@
-.git
 .github
 bin
 build
-client
 dataserver
 doc
-docker/dataserver
-docker/minio
-#stream-server
+docker
+stream-server
 tinymce-clean-server
 Zend
 docker-compose.yml
+
