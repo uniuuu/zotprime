@@ -13,6 +13,7 @@ jobs:
         with:
           repository: uniuuu/zotero-build
           ref:  stage
+          fetch-depth: 0
 
       - name: Run semver-diff
         id: semver-diff
