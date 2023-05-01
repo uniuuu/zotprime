@@ -1,0 +1,63 @@
+name: Push updated submodule to ZotPrime CI
+
+on: [repository_dispatch]
+
+
+jobs:
+  check_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.var.outputs.SV }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: uniuuu/zotero-build
+          ref:  new_dev
+
+      - name: Run semver-diff
+        id: semver-diff
+        uses: tj-actions/semver-diff@v2
+
+      - name: Set Ver env
+#        run: echo "SV=${{ steps.semver-diff.outputs.release_type }}" >> $GITHUB_ENV
+        run: echo "SV=`echo ${{ steps.semver-diff.outputs.release_type }} | tr '[:lower:]' '[:upper:]'`" >> $GITHUB_ENV
+
+      # Outputs: Release type: major || minor || patch || prerelease || build
+      - name: Show release type
+        id: var
+        run: |
+          echo "Release type: ${{ steps.semver-diff.outputs.release_type }}"
+          echo $SV
+          echo ${{ env.SV }}
+
+      - name: Set Release env
+        run: echo "RELEASE_V=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+   
+      - name: Print
+        run: |
+          echo $RELEASE_V
+          echo ${{ env.RELEASE_V }}
+
+
+  push_to_remote:
+    needs: check_tag
+    runs-on: ubuntu-latest
+#    container: pandoc/latex 
+
+#    if: startsWith(github.event.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Checkout submodules
+        run: |
+          git submodule update --init --recursive --remote client/zotero-build
+
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+
+      - name: Push tag
+        uses: 'rui-costa/action-automatic-semver-releases@1.1.1'
+        with:
+          TOKEN: '${{ secrets.API_TOKEN_GITHUB }}'
+          SEMVER: '${{ needs.check_tag.outputs.output1 }}'
+#          LABEL: '${{ github.event.inputs.label }}'
