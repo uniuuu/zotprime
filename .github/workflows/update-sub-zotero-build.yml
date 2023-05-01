@@ -50,3 +50,5 @@ jobs:
         with:
           github_token: ${{ secrets.API_TOKEN_GITHUB }}
           default_bump: ${{ needs.check_tag.outputs.output1 }}
+          release_branches: new_dev
+          append_to_pre_release_tag: false
