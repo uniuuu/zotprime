@@ -17,21 +17,13 @@ jobs:
           echo "payload Foo '${{ github.event.client_payload.semver }}'"
           echo "payload '${{ toJson(github.event.client_payload) }}'"
           SEMVER=${{ github.event.client_payload.semver }}
-          if [ $SEMVER="path" ]
-          then
-            commit=fix
-          else
-            if [ $SEMVER="minor" ]
-            then
-              commit=feat
-            else
-              commit='BREAKING CHANGE'
-            fi
-          fi
+          if [ $SEMVER="path" ]; then commit=fix; else if [ $SEMVER="minor" ]; then commit=feat; else commit='BREAKING CHANGE'; fi fi;
           echo $commit
         
       - name: print
-        run: echo $commit
+        run: |
+          echo $commit
+          echo $SEMVER
       
       - run: echo ${{ steps.receiver.outputs.commit }}
 
