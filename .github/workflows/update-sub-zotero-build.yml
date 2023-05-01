@@ -16,16 +16,30 @@ jobs:
         run: |
           echo "payload Foo '${{ github.event.client_payload.semver }}'"
           echo "payload '${{ toJson(github.event.client_payload) }}'"
-          SEMVER=${{ github.event.client_payload.semver }}
+          SEMVER='${{ github.event.client_payload.semver }}'
           if [ $SEMVER="path" ]; then commit=fix; else if [ $SEMVER="minor" ]; then commit=feat; else commit='BREAKING CHANGE'; fi fi;
           echo $commit
-        
+      
+      - name: Set Semver env
+        run: echo "$SEMVER" >> $GITHUB_ENV
+     
+      - name: Print 
+        run: |
+          echo $SEMVER
+          echo {{ env.SEMVER }}
+
+      - name: Set commit env
+        run: echo "$commit" >> $GITHUB_ENV         
+      
       - name: print
-        run: echo $commit
+        run: | 
+           echo $commit
+           echo {{ env.commit }}
+
       
-      - run: echo $SEMVER
+
       
-      - run: echo '${{ steps.receiver.outputs.commit }}'
+      - run: echo ${{ steps.receiver.outputs.commit }}
 
 
 #  push_to_remote:
