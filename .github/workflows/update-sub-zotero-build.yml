@@ -29,6 +29,11 @@ jobs:
             fi
           fi
           echo $commit
+        
+      - name: print
+        run: echo $commit
+      
+      - run: echo ${{ steps.receiver.outputs.commit }}
 
 
   push_to_remote:
