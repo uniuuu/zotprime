@@ -28,6 +28,7 @@ jobs:
               commit='BREAKING CHANGE'
             fi
           fi
+          echo $commit
 
 
   push_to_remote:
@@ -51,7 +52,7 @@ jobs:
         with:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
-          commit_message: ${{ needs.check_tag.outputs.output2 }}
+          commit_message: '${{ needs.check_tag.outputs.output2 }}'
 
   #    - name: Push tag
   #      uses: 'rui-costa/action-automatic-semver-releases@1.1.1'
