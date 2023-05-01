@@ -18,7 +18,7 @@ jobs:
           echo "payload '${{ toJson(github.event.client_payload) }}'"
           echo "SEMVER=${{ github.event.client_payload.semver }}" >> $GITHUB_ENV
           if [ $SEMVER="path" ]; then commit=fix; else if [ $SEMVER="minor" ]; then commit=feat; else commit='BREAKING CHANGE'; fi fi;
-          echo $commit >> $GITHUB_ENV
+          echo '$commit' >> $GITHUB_ENV
       
  #     - name: Set Semver env
  #       run: echo "$SEMVER" >> $GITHUB_ENV
