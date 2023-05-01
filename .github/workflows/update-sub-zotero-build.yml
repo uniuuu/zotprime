@@ -9,6 +9,11 @@ jobs:
     outputs:
       output1: ${{ steps.var.outputs.SV }}
     steps:
+
+      - name: A event received
+        run: |
+          echo "payload Foo '${{ github.event.client_payload.repository }}'"
+          echo "payload '${{ toJson(github.event.client_payload) }}'"
       - uses: actions/checkout@v3
         with:
           repository: uniuuu/zotero-build
@@ -47,6 +52,7 @@ jobs:
 
 #    if: startsWith(github.event.ref, 'refs/tags/v')
     steps:
+
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.API_TOKEN_GITHUB }}
