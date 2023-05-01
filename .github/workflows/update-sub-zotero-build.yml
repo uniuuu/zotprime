@@ -7,42 +7,15 @@ jobs:
   check_tag:
     runs-on: ubuntu-latest
     outputs:
-      output1: ${{ steps.var.outputs.SV }}
+      output1: ${{ steps.receiver.outputs.SEMVER }}
     steps:
 
       - name: A event received
+        id: receiver
         run: |
-          echo "payload Foo '${{ github.event.client_payload.repository }}'"
+          echo "payload Foo '${{ github.event.client_payload.semver }}'"
           echo "payload '${{ toJson(github.event.client_payload) }}'"
-      - uses: actions/checkout@v3
-        with:
-          repository: uniuuu/zotero-build
-          ref:  stage
-          fetch-depth: 0
-
-      - name: Run semver-diff
-        id: semver-diff
-        uses: tj-actions/semver-diff@v2
-
-      - name: Set Ver env
-#        run: echo "SV=${{ steps.semver-diff.outputs.release_type }}" >> $GITHUB_ENV
-        run: echo "SV=`echo ${{ steps.semver-diff.outputs.release_type }} | tr '[:lower:]' '[:upper:]'`" >> $GITHUB_ENV
-
-      # Outputs: Release type: major || minor || patch || prerelease || build
-      - name: Show release type
-        id: var
-        run: |
-          echo "Release type: ${{ steps.semver-diff.outputs.release_type }}"
-          echo $SV
-          echo ${{ env.SV }}
-
-      - name: Set Release env
-        run: echo "RELEASE_V=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-   
-      - name: Print
-        run: |
-          echo $RELEASE_V
-          echo ${{ env.RELEASE_V }}
+          SEMVER=${{ github.event.client_payload.semver }}
 
 
   push_to_remote:
