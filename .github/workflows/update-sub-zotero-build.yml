@@ -37,9 +37,16 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
 
-      - name: Push tag
-        uses: 'rui-costa/action-automatic-semver-releases@1.1.1'
-        with:
-          TOKEN: '${{ secrets.API_TOKEN_GITHUB }}'
-          SEMVER: '${{ needs.check_tag.outputs.output1 }}'
+  #    - name: Push tag
+  #      uses: 'rui-costa/action-automatic-semver-releases@1.1.1'
+  #      with:
+  #        TOKEN: '${{ secrets.API_TOKEN_GITHUB }}'
+  #        SEMVER: '${{ needs.check_tag.outputs.output1 }}'
 #          LABEL: '${{ github.event.inputs.label }}'
+
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.API_TOKEN_GITHUB }}
+          default_bump: ${{ needs.check_tag.outputs.output1 }}
