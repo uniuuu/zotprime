@@ -44,6 +44,9 @@ jobs:
         run: |
           git submodule update --init --recursive --remote client/zotero-build
 
+       
+      - run: echo '${{ needs.check_tag.outputs.output2 }}'
+      - run: echo ${{ needs.check_tag.outputs.output1 }}
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
