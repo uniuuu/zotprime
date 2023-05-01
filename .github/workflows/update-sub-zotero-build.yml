@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       output1: ${{ steps.receiver.outputs.SEMVER }}
+      output2: ${{ steps.receiver.outputs.commit }}
     steps:
 
       - name: A event received
@@ -16,6 +17,17 @@ jobs:
           echo "payload Foo '${{ github.event.client_payload.semver }}'"
           echo "payload '${{ toJson(github.event.client_payload) }}'"
           SEMVER=${{ github.event.client_payload.semver }}
+          if [ $SEMVER="path" ]
+          then
+            commit=fix
+          else
+            if [ $SEMVER="minor" ]
+            then
+              commit=feat
+            else
+              commit='BREAKING CHANGE'
+            fi
+          fi
 
 
   push_to_remote:
@@ -36,6 +48,10 @@ jobs:
 
 
       - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          # Optional. Commit message for the created commit.
+          # Defaults to "Apply automatic changes"
+          commit_message: ${{ needs.check_tag.outputs.output2 }}
 
   #    - name: Push tag
   #      uses: 'rui-costa/action-automatic-semver-releases@1.1.1'
@@ -49,6 +65,6 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.API_TOKEN_GITHUB }}
-          default_bump: ${{ needs.check_tag.outputs.output1 }}
+          default_bump: '${{ needs.check_tag.outputs.output1 }}'
           release_branches: new_dev
           append_to_pre_release_tag: false
