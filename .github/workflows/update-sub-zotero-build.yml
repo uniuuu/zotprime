@@ -65,7 +65,7 @@ jobs:
         with:
           # Optional. Commit message for the created commit.
           # Defaults to "Apply automatic changes"
-          commit_message: $commit
+          commit_message: ${{ env.message }}
 
   #    - name: Push tag
   #      uses: 'rui-costa/action-automatic-semver-releases@1.1.1'
@@ -79,6 +79,6 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.API_TOKEN_GITHUB }}
-          default_bump: $SEMVER
+          default_bump: ${{ env.SEMVER }}
           release_branches: new_dev
           append_to_pre_release_tag: false
