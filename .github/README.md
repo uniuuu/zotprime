@@ -1,8 +1,8 @@
 # Gthub Actions Workflows for ZotPrime updates.
 
-Link to the main project: https://github.com/uniuuu/zotprime (zotprime)
-Link to to the subproject used as submodule for main one: https://github.com/uniuuu/zotero-build  (client/zotero-build)
-Link to the README file: https://github.com/uniuuu/zotprime/tree/new_dev/.github 
+- Link to the main project: https://github.com/uniuuu/zotprime (zotprime).
+- Link to to the subproject used as submodule for main one: https://github.com/uniuuu/zotero-build  (client/zotero-build).
+- Link to the README file: https://github.com/uniuuu/zotprime/tree/new_dev/.github .
 
 1. The flow is starting via defined schedule in workflow CI_upstream_sync.yml under client/zotero-build repository. It's meant to check whether there are new commits on upstream zotero/zotero-build and in case yes the upstream will be merged into master and test branch of the uniuuu/zotero-build . Note, upstream zotero/zotero-build doesn't use tags and releases but commits only.
 
