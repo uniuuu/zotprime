@@ -15,6 +15,6 @@
 5. The workflow ```update-sub-zotero-build.yml``` of the zotprime repository (new_dev branch) receives semver label and checkouts zotprime repository. At next step it does specific submodule ```client/zotero-build``` udpate (total 6 of first level submodules with a number of sub-submodules) ```git submodule update --init --recursive --remote client/zotero-build``` 
 It commits changes with commit message either fix, feat or BREAKING CHANGE based on a respective label received after parsing semver in previous workflow. Next step it's issuing a tag again based on a respective label received after parsing semver in previous workflow
 
-6. Once commit done to new_dev branch it triggers unit test for Zotero clinet. The ```client-build-test.yml``` builds Zotero clinet via Docker image. 
+6. Once commit done to new_dev branch it triggers unit test for Zotero client. The ```client-build-test.yml``` builds Zotero client via Docker image. 
 
-7. Same strategy is under development for the rest of 5 first level submodules. ZotPrime consist of Server (based on multiple services) first 3 submodules and monolithic the rest of 3 first level submodules. Once there is update either client or server final testing have to beperformed with both server and clinet.
+7. Same strategy is under development for the rest of 5 first level submodules. ZotPrime consist of Server (based on multiple services) first 3 submodules and monolithic the rest of 3 first level submodules. Once there is update either client or server final testing have to beperformed with both server and client.
