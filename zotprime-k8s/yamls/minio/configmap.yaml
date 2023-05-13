@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-config
+  namespace: zotrime
+data:
+  MINIO_ROOT_USER: zotero

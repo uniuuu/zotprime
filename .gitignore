@@ -1,2 +1,5 @@
 build
 logs
+**/secret.json
+**/secret.txt
+**/secret.yaml
