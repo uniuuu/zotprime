@@ -23,22 +23,31 @@ spec:
     - /bin/bash
     - -c
     args: 
-    - minio server /data --console-address :9001
+    -  set -o allexport && source tmp/_key/secret.txt && set +o allexport && minio server /data --console-address :9001 
+#| tee /data/test.log
+#    lifecycle:
+#      preStop:
+#        exec:
+#          command:
+#            - /bin/sh
+#            - -c
+#          args: ls -lha /tmp/_key/
     env:
-      - name: SPECIAL_LEVEL_KEY
+      - name: MINIO_ROOT_USER
         valueFrom:
           configMapKeyRef:
-            name: special-config
-            key: special.how
+            name: minio-config
+            key: minio-user
     volumeMounts:
     - name: localvolumeminio # Corresponds to the `spec.volumes` Persistent Volume
       mountPath: /data
     - name: minio-secret
       mountPath: "/tmp/_key"
-      subPath: _key
+#      subPath: secret.txt
       readOnly: true
   nodeSelector:
     kubernetes.io/hostname: localhost.localdomain # Specify a node label associated to the Worker Node on which you want to deploy the pod.
+#  terminationGracePeriodSeconds: 30
   volumes:
   - name: localvolumeminio
     hostPath: # MinIO generally recommends using locally-attached volumes
@@ -47,9 +56,9 @@ spec:
   - name: minio-secret
     secret:
       secretName: minio-secret
-      items:
-        - key: _key
-          path: _key
+#      items:
+#        - key: _key
+#          path: _key
 
 
 #apiVersion: apps/v1
