@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
-    move2kube.konveyor.io/service: zotprime-streamserver
+    apps: zotprime-streamserver
   name: zotprime-streamserver
+  namespace: zotprime
 spec:
   replicas: 1
   selector:
     matchLabels:
-      move2kube.konveyor.io/service: zotprime-streamserver
+      apps: zotprime-streamserver
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: zotprime-streamserver
+        apps: zotprime-streamserver
       name: zotprime-streamserver
     spec:
       containers:
@@ -24,7 +23,18 @@ spec:
           name: zotprime-streamserver
           ports:
             - containerPort: 81
-          resources: {}
+          volumeMounts:
+            - name: streamserver-config
+              mountPath: /usr/src/app/config/
+              readOnly: true              
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: "0.5"
+      volumes:
+      - name: streamserver-config
+        configMap:
+          name: streamserver-config          
       restartPolicy: Always
       securityContext: {}
 status: {}

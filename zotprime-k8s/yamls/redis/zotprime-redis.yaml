@@ -3,16 +3,18 @@ kind: StatefulSet
 metadata:
   name: zotprime-redis
   namespace: zotprime
+  labels:
+    apps: zotprime-redis
 spec:
   serviceName: "redis-service"
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      apps: zotprime-redis
   template:
     metadata:
       labels:
-        app: redis
+        apps: zotprime-redis
 #        appCluster: redis-cluster
     spec:
       terminationGracePeriodSeconds: 20
