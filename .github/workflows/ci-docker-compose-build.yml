@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: install Compose V2
-        run: apt-get install -y docker-compose-plugin
+        run: apt-get update && apt-get install -y docker-compose-plugin
       - name: Bootstrap config
         run: cp .env_example .env
       - name: Build the stack
