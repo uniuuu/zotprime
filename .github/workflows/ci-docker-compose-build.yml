@@ -22,6 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Bootstrap config
-        run: cp .env.example .env
+        run: cp .env_example .env
       - name: Build the stack
         run: BUILDKIT_PROGRESS=plain docker compose -f docker-compose.dev.yml build

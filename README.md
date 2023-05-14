@@ -29,6 +29,10 @@ $ cd zotprime
 
 *Configure and run*:
 ```bash
+$ cp .env_example .env
+```
+edit .env and add strong passwords 
+```bash
 $ sudo docker compose -f docker-compose-prod.yml up -d
 ```
 
