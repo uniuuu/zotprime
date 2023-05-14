@@ -3,6 +3,7 @@ name: Docker Compose Actions Workflow
 on:
   push:
     paths:
+      - '.github/workflows/docker-compose-build.yml'
       - '*.Dockerfile'
       - '*.dockerignore'
       - 'docker-compose-dev.yml'
@@ -11,6 +12,7 @@ on:
   pull_request:
     branches: [ "development" ]
     paths:
+      - '.github/workflows/docker-compose-build.yml'
       - '*.Dockerfile'
       - '*.dockerignore'
       - 'docker-compose-dev.yml'
