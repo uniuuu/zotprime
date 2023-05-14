@@ -30,7 +30,7 @@ spec:
           privileged: true
       containers:
       - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+        image: "localhost:32000/elasticsearch:8.7.0"
         env:
         - name: CLUSTER_NAME
           value: zotero
@@ -79,7 +79,7 @@ spec:
         livenessProbe:
           tcpSocket:
             port: transport
-          initialDelaySeconds: 20
+          initialDelaySeconds: 120
           periodSeconds: 10
         volumeMounts:
         - name: storage
