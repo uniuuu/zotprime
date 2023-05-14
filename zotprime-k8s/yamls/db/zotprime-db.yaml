@@ -3,16 +3,18 @@ kind: StatefulSet
 metadata:
   name: zotprime-db
   namespace: zotprime
+  labels:
+    apps: zotprime-db
 spec:
   serviceName: "db-service"
   replicas: 1
   selector:
     matchLabels:
-      app: mariadb
+      apps: zotprime-db
   template:
     metadata:
       labels:
-        app: mariadb
+        apps: zotprime-db
     spec:
       containers:
       - name: mariadb
