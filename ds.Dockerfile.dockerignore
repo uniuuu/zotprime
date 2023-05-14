@@ -1,3 +1,7 @@
+**/secret.json
+**/secret.txt
+**/secret.yaml
+.env
 .git
 .github
 bin

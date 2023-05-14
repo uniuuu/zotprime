@@ -1,8 +1,8 @@
-.git
-.github
 **/secret.json
 **/secret.txt
 **/secret.yaml
+.git
+.github
 .env
 bin
 build
@@ -13,7 +13,7 @@ docker
 docker-compose.yml
 logs
 stream-server
-#tinymce-clean-server
+tinymce-clean-server
 Zend
 zotprime-k8s
 

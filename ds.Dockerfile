@@ -1,5 +1,5 @@
 FROM alpine:3 AS builder
-
+ARG ZOTPRIME_VERSION=2
 #RUN apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 #ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
@@ -28,6 +28,8 @@ RUN set -eux \
 
 
 FROM alpine:3
+ARG ZOTPRIME_VERSION=2
+
 #FROM php:8.1-alpine
 #FROM php:alpine
 COPY --from=builder /tmp/rinetd/rinetd /usr/sbin/rinetd

@@ -29,7 +29,7 @@ $ cd zotprime
 
 *Configure and run*:
 ```bash
-$ sudo docker compose up -d
+$ sudo docker compose -f docker-compose-prod.yml up -d
 ```
 
 ### Initialize databases
