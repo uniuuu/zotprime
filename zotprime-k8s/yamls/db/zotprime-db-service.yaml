@@ -14,5 +14,5 @@ spec:
     name: mariadb
   selector:
     apps: zotprime-db
-#  clusterIP: None
+  clusterIP: None
 #  publishNotReadyAddresses: True

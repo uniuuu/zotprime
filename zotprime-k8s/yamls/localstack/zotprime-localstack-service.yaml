@@ -13,14 +13,14 @@ spec:
 #  type: NodePort
 #  externalTrafficPolicy: ""
   ports:
-    - name: "sns-4575"
+    - name: "localstack-sns"
       port: 4575
       targetPort: "sns-4575"
 #      nodePort: 31566
-    - name: "sqs-4576"
+    - name: "localstack-sqs"
       port: 4576
       targetPort: "sqs-4576"
-    - name: "apigateway-4567"
+    - name: "localstack-apigateway"
       port: 4567
       targetPort: "apigateway-4567"
   selector:

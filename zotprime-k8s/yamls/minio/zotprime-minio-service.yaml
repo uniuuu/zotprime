@@ -1,20 +1,20 @@
 apiVersion: v1
 kind: Service
 metadata:
-  creationTimestamp: null
   labels:
-#    move2kube.konveyor.io/service: zotprime-minio
-    app: zotprime-minio
-  name: zotprime-minio
+    apps: minio
+  name: minio
   namespace: zotprime
 spec:
   ports:
-    - name: port-9001
+    - name: minio-ui
       port: 9001
       targetPort: 9001
+    - name: minio-data
+      port: 9000
+      targetPort: 9000
   selector:
-#    move2kube.konveyor.io/service: zotprime-minio
-    app: zotprime-minio
+    apps: zotprime-minio
   type: ClusterIP
 status:
   loadBalancer: {}

@@ -14,5 +14,5 @@ spec:
     name: redis
   selector:
     apps: zotprime-redis
-#  clusterIP: None
+  clusterIP: None
 #  publishNotReadyAddresses: True

@@ -9,7 +9,7 @@ metadata:
 spec:
   ports:
   - port: 9300
-    name: transport
+    name: elasticsearch
   clusterIP: None
   selector:
     apps: zotprime-elasticsearch

@@ -8,7 +8,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: zotprime-minio
+    apps: zotprime-minio
   name: zotprime-minio
   namespace: zotprime # Change this value to match the namespace metadata.name
 spec:
@@ -44,6 +44,11 @@ spec:
 #            - /bin/sh
 #            - -c
 #          args: ls -lha /tmp/_key/
+          ports:
+            - containerPort: 9000
+              name: data
+            - containerPort: 9001
+              name: ui
           env:
             - name: MINIO_ROOT_USER
               valueFrom:
