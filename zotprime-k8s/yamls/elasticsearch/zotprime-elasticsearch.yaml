@@ -60,19 +60,21 @@ spec:
 #          value: "false"
 #        - name: ES_JAVA_OPTS
 #          value: -Xms256m -Xmx256m
-#        - name: PROCESSORS
-#          valueFrom:
-#            resourceFieldRef:
-#              resource: limits.cpu
+        - name: PROCESSORS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
         resources:
           limits:
             cpu: "0.5"
 #            cpu: "1"
-            memory: 2Gi
+#            memory: 2Gi
+            memory: 512M
           requests:
             cpu: 100m
 #            cpu: "0.25"
-            memory: 1500Mi
+#            memory: 1500Mi
+            memory: 256M
         ports:
         - containerPort: 9300
           name: transport
