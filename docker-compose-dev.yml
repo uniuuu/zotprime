@@ -113,18 +113,6 @@ services:
       - "8082:8082"
 #      - "9000:9000"
     volumes:
-#      - "./dataserver/:/var/www/zotero:rw"
-#      - "./Zend/:/var/www/zotero/include/Zend:rw"
-#      - "./docker/dataserver/create-user.sh:/var/www/zotero/admin/create-user.sh:ro" 
-#      - "./docker/dataserver/config.inc.php:/var/www/zotero/include/config/config.inc.php:ro"
-#      - "./docker/dataserver/dbconnect.inc.php:/var/www/zotero/include/config/dbconnect.inc.php:ro"
-#      - "./docker/dataserver/header.inc.php:/var/www/zotero/include/header.inc.php:ro"
-#      - "./docker/dataserver/Storage.inc.php:/var/www/zotero/model/Storage.inc.php:ro"    
-#      - "./docker/dataserver/config/FullText.inc.php:/var/www/zotero/model/FullText.inc.php:ro"
-#      - "./docker/db/init-mysql.sh:/var/www/zotero/misc/init-mysql.sh:ro"
-#      - "./docker/db/db_update.sh:/var/www/zotero/misc/db_update.sh:ro"
-#      - "./docker/db/www.sql:/var/www/zotero/misc/www.sql:ro"
-#      - "./docker/db/shard.sql:/var/www/zotero/misc/shard.sql:ro"
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       - RUN_USER=apache

@@ -313,14 +313,6 @@ RUN set -eux; \
 #Install uws
 #WORKDIR /var/
 
-
-ENV APACHE_RUN_USER=apache
-ENV APACHE_RUN_GROUP=apache
-ENV APACHE_LOCK_DIR=/var/lock/apache2
-ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
-ENV APACHE_RUN_DIR=/var/run/apache2
-ENV APACHE_LOG_DIR=/var/log/apache2
-
 COPY dataserver/. /var/www/zotero/
 
 RUN rm -rf /var/www/zotero/include/Zend
@@ -336,6 +328,14 @@ COPY docker/db/db_update.sh /var/www/zotero/misc/
 COPY docker/db/www.sql /var/www/zotero/misc/
 COPY docker/db/shard.sql /var/www/zotero/misc/
 
+
+
+ENV APACHE_RUN_USER=apache
+ENV APACHE_RUN_GROUP=apache
+ENV APACHE_LOCK_DIR=/var/lock/apache2
+ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
+ENV APACHE_RUN_DIR=/var/run/apache2
+ENV APACHE_LOG_DIR=/var/log/apache2
 
 # Expose and entrypoint
 COPY docker/dataserver/entrypoint.sh /
