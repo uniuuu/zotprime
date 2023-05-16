@@ -2,6 +2,9 @@ version: '3.9'
 services:
   zotprime-db:
     image: "zotprime-db:${VER}"
+    build:
+      context: .
+      dockerfile: db.Dockerfile
     restart: always
     environment:
       - MARIADB_ROOT_PASSWORD=${MYSQLROOTPASSWORD}
@@ -13,29 +16,46 @@ services:
       - /etc/localtime:/etc/localtime:ro
   zotprime-elasticsearch:
     image: "zotprime-elasticsearch:${VER}"
+    mem_limit: 2G
+    mem_reservation: 1G
+    build:
+      context: .
+      dockerfile: es.Dockerfile
     environment:
       - cluster.name=zotero
       - xpack.security.enabled=false
-      - cluster.routing.allocation.disk.threshold_enabled=false
+      - cluster.routing.allocation.disk.threshold_enabled=false 
       - discovery.type=single-node
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-redis:
     image: "zotprime-redis:${VER}"
+    build:
+      context: .
+      dockerfile: r.Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-memcached:
     image: "zotprime-memcached:${VER}"
+    build:
+      context: .
+      dockerfile: m.Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-localstack:
     image: "zotprime-localstack:${VER}"
+    build:
+      context: .
+      dockerfile: ls.Dockerfile
     environment:
       - SERVICES=sns,sqs,apigateway
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-minio:
     image: "zotprime-minio:${VER}"
+    build:
+      context: .
+      dockerfile: minio.Dockerfile
     environment:
       - MINIO_ROOT_USER=${MINIOROOTUSER}
       - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
@@ -44,23 +64,29 @@ services:
       - "9001:9001"
     volumes:
       - /etc/localtime:/etc/localtime:ro
+  zotprime-miniomc:
+    image: "zotprime-miniomc:${VER}"
+    build:
+      context: .
+      dockerfile: miniomc.Dockerfile
+    entrypoint: >
+         /bin/sh -c "
+         /usr/bin/mc config host add minio http://zotprime-minio:9000 ${MINIOROOTUSER} ${MINIOROOTPASSWORD}; 
+         exec mc admin trace -v -a minio;
+         "
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - zotprime-minio
   zotprime-dataserver:
     image: "zotprime-dataserver:${VER}"
+    build:
+      context: .
+      dockerfile: ds.Dockerfile
     ports:
       - "8080:80"
       - "8082:8082"
     volumes:
-      - "./dataserver/:/var/www/zotero:rw"
-      - "./Zend/:/var/www/zotero/include/Zend:rw"
-      - "./docker/dataserver/create-user.sh:/var/www/zotero/admin/create-user.sh:ro" 
-      - "./docker/dataserver/config.inc.php:/var/www/zotero/include/config/config.inc.php:ro"
-      - "./docker/dataserver/dbconnect.inc.php:/var/www/zotero/include/config/dbconnect.inc.php:ro"
-      - "./docker/dataserver/header.inc.php:/var/www/zotero/include/header.inc.php:ro"
-      - "./docker/dataserver/Storage.inc.php:/var/www/zotero/model/Storage.inc.php:ro"    
-      - "./docker/db/init-mysql.sh:/var/www/zotero/misc/init-mysql.sh:ro"
-      - "./docker/db/db_update.sh:/var/www/zotero/misc/db_update.sh:ro"
-      - "./docker/db/www.sql:/var/www/zotero/misc/www.sql:ro"
-      - "./docker/db/shard.sql:/var/www/zotero/misc/shard.sql:ro"
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       - RUN_USER=apache
@@ -84,6 +110,9 @@ services:
     restart: always
   zotprime-tinymceclean:
     image: "zotprime-tinymceclean:${VER}"
+    build:
+      context: .
+      dockerfile: tmcs.Dockerfile
     depends_on:
       - zotprime-db
       - zotprime-elasticsearch
@@ -96,6 +125,9 @@ services:
     restart: always
   zotprime-streamserver:
     image: "zotprime-streamserver:${VER}"
+    build:
+      context: .
+      dockerfile: sts.Dockerfile
     ports:
       - "8081:81"
     volumes:
@@ -111,6 +143,9 @@ services:
       - zotprime-redis:redis
   zotprime-phpmyadmin:
     image: "zotprime-phpmyadmin:${VER}"
+    build:
+      context: .
+      dockerfile: pa.Dockerfile
     ports:
       - "8083:80"
     environment:

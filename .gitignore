@@ -4,3 +4,4 @@ logs
 **/secret.json
 **/secret.txt
 **/secret.yaml
+docker-compose.yml
