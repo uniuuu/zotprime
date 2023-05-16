@@ -4,7 +4,7 @@ data:
     false,\n\tlogLevel: 'info',\n\thostname: os.hostname().split('.')[0],\n\thttpPort:
     81,\n\tproxyProtocol: false,\n\thttps: false,\n\ttrustedProxies: [],\n\tstatusInterval:
     10,\n\tkeepaliveInterval: 25,\n\tretryTime: 10,\n\tshutdownDelay: 100,\n\tredis:
-    {\n\t\thost: 'redis',\n\t\tprefix: ''\n\t},\n\tapiURL: 'http://zotprime-dataserver/',\n\tapiVersion:
+    {\n\t\thost: 'redis',\n\t\tprefix: ''\n\t},\n\tapiURL: 'http://dataserver/',\n\tapiVersion:
     3,\n\tapiRequestHeaders: {},\n\tlongStackTraces: false,\n\tglobalTopics: [\n\t\t'styles',\n\t\t'translators'\n\t],\n\t//
     Minimum delay before clients should act on global topic notifications -- since
     these are triggered\n\t// by webhooks or other queued notifications, they need
