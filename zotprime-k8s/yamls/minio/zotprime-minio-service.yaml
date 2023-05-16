@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
     - name: minio-ui
-      port: 9001
+      port: 80
       targetPort: 9001
     - name: minio-data
       port: 9000

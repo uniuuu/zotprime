@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    apps: zotprime-phpmyadmin-ingress
+  name: zotprime-phpmyadmin-ingress
+  namespace: zotprime
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+spec:
+  rules:
+    - host: phpmyadmin.zotprime
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: phpmyadmin
+                port:
+#                  name: phpmyadmin
+                  number: 80
+
+status:
+  loadBalancer: {}

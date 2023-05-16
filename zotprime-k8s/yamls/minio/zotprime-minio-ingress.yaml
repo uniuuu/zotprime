@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    apps: zotprime-minio-ingress
+  name: zotprime-minio-ingress
+  namespace: zotprime
+  annotations:
+#    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+spec:
+  rules:
+    - host: minio.zotprime
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  name: minio-ui
+#                  number: 80
+
+status:
+  loadBalancer: {}
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: zotprime-ingress-lb
+#  namespace: zotprime
+##spec:
+#  selector:
+#    name: zotprime-ingress
+#  type: LoadBalancer
+#  loadBalancerIP: 10.77.77.228
+#  ports:
+#    - name: http
+#      protocol: TCP
+#      port: 80
+#      targetPort: 80
+#    - name: https
+#      protocol: TCP
+#      port: 443
+#      targetPort: 80

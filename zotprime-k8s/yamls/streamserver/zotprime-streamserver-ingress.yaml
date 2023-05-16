@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    apps: zotprime-streamserver-ingress
+  name: zotprime-streamserver-ingress
+  namespace: zotprime
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+spec:
+  rules:
+    - host: zotprime.zotprime
+      http:
+        paths:
+          - path: /streamserver(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: streamserver
+                port:
+#                  name: streamserver
+                  number: 8081
+status:
+  loadBalancer: {}

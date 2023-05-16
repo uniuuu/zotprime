@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zotprime-dataserver-lb
+  namespace: zotprime
+spec:
+  selector:
+    apps: zotprime-dataserver
+  type: LoadBalancer
+  loadBalancerIP: 10.77.77.228
+  ports:
+    - name: data
+      protocol: TCP
+      port: 8080
+      targetPort: 80
