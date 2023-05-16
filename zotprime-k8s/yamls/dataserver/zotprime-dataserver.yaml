@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
-    move2kube.konveyor.io/service: zotprime-dataserver
+    apps: zotprime-dataserver
   name: zotprime-dataserver
+  namespace: zotprime
 spec:
   replicas: 1
   selector:
     matchLabels:
-      move2kube.konveyor.io/service: zotprime-dataserver
+      apps: zotprime-dataserver
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        move2kube.konveyor.io/service: zotprime-dataserver
+        apps: zotprime-dataserver
       name: zotprime-dataserver
     spec:
       containers:
@@ -25,7 +24,10 @@ spec:
           ports:
             - containerPort: 80
             - containerPort: 8082
-          resources: {}
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: "0.1"
       restartPolicy: Always
       securityContext: {}
 status: {}
