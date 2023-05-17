@@ -52,4 +52,8 @@ echo 'pushing image db-zotprime-minio'
 ${CONTAINER_RUNTIME} tag zotprime-minio ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-minio
 ${CONTAINER_RUNTIME} push ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-minio
 
+echo 'pushing image db-zotprime-miniomc'
+${CONTAINER_RUNTIME} tag zotprime-miniomc ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-miniomc
+${CONTAINER_RUNTIME} push ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-miniomc
+
 echo 'done'

@@ -23,15 +23,16 @@ spec:
           limits:
             cpu: 200m
             memory: 2000Mi
-#          requests:
-#            cpu: 100m
-#            memory: 1000Mi
+          requests:
+            cpu: 100m
+            memory: 1000Mi
         ports:
           - containerPort: 11211
             protocol: TCP
         args:
           - -m 2047
           - -I 50M
+      priorityClassName: high-priority
 #      - name: memcached-exporter
 #        image: prom/memcached-exporter
 #        ports:

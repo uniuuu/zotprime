@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    apps: zotprime-miniomc
+  name: zotprime-miniomc
+  namespace: zotprime
+spec:
+  containers:
+  - name: minio
+    image: quay.io/minio/mc:latest
+    resources:
+      limits:
+        memory: 256Mi
+        cpu: "0.5"
+    command:
+    - /bin/sh
+    - -c
+    args: 
+    - set -o allexport && source tmp/_key/secret.txt && set +o allexport && /usr/bin/mc config host add minio http://minio:9000 ${MINIOROOTUSER} ${MINIOROOTPASSWORD}; exec sleep inf;
+    volumeMounts:
+      - name: minio-secret
+        mountPath: "/tmp/_key"
+        readOnly: true
+    env:
+      - name: MINIO_ROOT_USER
+        valueFrom:
+          configMapKeyRef:
+            name: minio-config
+            key: minio-user
+  priorityClassName: low-priority
+  nodeSelector:
+    kubernetes.io/hostname: localhost.localdomain
+  volumes:
+    - name: minio-secret
+      secret:
+        secretName: minio-secret

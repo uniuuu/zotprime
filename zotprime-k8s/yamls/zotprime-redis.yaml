@@ -81,6 +81,7 @@ spec:
         - name: probes
           mountPath: /probes
           readOnly: true
+      priorityClassName: high-priority
       volumes:
       - name: conf
         configMap:

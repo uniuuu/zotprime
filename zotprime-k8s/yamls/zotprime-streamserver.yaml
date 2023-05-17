@@ -30,7 +30,8 @@ spec:
           resources:
             limits:
               memory: 256Mi
-              cpu: "0.1"
+              cpu: "0.5"
+      priorityClassName: medium-priority
       volumes:
       - name: streamserver-config
         configMap:

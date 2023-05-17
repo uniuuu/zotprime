@@ -86,6 +86,7 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: /data
+      priorityClassName: high-priority
   volumeClaimTemplates:
   - metadata:
       name: storage
