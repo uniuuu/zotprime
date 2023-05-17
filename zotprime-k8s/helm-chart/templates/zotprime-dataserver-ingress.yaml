@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-dataserver-ingress
+  labels:
+    apps: zotprime-dataserver-ingress
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+spec:
+  rules:
+  - host: zotprime.zotprime
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "zotprime-k8s.fullname" . }}-dataserver'
+            port:
+              number: 8080
+        path: /api(.*)
+        pathType: Prefix

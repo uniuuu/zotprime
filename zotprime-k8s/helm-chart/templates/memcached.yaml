@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-memcached
+  labels:
+    apps: memcached
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.memcached.type }}
+  selector:
+    apps: zotprime-memcached
+  {{- include "zotprime-k8s.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.memcached.ports | toYaml | nindent 2 -}}
