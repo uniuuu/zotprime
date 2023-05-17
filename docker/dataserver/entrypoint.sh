@@ -13,7 +13,15 @@ set -eux
 
 # Start rinetd
 echo "logfile /dev/stdout" >> /etc/rinetd.conf
-rinetd -f -c /etc/rinetd.conf &
+#(while true; do
+#    rinetd -f -c /etc/rinetd.conf
+#done) &
+
+(until rinetd -f -c /etc/rinetd.conf; do
+    echo "'rinetd' crashed with exit code $?. Restarting..." >&2
+    sleep 1
+done) & 
+#rinetd -f -c /etc/rinetd.conf &
 #/etc/init.d/rinetd start
 
 #a2enmod headers 
