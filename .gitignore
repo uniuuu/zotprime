@@ -4,4 +4,5 @@ logs
 **/secret*.json
 **/secret*.txt
 **/secret*.yaml
+**/zotprime*secret.yaml
 docker-compose.yml
