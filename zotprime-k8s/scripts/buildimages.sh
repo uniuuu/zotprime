@@ -41,6 +41,9 @@ echo 'building image zotprime-minio'
 
 ${CONTAINER_RUNTIME} build -f minio.Dockerfile -t zotprime-minio .
 
+echo 'building image zotprime-miniomc'
+
+${CONTAINER_RUNTIME} build -f miniomc.Dockerfile -t zotprime-miniomc .
 
 echo 'building image zotprime-tinymceclean'
 

@@ -55,6 +55,7 @@ spec:
         - name: db-secret
           secret:
             secretName: db-secret
+      priorityClassName: high-priority
   volumeClaimTemplates:
   - metadata:
       name: datadir

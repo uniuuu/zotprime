@@ -1,5 +1,3 @@
-# Deploys a new MinIO Pod into the metadata.namespace Kubernetes namespace
-#
 # The `spec.containers[0].args` contains the command run on the pod
 # The `/data` directory corresponds to the `spec.containers[0].volumeMounts[0].mountPath`
 # That mount path corresponds to a Kubernetes HostPath which binds `/data` to a local drive or volume on the worker node where the pod runs
@@ -26,7 +24,7 @@ spec:
       containers:
         - name: zotprime-minio
           image: quay.io/minio/minio:latest
-#          imagePullPolicy: Always
+          imagePullPolicy: Always
           resources:
             limits:
               memory: 512Mi
@@ -62,9 +60,33 @@ spec:
               mountPath: "/tmp/_key"
 #             subPath: secret.txt
               readOnly: true
+        - name: zotprime-miniomc
+          image: localhost:32000/zotprime-k8s/zotprime-miniomc
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: "0.3"
+#          command:
+#          - /bin/sh
+#          - -c
+#          args: 
+#          - set -o allexport && source tmp/_key/secret.txt && set +o allexport;
+          volumeMounts:
+            - name: localvolumeminio # Corresponds to the `spec.volumes` Persistent Volume
+              mountPath: /data
+            - name: minio-secret
+              mountPath: "/tmp/_key"
+              readOnly: true
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: minio-config
+                  key: minio-user
       nodeSelector:
         kubernetes.io/hostname: localhost.localdomain # Specify a node label associated to the Worker Node on which you want to deploy the pod.
 #  terminationGracePeriodSeconds: 30
+      priorityClassName: high-priority
       restartPolicy: Always
       securityContext: {}
       volumes:
