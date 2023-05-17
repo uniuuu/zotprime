@@ -10,7 +10,7 @@ client
 #dataserver
 doc
 docker/stream-server
-docker/minio
+docker/miniomc
 docker-compose.yml
 logs
 stream-server

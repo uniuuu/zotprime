@@ -85,21 +85,25 @@ services:
       - /etc/localtime:/etc/localtime:ro
   zotprime-miniomc:
     image: "zotprime-miniomc:${VER}"
+    restart: always
     build:
       context: .
       dockerfile: miniomc.Dockerfile
-#    entrypoint:
-#      - /bin/sh
-    entrypoint: >
-         /bin/sh -c "
-         /usr/bin/mc config host add minio http://zotprime-minio:9000 ${MINIOROOTUSER} ${MINIOROOTPASSWORD}; 
-         exec mc admin trace -v -a minio;
-         "
+    environment:
+      - MINIO_ROOT_USER=${MINIOROOTUSER}
+      - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
+#    entrypoint: >
+#         /bin/sh -c "
+#         /usr/bin/mc config host add minio http://zotprime-minio:9000 ${MINIOROOTUSER} ${MINIOROOTPASSWORD}; 
+#         exec mc admin trace -v -a minio;
+#         "
 #          exec sleep inf;
     volumes:
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - zotprime-minio
+    links:
+      - zotprime-minio:minio
   zotprime-dataserver:
     image: "zotprime-dataserver:${VER}"
     build:
