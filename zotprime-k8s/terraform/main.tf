@@ -2,6 +2,25 @@ provider "google" {
   credentials = file("auth/cred.json")
 }
 
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = ">= 4.65.2"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.14.0"
+    }
+    /* null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
+    } */
+  }
+
+  required_version = ">= 1.3.8"
+}
+
 module "gke_auth" {
   source       = "terraform-google-modules/kubernetes-engine/google//modules/auth"
   version      = "26.0.0"
@@ -50,7 +69,7 @@ module "k8s" {
   name                     = "${var.cluster_name}-${var.env_name}"
   regional                 = false
   region                   = var.region
-  zones                    = ["asia-southeast2-c"]
+  zones                    = var.zones
   network                  = module.vpc.network_name
   subnetwork               = module.vpc.subnets_names[0]
   ip_range_pods            = var.ip_range_pods_name
@@ -59,9 +78,10 @@ module "k8s" {
   initial_node_count       = 1
   node_pools = [
     {
-      name           = "nodepool"
-      machine_type   = "n1-standard-1"
-      node_locations = "asia-southeast2-c,asia-southeast2-a"
+      name         = "nodepool"
+      machine_type = "n1-standard-1"
+      #node_locations = "asia-southeast1-a,asia-southeast1-b,asia-southeast1-c"
+      node_locations = "asia-southeast1-a"
       min_count      = var.minnode
       max_count      = var.maxnode
       disk_size_gb   = var.disksize
@@ -70,8 +90,24 @@ module "k8s" {
       auto_upgrade   = true
     },
   ]
-  cluster_resource_labels = { "env" : "var.env_name" }
+  cluster_resource_labels = { "env" : "${var.env_name}" }
 }
 
 
+#provider "kubectl" {
+#  load_config_file = false
+#  host             = "https://module.k8s.endpoint"
+#  token            = module.gke_auth.token
+#  #cluster_ca_certificate = base64decode(module.gke_auth.cluster_ca_certificate)
+#  cluster_ca_certificate = base64decode(module.k8s.ca_certificate)
+#}
+
+#data "kubectl_filename_list" "manifests" {
+#  pattern = "../manifests/*.yaml"
+#}
+
+#resource "kubectl_manifest" "zotprime" {
+#  count     = length(data.kubectl_filename_list.manifests.matches)
+#  yaml_body = file(element(data.kubectl_filename_list.manifests.matches, count.index))
+#}
 

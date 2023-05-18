@@ -11,11 +11,11 @@ variable "env_name" {
 }
 variable "region" {
   description = "The region to host the cluster in"
-  default     = "asia-southeast2"
+  default     = "asia-southeast1"
 }
 variable "zones" {
   description = "Cluster zone"
-  default     = "asia-southeast2-c"
+  default     = ["asia-southeast1-a", "asia-southeast1-b", "asia-southeast1-c"]
 }
 variable "network" {
   description = "The VPC network created to host the cluster in"

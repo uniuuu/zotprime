@@ -18,8 +18,7 @@ spec:
       name: zotprime-streamserver
     spec:
       containers:
-        - image: localhost:32000/zotprime-k8s/zotprime-streamserver:latest
-          imagePullPolicy: Always
+        - image: uniuu/zotprime-streamserver:2.5.2
           name: zotprime-streamserver
           ports:
             - containerPort: 81

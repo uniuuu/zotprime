@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: phpmyadmin
-          image: localhost:32000/zotprime-phpmyadmin:dev
+          image: uniuu/zotprime-phpmyadmin:2.5.2
           ports:
             - containerPort: 80
           resources:

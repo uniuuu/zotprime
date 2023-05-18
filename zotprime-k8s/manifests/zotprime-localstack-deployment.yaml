@@ -29,7 +29,7 @@ spec:
         - name: localstack
           securityContext:
             {}
-          image: "localhost:32000/localstack:latest"
+          image: "uniuu/localstack:2.5.2"
           imagePullPolicy: IfNotPresent
           ports:
             - name: edge

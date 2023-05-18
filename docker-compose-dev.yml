@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   zotprime-db:
-    image: "zotprime-db:${VER}"
+    image: "uniuu/zotprime-db:${VER}"
 #    image: mysql:5.6
     build:
       context: .
@@ -21,7 +21,7 @@ services:
 #         soft: 262144
 #         hard: 262144
   zotprime-elasticsearch:
-    image: "zotprime-elasticsearch:${VER}"
+    image: "uniuu/zotprime-elasticsearch:${VER}"
     mem_limit: 512m
     mem_reservation: 256M
     build:
@@ -43,7 +43,7 @@ services:
  #           - vm.max_map_count=262144
 #   command: "sysctl -w vm.max_map_count=262144"
   zotprime-redis:
-    image: "zotprime-redis:${VER}"
+    image: "uniuu/zotprime-redis:${VER}"
     build:
       context: .
       dockerfile: r.Dockerfile
@@ -54,14 +54,14 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-memcached:
-    image: "zotprime-memcached:${VER}"
+    image: "uniuu/zotprime-memcached:${VER}"
     build:
       context: .
       dockerfile: m.Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-localstack:
-    image: "zotprime-localstack:${VER}"
+    image: "uniuu/zotprime-localstack:${VER}"
     build:
       context: .
       dockerfile: ls.Dockerfile
@@ -70,7 +70,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-minio:
-    image: "zotprime-minio:${VER}"
+    image: "uniuu/zotprime-minio:${VER}"
     build:
       context: .
       dockerfile: minio.Dockerfile
@@ -84,7 +84,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
   zotprime-miniomc:
-    image: "zotprime-miniomc:${VER}"
+    image: "uniuu/zotprime-miniomc:${VER}"
     restart: always
     build:
       context: .
@@ -105,7 +105,7 @@ services:
     links:
       - zotprime-minio:minio
   zotprime-dataserver:
-    image: "zotprime-dataserver:${VER}"
+    image: "uniuu/zotprime-dataserver:${VER}"
     build:
       context: .
       dockerfile: ds.Dockerfile
@@ -139,7 +139,7 @@ services:
       - zotprime-streamserver:streamserver
     restart: always
   zotprime-tinymceclean:
-    image: "zotprime-tinymceclean:${VER}"
+    image: "uniuu/zotprime-tinymceclean:${VER}"
     build:
       context: .
       dockerfile: tmcs.Dockerfile
@@ -154,7 +154,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: always
   zotprime-streamserver:
-    image: "zotprime-streamserver:${VER}"
+    image: "uniuu/zotprime-streamserver:${VER}"
     build:
       context: .
       dockerfile: sts.Dockerfile
@@ -172,7 +172,7 @@ services:
     links:
       - zotprime-redis:redis
   zotprime-phpmyadmin:
-    image: "zotprime-phpmyadmin:${VER}"
+    image: "uniuu/zotprime-phpmyadmin:${VER}"
     build:
       context: .
       dockerfile: pa.Dockerfile
