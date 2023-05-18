@@ -6,3 +6,4 @@ logs
 **/secret*.yaml
 **/zotprime*secret.yaml
 docker-compose.yml
+**/cred.json
