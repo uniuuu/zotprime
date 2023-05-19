@@ -30,7 +30,7 @@ spec:
           privileged: true
       containers:
       - name: elasticsearch
-        image: "localhost:32000/elasticsearch:8.7.0"
+        image: "uniuu/zotprime-elasticsearch:2.5.2"
         env:
         - name: CLUSTER_NAME
           value: zotero

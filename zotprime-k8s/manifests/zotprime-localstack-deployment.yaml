@@ -29,7 +29,7 @@ spec:
         - name: localstack
           securityContext:
             {}
-          image: "uniuu/localstack:2.5.2"
+          image: "uniuu/zotprime-localstack:2.5.2"
           imagePullPolicy: IfNotPresent
           ports:
             - name: edge

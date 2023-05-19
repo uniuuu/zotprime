@@ -76,12 +76,13 @@ module "k8s" {
   ip_range_services        = var.ip_range_services_name
   remove_default_node_pool = true
   initial_node_count       = 1
+  gce_pd_csi_driver        = true
   node_pools = [
     {
       name         = "nodepool"
-      machine_type = "n1-standard-1"
+      machine_type = "n1-standard-2"
       #node_locations = "asia-southeast1-a,asia-southeast1-b,asia-southeast1-c"
-      node_locations = "asia-southeast1-a"
+      node_locations = "asia-southeast1-c"
       min_count      = var.minnode
       max_count      = var.maxnode
       disk_size_gb   = var.disksize
