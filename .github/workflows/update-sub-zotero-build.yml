@@ -1,4 +1,4 @@
-name: Push updated submodule to ZotPrime CI
+name: Push updated submodule to ZotPrime
 
 on: [repository_dispatch]
 

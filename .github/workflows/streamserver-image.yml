@@ -1,4 +1,4 @@
-name: Streamserver Image CI
+name: Streamserver Docker Image
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Checkout submodules
       run: git submodule update --init stream-server
-    - name: Build the Docker image
+    - name: Build the Streamserver Docker Image
 #      working-directory: ./stream-server
       run: docker build . --file sts.Dockerfile --tag zotprime-streamserver:$(date +%s)
 #      uses: docker/build-push-action@v2

@@ -1,4 +1,4 @@
-name: Dataserver PHP Composer
+name: Dataserver PHP Composer Install
 
 on:
   push:
