@@ -9,6 +9,6 @@ build
 doc
 docker-compose.yml
 logs
-Zend
+#Zend
 zotprime-k8s
 
