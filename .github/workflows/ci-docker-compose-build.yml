@@ -1,4 +1,4 @@
-name: Docker Compose Actions Workflow
+name: Build All Images via Docker Compose
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
       - '*.dockerignore'
       - 'docker-compose-dev.yml'
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
