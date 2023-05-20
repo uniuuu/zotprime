@@ -16,6 +16,19 @@ spec:
       labels:
         apps: zotprime-db
     spec:
+      initContainers:
+      - name: take-data-dir-ownership
+        image: alpine:3
+        # Give `mysql` user permissions a mounted volume
+        # https://stackoverflow.com/a/51195446/4360433
+        command:
+        - chown
+        - -R
+        - 999:999
+        - /var/lib/mysql
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/mysql 
       containers:
       - name: mariadb
         image: uniuu/zotprime-db:2.5.2
@@ -47,7 +60,8 @@ spec:
         - name: datadir
           mountPath: /var/lib/mysql/
         - name: db-secret
-          mountPath: "/tmp/_key"
+          mountPath: tmp/_key/
+#          subPath: _key/
         securityContext:
           runAsUser: 999
           runAsGroup: 999
