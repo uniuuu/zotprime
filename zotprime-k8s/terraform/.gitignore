@@ -1,4 +1,5 @@
 .pluralith/*
+**/kubeconfig-*
 
 # Local .terraform directories
 **/.terraform/*
