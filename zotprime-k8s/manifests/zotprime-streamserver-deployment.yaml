@@ -21,20 +21,12 @@ spec:
         - image: uniuu/zotprime-streamserver:2.6.1-rc
           name: zotprime-streamserver
           ports:
-            - containerPort: 81
-          volumeMounts:
-            - name: streamserver-config
-              mountPath: /usr/src/app/config/
-              readOnly: true              
+            - containerPort: 81           
           resources:
             limits:
               memory: 256Mi
               cpu: "0.5"
-      priorityClassName: medium-priority
-      volumes:
-      - name: streamserver-config
-        configMap:
-          name: streamserver-config          
+      priorityClassName: medium-priority      
       restartPolicy: Always
       securityContext: {}
 status: {}
