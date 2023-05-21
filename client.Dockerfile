@@ -41,8 +41,9 @@ RUN git submodule update --init --recursive
 #RUN git submodule update --init --recursive client/zotero-client
 
 WORKDIR /usr/src/app/client/
+ARG CONFIG=config.sh
 RUN set -eux; \
-    ./config.sh
+    ./$CONFIG
 WORKDIR /usr/src/app/client/zotero-client
 #RUN set -eux; \
 #     npx browserslist@latest --update-db --legacy-peer-deps
