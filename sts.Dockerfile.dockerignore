@@ -10,6 +10,7 @@ client
 dataserver
 doc
 docker/dataserver
+docker/db
 docker/miniomc
 docker-compose.yml
 logs

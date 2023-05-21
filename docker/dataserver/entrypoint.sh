@@ -55,6 +55,10 @@ chmod 777 /var/www/zotero/tmp
 
 sed -i 's/AGPL-3.0"/AGPL-3.0-only"/g' /var/www/zotero/composer.json
 
+sed -i "s#http://localhost:8080/#$DSURI#g" /var/www/zotero/include/config/config.inc.php
+sed -i "s#localhost:8082#$S3POINTURI#g" /var/www/zotero/include/config/config.inc.php
+
+
 # Elastica Composer
 #cd /var/www/zotero/include/Elastica && composer -v install
 

@@ -20,6 +20,9 @@ services:
 #      nofile:
 #         soft: 262144
 #         hard: 262144
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.2
   zotprime-elasticsearch:
     image: "uniuu/zotprime-elasticsearch:${VER}"
     mem_limit: 512m
@@ -42,6 +45,9 @@ services:
  #  sysctls:
  #           - vm.max_map_count=262144
 #   command: "sysctl -w vm.max_map_count=262144"
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.3
   zotprime-redis:
     image: "uniuu/zotprime-redis:${VER}"
     build:
@@ -53,6 +59,9 @@ services:
  #      - sysctl vm.overcommit_memory=1
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.4
   zotprime-memcached:
     image: "uniuu/zotprime-memcached:${VER}"
     build:
@@ -60,6 +69,9 @@ services:
       dockerfile: m.Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.5
   zotprime-localstack:
     image: "uniuu/zotprime-localstack:${VER}"
     build:
@@ -69,6 +81,9 @@ services:
       - SERVICES=sns,sqs,apigateway
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.6
   zotprime-minio:
     image: "uniuu/zotprime-minio:${VER}"
     build:
@@ -83,6 +98,9 @@ services:
       - "9001:9001"
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.7
   zotprime-miniomc:
     image: "uniuu/zotprime-miniomc:${VER}"
     restart: always
@@ -104,6 +122,9 @@ services:
       - zotprime-minio
     links:
       - zotprime-minio:minio
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.12
   zotprime-dataserver:
     image: "uniuu/zotprime-dataserver:${VER}"
     build:
@@ -121,6 +142,8 @@ services:
     environment:
       - RUN_USER=apache
       - RUN_GROUP=apache
+      - DSURI=${DSHOST}
+      - S3POINTURI=${S3HOST}
     depends_on:
       - zotprime-db
       - zotprime-elasticsearch
@@ -138,6 +161,11 @@ services:
       - zotprime-tinymceclean:tinymceclean
       - zotprime-streamserver:streamserver
     restart: always
+    networks:
+      zotprime:
+        aliases:
+          - dataserver
+        ipv4_address: 10.5.5.8
   zotprime-tinymceclean:
     image: "uniuu/zotprime-tinymceclean:${VER}"
     build:
@@ -153,6 +181,9 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
     restart: always
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.9
   zotprime-streamserver:
     image: "uniuu/zotprime-streamserver:${VER}"
     build:
@@ -161,7 +192,7 @@ services:
     ports:
       - "8081:81"
     volumes:
-      - "./docker/stream-server/default.js:/usr/src/app/config/default.js:ro"
+#      - "./docker/stream-server/default.js:/usr/src/app/config/default.js:ro"
       - /etc/localtime:/etc/localtime:ro
     restart: always
     depends_on:
@@ -171,6 +202,9 @@ services:
       - zotprime-memcached 
     links:
       - zotprime-redis:redis
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.10
   zotprime-phpmyadmin:
     image: "uniuu/zotprime-phpmyadmin:${VER}"
     build:
@@ -184,8 +218,19 @@ services:
       - zotprime-db:mysql
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.11
+
 
 volumes:
   dbdata:
    driver: local
 
+networks:
+  zotprime:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.5.0/28
+          gateway: 10.5.5.1
