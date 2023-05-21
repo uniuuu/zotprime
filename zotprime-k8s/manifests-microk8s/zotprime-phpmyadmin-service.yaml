@@ -5,8 +5,6 @@ metadata:
     apps: phpmyadmin
   name: phpmyadmin
   namespace: zotprime
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
 spec:
   ports:
     - name: phpmyadmin

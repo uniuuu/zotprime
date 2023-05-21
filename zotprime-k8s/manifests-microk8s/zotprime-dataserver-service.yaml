@@ -5,8 +5,6 @@ metadata:
     apps: dataserver
   name: dataserver
   namespace: zotprime
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
 spec:
   ports:
     - name: dataserver-api

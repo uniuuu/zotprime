@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    apps: zotprime-dataserver
+  name: zotprime-dataserver
+  namespace: zotprime
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      apps: zotprime-dataserver
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        apps: zotprime-dataserver
+      name: zotprime-dataserver
+    spec:
+      containers:
+        - image: uniuu/zotprime-dataserver:2.5.2
+          imagePullPolicy: Always
+          name: zotprime-dataserver
+          ports:
+            - containerPort: 80
+            - containerPort: 8082
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: "0.1"
+      priorityClassName: low-priority
+      restartPolicy: Always
+      securityContext: {}
+status: {}

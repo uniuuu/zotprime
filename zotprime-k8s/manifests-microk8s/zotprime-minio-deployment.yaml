@@ -28,7 +28,7 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "0.5"
+              cpu: "1"
           command:
             - /bin/bash
             - -c
@@ -65,7 +65,7 @@ spec:
           resources:
             limits:
               memory: 256Mi
-              cpu: "0.2"
+              cpu: "0.3"
 #          command:
 #          - /bin/sh
 #          - -c

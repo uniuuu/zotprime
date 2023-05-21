@@ -5,12 +5,10 @@ metadata:
     apps: minio
   name: minio
   namespace: zotprime
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
 spec:
   ports:
     - name: minio-ui
-      port: 9001
+      port: 80
       targetPort: 9001
     - name: minio-data
       port: 9000

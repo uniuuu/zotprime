@@ -5,10 +5,6 @@ metadata:
     apps: streamserver
   name: streamserver
   namespace: zotprime
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
-#    beta.cloud.google.com/backend-config: '{"ports": {"81": "config-broker-ws"}}'
-    cloud.google.com/backend-config: '{"default": "streamserver-backendconfig"}'
 spec:
   ports:
     - name: streamserver
@@ -19,4 +15,3 @@ spec:
   type: ClusterIP
 #status:
 #  loadBalancer: {}
-
