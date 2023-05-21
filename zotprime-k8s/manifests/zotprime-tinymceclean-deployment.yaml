@@ -18,7 +18,7 @@ spec:
       name: zotprime-tinymceclean
     spec:
       containers:
-        - image: uniuu/zotprime-tinymceclean:2.5.2
+        - image: uniuu/zotprime-tinymceclean:2.6.1-rc
           imagePullPolicy: Always
           name: zotprime-tinymceclean
           ports:
