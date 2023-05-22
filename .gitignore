@@ -7,3 +7,4 @@ logs
 **/zotprime*secret.yaml
 docker-compose.yml
 **/cred.json
+.vscode/
