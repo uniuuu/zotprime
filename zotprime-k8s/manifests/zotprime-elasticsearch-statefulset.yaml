@@ -84,12 +84,12 @@ spec:
 #          initialDelaySeconds: 120
 #          periodSeconds: 10
         volumeMounts:
-        - name: storage
+        - name: dataes
           mountPath: /data
       priorityClassName: high-priority
   volumeClaimTemplates:
   - metadata:
-      name: storage
+      name: dataes
     spec:
 #      storageClassName: standard
       accessModes: [ ReadWriteOnce ]

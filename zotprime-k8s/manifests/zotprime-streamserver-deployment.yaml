@@ -27,10 +27,21 @@ spec:
               memory: 256Mi
               cpu: "0.5"
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /health
               port: 81
-            initialDelaySeconds: 15
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 20
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 0
             periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              path: /health
+              port: 81
       priorityClassName: medium-priority      
       restartPolicy: Always
       securityContext: {}

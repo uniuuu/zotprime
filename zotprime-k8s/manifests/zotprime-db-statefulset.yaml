@@ -27,7 +27,7 @@ spec:
         - 999:999
         - /var/lib/mysql
         volumeMounts:
-        - name: datadir
+        - name: datadb
           mountPath: /var/lib/mysql 
       containers:
       - name: mariadb
@@ -57,7 +57,7 @@ spec:
               name: db-config
               key: mariadb-databasename
         volumeMounts:
-        - name: datadir
+        - name: datadb
           mountPath: /var/lib/mysql/
         - name: db-secret
           mountPath: tmp/_key/
@@ -72,7 +72,7 @@ spec:
       priorityClassName: high-priority
   volumeClaimTemplates:
   - metadata:
-      name: datadir
+      name: datadb
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:

@@ -70,7 +70,7 @@ spec:
                    name: minio-config
                    key: minio-user
           volumeMounts:
-            - name: bucketsstore # Corresponds to the `spec.volumes` Persistent Volume
+            - name: dataminio # Corresponds to the `spec.volumes` Persistent Volume
               mountPath: /data
             - name: minio-secret
               mountPath: "/tmp/_key"
@@ -88,7 +88,7 @@ spec:
 #          args: 
 #          - set -o allexport && source tmp/_key/secret.txt && set +o allexport;
           volumeMounts:
-            - name: bucketsstore # Corresponds to the `spec.volumes` Persistent Volume
+            - name: dataminio # Corresponds to the `spec.volumes` Persistent Volume
               mountPath: /data
             - name: minio-secret
               mountPath: "/tmp/_key"
@@ -106,7 +106,7 @@ spec:
       restartPolicy: Always
       securityContext: {}
       volumes:
-        - name: bucketsstore
+        - name: dataminio
           persistentVolumeClaim:
             claimName: bucketsstore-vol
 #        - name: bucketsstore

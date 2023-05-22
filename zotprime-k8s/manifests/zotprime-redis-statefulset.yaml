@@ -75,7 +75,7 @@ spec:
         - name: conf
           mountPath: /conf
           readOnly: false
-        - name: data
+        - name: dataredis
           mountPath: /data
           readOnly: false
         - name: probes
@@ -93,7 +93,7 @@ spec:
           defaultMode: 0555
   volumeClaimTemplates:
   - metadata:
-      name: data
+      name: dataredis
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:

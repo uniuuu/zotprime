@@ -35,5 +35,9 @@ spec:
               cpu: "0.1"
       priorityClassName: low-priority
       restartPolicy: Always
+      hostAliases:
+        - ip: "10.30.11.11"
+          hostnames:
+          - "s3min.projectdev.net"
       securityContext: {}
 status: {}

@@ -8,12 +8,16 @@ metadata:
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
 spec:
+  clusterIP: 10.30.11.11
   ports:
     - name: minio-ui
       port: 9001
       targetPort: 9001
     - name: minio-data
       port: 9000
+      targetPort: 9000
+    - name: minio-data2
+      port: 80
       targetPort: 9000
   selector:
     apps: zotprime-minio
