@@ -18,7 +18,8 @@ RUN git submodule update --init client/zotero-client
 
 
 WORKDIR /usr/src/app/client/zotero-client
-RUN git checkout tags/6.0.23 -b v6.0.23
+#RUN git checkout tags/6.0.23 -b v6.0.23
+RUN git checkout tags/6.0.26 -b v6.0.26
 RUN rm -rf *
 RUN git checkout -- .
 RUN git submodule update --init --recursive
@@ -30,7 +31,8 @@ RUN git checkout -- .
 RUN git submodule update --init --recursive
 
 WORKDIR /usr/src/app/client/zotero-build 
-RUN git checkout 00e854c6588f329b714250e450f4f7f663aa0222
+#RUN git checkout 00e854c6588f329b714250e450f4f7f663aa0222
+RUN git checkout tags/apr20 -b v_apr20
 RUN git status
 RUN git submodule update --init --recursive
 
