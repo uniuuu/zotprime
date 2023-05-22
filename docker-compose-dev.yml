@@ -94,7 +94,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
     command: server /data --console-address ":9001"
     ports:
-#      - "8082:9000"
+      - "9000:9000"
       - "9001:9001"
     volumes:
       - /etc/localtime:/etc/localtime:ro

@@ -1,38 +1,35 @@
-FROM alpine:3 AS builder
-ARG ZOTPRIME_VERSION=2
-#RUN apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
-#ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
-RUN set -eux; \
-        apk update && apk upgrade --available
-RUN set -eux \
-    && apk add --no-cache \
-        python3 \
-        py3-pip \
-        build-base \
-        git \
-        autoconf \
-        automake \ 
-#        util-linux \
-    && cd /tmp \
-    && git clone --depth=1 "https://github.com/samhocevar/rinetd" \
-    && cd rinetd \
-    && ./bootstrap \
-    && ./configure --prefix=/usr \
-    && make -j $(nproc) \
-    && strip rinetd \
-#    && pip3 install --upgrade pip \
-#    && pip3 install -v --no-cache-dir \
-#    awscli \
-    && rm -rf /var/cache/apk/*
-
-
+#FROM alpine:3 AS builder
+#ARG ZOTPRIME_VERSION=2
+##RUN apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+##ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+#RUN set -eux; \
+#        apk update && apk upgrade --available
+#RUN set -eux \
+#    && apk add --no-cache \
+#        python3 \
+#        py3-pip \
+#        build-base \
+#        git \
+#        autoconf \
+#        automake \ 
+##        util-linux \
+#    && cd /tmp \
+#    && git clone --depth=1 "https://github.com/samhocevar/rinetd" \
+#    && cd rinetd \
+#    && ./bootstrap \
+#    && ./configure --prefix=/usr \
+#    && make -j $(nproc) \
+#    && strip rinetd \
+##    && pip3 install --upgrade pip \
+##    && pip3 install -v --no-cache-dir \
+##    awscli \
+#    && rm -rf /var/cache/apk/*
 FROM alpine:3
 ARG ZOTPRIME_VERSION=2
 
 #FROM php:8.1-alpine
 #FROM php:alpine
-COPY --from=builder /tmp/rinetd/rinetd /usr/sbin/rinetd
+#COPY --from=builder /tmp/rinetd/rinetd /usr/sbin/rinetd
 
 
 #COPY --from=builder /usr/lib/preloadable_libiconv.so /usr/lib/preloadable_libiconv.so
@@ -307,8 +304,8 @@ RUN set -eux; \
         chown -R --no-dereference 100:101 /var/log/apache2
 
 # Rinetd
-RUN set -eux; \
-        echo "0.0.0.0		8082		minio		9000" >> /etc/rinetd.conf
+#RUN set -eux; \
+#        echo "0.0.0.0		8082		minio		9000" >> /etc/rinetd.conf
 
 #Install uws
 #WORKDIR /var/
@@ -345,4 +342,3 @@ EXPOSE 80/tcp
 #EXPOSE 81/TCP
 #EXPOSE 82/TCP
 ENTRYPOINT ["/entrypoint.sh"]
-
