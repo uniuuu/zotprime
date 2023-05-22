@@ -42,6 +42,22 @@ spec:
 #            - /bin/sh
 #            - -c
 #          args: ls -lha /tmp/_key/
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 20
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 0
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              path: /minio/health/live
+              port: 9000
           ports:
             - containerPort: 9000
               name: data

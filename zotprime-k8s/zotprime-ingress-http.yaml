@@ -23,6 +23,16 @@ spec:
                 name: minio
                 port:
                   name: minio-ui
+    - host: s3min.projectdev.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  name: minio-data
     - host: pm.projectdev.net
       http:
         paths:

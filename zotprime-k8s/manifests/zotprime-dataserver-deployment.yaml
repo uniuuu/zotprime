@@ -23,12 +23,12 @@ spec:
           name: zotprime-dataserver
           ports:
             - containerPort: 80
-            - containerPort: 8082
+#            - containerPort: 8082
           env:
             - name: DSURI
               value: http://api.projectdev.net/
             - name: S3POINTURI
-              value: stream.projectdev.net
+              value: s3min.projectdev.net
           resources:
             limits:
               memory: 256Mi

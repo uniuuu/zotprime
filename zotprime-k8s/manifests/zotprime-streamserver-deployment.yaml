@@ -26,6 +26,11 @@ spec:
             limits:
               memory: 256Mi
               cpu: "0.5"
+          livenessProbe:
+            tcpSocket:
+              port: 81
+            initialDelaySeconds: 15
+            periodSeconds: 20
       priorityClassName: medium-priority      
       restartPolicy: Always
       securityContext: {}
