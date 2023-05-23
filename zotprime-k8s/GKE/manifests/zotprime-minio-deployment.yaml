@@ -88,11 +88,6 @@ spec:
             requests:
               memory: 256Mi
               cpu: "0.2"
-#          command:
-#          - /bin/sh
-#          - -c
-#          args: 
-#          - set -o allexport && source tmp/_key/secret.txt && set +o allexport;
           volumeMounts:
             - name: s3data # Corresponds to the `spec.volumes` Persistent Volume
               mountPath: /data
