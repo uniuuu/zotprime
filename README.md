@@ -144,6 +144,7 @@ $ kubectl get -A ing
 
 ## MicroK8s Installation
 
+
 ## Client Build
 
 #### Client build Windows and Linux
@@ -203,8 +204,7 @@ $ ./staging/Zotero_VERSION/zotero
 
 ![Sync](doc/sync.png)
 
-
-###*Credits*
+Credits
 1. https://github.com/FiligranHQ/zotprime
 2. https://github.com/gfacciol/zotero_dataserver-docker
 3. https://github.com/isabekov/dataserver
