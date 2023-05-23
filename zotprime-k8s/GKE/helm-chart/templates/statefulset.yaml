@@ -47,7 +47,7 @@ spec:
         - mountPath: /var/lib/mysql/
           name: datadb
         - mountPath: tmp/_key/
-          name: db-secret
+          name: {{ include "zotprime-k8s.fullname" . }}-db-secret
       initContainers:
       - command:
         - chown
@@ -66,7 +66,7 @@ spec:
           name: datadb
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       volumes:
-      - name: db-secret
+      - name: {{ include "zotprime-k8s.fullname" . }}-db-secret
         secret:
           secretName: {{ include "zotprime-k8s.fullname" . }}-db-secret
   updateStrategy: {}

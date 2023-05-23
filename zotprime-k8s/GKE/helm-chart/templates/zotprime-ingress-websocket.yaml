@@ -8,6 +8,7 @@ metadata:
   annotations:
     cloud.google.com/load-balancer-type: External
     kubernetes.io/ingress.class: gce
+    cert-manager.io/issuer: letsencrypt-staging
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/rewrite-target: /
@@ -23,6 +24,9 @@ metadata:
         proxy_cache_bypass $http_upgrade;
       }
 spec:
+  tls:
+  - hosts:
+    - stream.projectdev.net
   rules:
   - host: stream.projectdev.net
     http:

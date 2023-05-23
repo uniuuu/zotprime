@@ -377,7 +377,7 @@ spec:
         - mountPath: /data
           name: s3data
         - mountPath: /tmp/_key
-          name: minio-secret
+          name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
           readOnly: true
       - env:
         - name: MINIO_ROOT_USER
@@ -396,7 +396,7 @@ spec:
         - mountPath: /data
           name: s3data
         - mountPath: /tmp/_key
-          name: minio-secret
+          name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
           readOnly: true
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       restartPolicy: Always
@@ -405,7 +405,7 @@ spec:
       - name: s3data
         persistentVolumeClaim:
           claimName: {{ include "zotprime-k8s.fullname" . }}-dataminio
-      - name: minio-secret
+      - name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
         secret:
           secretName: {{ include "zotprime-k8s.fullname" . }}-minio-secret
 ---

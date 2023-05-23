@@ -8,15 +8,22 @@ metadata:
   annotations:
     cloud.google.com/load-balancer-type: External
     kubernetes.io/ingress.class: gce
+    cert-manager.io/issuer: letsencrypt-staging
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  tls:
+  - hosts:
+    - min.projectdev.net
+    - s3min.projectdev.net
+    - pm.projectdev.net
+    - api.projectdev.net
   rules:
   - host: min.projectdev.net
     http:
       paths:
       - backend:
           service:
-            name: '{{ include "zotprime-k8s.fullname" . }}-minio'
+            name: minio
             port:
               name: minio-ui
         path: /
@@ -26,7 +33,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ include "zotprime-k8s.fullname" . }}-minio'
+            name: minio
             port:
               name: minio-data
         path: /
@@ -36,7 +43,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ include "zotprime-k8s.fullname" . }}-phpmyadmin'
+            name: phpmyadmin
             port:
               number: 80
         path: /
@@ -46,7 +53,7 @@ spec:
       paths:
       - backend:
           service:
-            name: '{{ include "zotprime-k8s.fullname" . }}-dataserver'
+            name: dataserver
             port:
               name: dataserver-api
         path: /
