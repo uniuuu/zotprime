@@ -26,14 +26,14 @@ metadata:
 spec:
   tls:
   - hosts:
-    - stream.projectdev.net
+    - {{ .Values.ingressHostnames.streamserver }}
   rules:
-  - host: stream.projectdev.net
+  - host: {{ .Values.ingressHostnames.streamserver }}
     http:
       paths:
       - backend:
           service:
-            name: '{{ include "zotprime-k8s.fullname" . }}-streamserver'
+            name: streamserver
             port:
               name: streamserver
         path: /

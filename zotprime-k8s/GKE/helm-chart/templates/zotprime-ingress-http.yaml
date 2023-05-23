@@ -13,12 +13,12 @@ metadata:
 spec:
   tls:
   - hosts:
-    - min.projectdev.net
-    - s3min.projectdev.net
-    - pm.projectdev.net
-    - api.projectdev.net
+    - {{ .Values.ingressHostnames.minios3Web }}
+    - {{ .Values.ingressHostnames.minios3Data }}
+    - {{ .Values.ingressHostnames.phpmyadmin }}
+    - {{ .Values.ingressHostnames.api }}
   rules:
-  - host: min.projectdev.net
+  - host: {{ .Values.ingressHostnames.minios3Web }}
     http:
       paths:
       - backend:
@@ -28,7 +28,7 @@ spec:
               name: minio-ui
         path: /
         pathType: Prefix
-  - host: s3min.projectdev.net
+  - host: {{ .Values.ingressHostnames.minios3Data }}
     http:
       paths:
       - backend:
@@ -38,7 +38,7 @@ spec:
               name: minio-data
         path: /
         pathType: Prefix
-  - host: pm.projectdev.net
+  - host: {{ .Values.ingressHostnames.phpmyadmin }}
     http:
       paths:
       - backend:
@@ -48,7 +48,7 @@ spec:
               number: 80
         path: /
         pathType: Prefix
-  - host: api.projectdev.net
+  - host: {{ .Values.ingressHostnames.api }}
     http:
       paths:
       - backend:

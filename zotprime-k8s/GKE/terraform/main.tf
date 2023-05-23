@@ -93,7 +93,7 @@ module "k8s" {
       name         = "nodepool"
       machine_type = "n2-standard-4"
       #node_locations = "asia-southeast1-a,asia-southeast1-b,asia-southeast1-c"
-      node_locations = "asia-southeast1-b" # node_locations Optional. The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified.
+      node_locations = var.node-locations # node_locations Optional. The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified.
       min_count      = var.minnode
       max_count      = var.maxnode
       disk_size_gb   = var.disksize

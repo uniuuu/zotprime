@@ -38,10 +38,16 @@ variable "service-account-id" {
   description = "The ID of service account of GCP"
   default     = "serviceaccount-id"
 }
-variable "cpus" {
-  description = "Number of cpus"
-  default     = "2"
+#variable "cpus" {
+#  description = "Number of cpus"
+#  default     = "2"
+#}
+
+variable "node-locations" {
+  description = "Node locations"
+  default     = "asia-southeast1-b"
 }
+
 
 variable "minnode" {
   description = "Minimum number of node pool"
