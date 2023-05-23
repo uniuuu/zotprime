@@ -2,7 +2,15 @@
 
 ZotPrime is a full packaged repository aimed to make on-premise [Zotero](https://www.zotero.org) deployment easier with the last versions of both Zotero client and server. This is the result of sleepness nights spent to deploy Zotero within my organization on a disconnected network. Feel free to open issues or pull requests if you did not manage to use it.
 
-## Server installation
+Table of contents
+=================
+
+  * [Localhost Installation](#localhost-installation)
+  * [VM Installation](#VM-installation)
+  * [GKE Installation](#gke-Installation)
+  * [MicroK8s Installation](#get-security-bulletins)
+
+## **Localhost installation**
 
 ### Dependencies and source code
 
@@ -50,7 +58,7 @@ $ cd ..
 | Name          | URL                                           |
 | ------------- | --------------------------------------------- |
 | Zotero API    | http://localhost:8080                         |
-| S3            | http://localhost:8082                         |
+| S3            | http://localhost:9000                         |
 | PHPMyAdmin    | http://localhost:8083                         |
 | S3 Web UI     | http://localhost:9001                         |
 
