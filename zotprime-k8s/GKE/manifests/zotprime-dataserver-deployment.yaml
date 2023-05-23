@@ -29,10 +29,29 @@ spec:
               value: http://api.projectdev.net/
             - name: S3POINTURI
               value: s3min.projectdev.net
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 210
+            periodSeconds: 30
+#            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 180
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              path: /
+              port: 80
           resources:
             limits:
-              memory: 256Mi
-              cpu: "0.1"
+              memory: 512Mi
+#              cpu: "0.3"
+            requests:
+              memory: 512Mi
+              cpu: "1"
       priorityClassName: low-priority
       restartPolicy: Always
       hostAliases:

@@ -39,6 +39,9 @@ spec:
           limits:
             memory: 512Mi
 #            cpu: "1"
+#            cpu: "0.5"
+          requests:
+            memory: 512Mi
             cpu: "0.5"
         command:
           - /bin/bash
@@ -77,4 +80,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 300M
+          storage: 2Gi

@@ -3,15 +3,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: localstack
-  namespace: "default"
+  name: zotprime-localstack
+  namespace: "zotprime"
   labels:
-    helm.sh/chart: localstack-0.6.0
-    app.kubernetes.io/name: localstack
-    app.kubernetes.io/instance: localstack
-    app.kubernetes.io/version: "latest"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
+    apps: zotprime-localstack
+#  annotations:
     
 spec:
   replicas: 1
@@ -19,26 +15,34 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app.kubernetes.io/name: localstack
-      app.kubernetes.io/instance: localstack
+      apps: zotprime-localstack
+      
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: localstack
-        app.kubernetes.io/instance: localstack
+        apps: zotprime-localstack
     spec:
-      serviceAccountName: localstack
+#      serviceAccountName: localstack
       securityContext:
         {}
       containers:
         - name: localstack
           securityContext:
             {}
-          image: "localstack/localstack:latest"
+          image: uniuu/zotprime-localstack:2.6.1-rc
           imagePullPolicy: IfNotPresent
           ports:
             - name: edge
               containerPort: 4566
+              protocol: TCP
+            - name: "sns-4575"
+              containerPort: 4575
+              protocol: TCP
+            - name: "sqs-4576"
+              containerPort: 4576
+              protocol: TCP
+            - name: "apigateway-4567"
+              containerPort: 4567
               protocol: TCP
             - name: "ext-svc-4510"
               containerPort: 4510
@@ -190,45 +194,52 @@ spec:
             - name: "ext-svc-4559"
               containerPort: 4559
               protocol: TCP
-          livenessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-            httpGet:
-              path: /_localstack/health
-              port: edge
-          readinessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
-            httpGet:
-              path: /_localstack/health
-              port: edge
+#          livenessProbe:
+#            failureThreshold: 3
+#            initialDelaySeconds: 0
+#            periodSeconds: 10
+#            successThreshold: 1
+#            timeoutSeconds: 1
+#            httpGet:
+#              path: /_localstack/health
+#              port: edge
+#          readinessProbe:
+#            failureThreshold: 3
+#            initialDelaySeconds: 0
+#            periodSeconds: 10
+#            successThreshold: 1
+#            timeoutSeconds: 1
+#            httpGet:
+#              path: /_localstack/health
+#              port: edge
           resources:
-            {}
+            limits:
+              memory: 256Mi
+#              cpu: "0.1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
           env:
+            - name: SERVICES
+              value: "sns,sqs,apigateway"
             - name: DEBUG
               value: "0"
-            - name: EXTERNAL_SERVICE_PORTS_START
-              value: "4510"
-            - name: EXTERNAL_SERVICE_PORTS_END
-              value: "4560"
+#            - name: EXTERNAL_SERVICE_PORTS_START
+#              value: "4510"
+#            - name: EXTERNAL_SERVICE_PORTS_END
+#              value: "4560"
             - name: LOCALSTACK_K8S_SERVICE_NAME
               value: localstack
             - name: LOCALSTACK_K8S_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: LAMBDA_RUNTIME_EXECUTOR
-              value: "docker"
-            - name: LAMBDA_K8S_IMAGE_PREFIX
-              value: "localstack/lambda-"
-            - name: LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT
-              value: "60"
-            - name: OVERRIDE_IN_DOCKER
-              value: "1"
-      volumes:
+#            - name: LAMBDA_RUNTIME_EXECUTOR
+#              value: "docker"
+#            - name: LAMBDA_K8S_IMAGE_PREFIX
+#              value: "localstack/lambda-"
+#            - name: LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT
+#              value: "60"
+#            - name: OVERRIDE_IN_DOCKER
+#              value: "1"
+#      volumes:

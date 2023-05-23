@@ -2,12 +2,21 @@ provider "google" {
   credentials = file("auth/cred.json")
 }
 
+provider "google-beta" {
+  credentials = file("auth/cred.json")
+}
 terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 4.65.2"
+      version = ">= 4.66.0"
     }
+
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = ">= 4.66.0"
+    }
+
     kubectl = {
       source  = "gavinbunney/kubectl"
       version = ">= 1.14.0"
@@ -18,12 +27,12 @@ terraform {
     } */
   }
 
-  required_version = ">= 1.3.8"
+  required_version = ">= 1.4.6"
 }
 
 module "gke_auth" {
   source       = "terraform-google-modules/kubernetes-engine/google//modules/auth"
-  version      = "26.0.0"
+  version      = "26.1.1"
   depends_on   = [module.k8s]
   project_id   = var.project_id
   location     = module.k8s.location
@@ -34,7 +43,8 @@ module "vpc" {
   source       = "terraform-google-modules/network/google"
   project_id   = var.project_id
   network_name = "${var.network}-${var.env_name}"
-  version      = "~> 7.0"
+  version      = "~> 7.0.0"
+  #  version      = "6.0.0"
   subnets = [
     {
       subnet_name   = "${var.subnetwork}-${var.env_name}"
@@ -54,28 +64,11 @@ module "vpc" {
       },
     ]
   }
-  routes = [
-    {
-      name              = "egress-internet"
-      description       = "route through IGW to access internet"
-      destination_range = "0.0.0.0/0"
-      tags              = "egress-inet"
-      next_hop_internet = "true"
-    },
-    #    {
-    #      name                   = "app-proxy"
-    #      description            = "route through proxy to reach app"
-    #      destination_range      = "10.50.10.0/24"
-    #      tags                   = "app-proxy"
-    #      next_hop_instance      = "app-proxy-instance"
-    #      next_hop_instance_zone = "asia-southeast1-b"
-    #    },
-  ]
 }
 
 module "k8s" {
   source                   = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-  version                  = "26.0.0"
+  version                  = "26.1.1"
   project_id               = var.project_id
   name                     = "${var.cluster_name}-${var.env_name}"
   regional                 = false

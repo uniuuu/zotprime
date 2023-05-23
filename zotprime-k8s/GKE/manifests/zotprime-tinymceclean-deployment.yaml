@@ -26,6 +26,9 @@ spec:
           resources:
             limits:
               memory: 256Mi
+#              cpu: "0.1"
+            requests:
+              memory: 256Mi
               cpu: "0.1"
       priorityClassName: medium-priority
       restartPolicy: Always

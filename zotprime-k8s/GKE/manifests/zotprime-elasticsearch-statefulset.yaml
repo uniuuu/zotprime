@@ -66,15 +66,15 @@ spec:
               resource: limits.cpu
         resources:
           limits:
-            cpu: "0.5"
+#            cpu: "0.5"
 #            cpu: "1"
 #            memory: 2Gi
             memory: 1Gi
           requests:
-            cpu: 100m
+            cpu: "1"
 #            cpu: "0.25"
 #            memory: 1500Mi
-            memory: 512M
+            memory: 1Gi
         ports:
         - containerPort: 9300
           name: transport
