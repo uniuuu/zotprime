@@ -5,6 +5,7 @@ node-locations         = "asia-southeast1-b"
 minnode                = 1
 maxnode                = 2
 disksize               = 30
+machine                = "n1-standard-8"
 env_name               = "prod"
 cluster_name           = "zotprime-k8s"
 network                = "zotprime-network"

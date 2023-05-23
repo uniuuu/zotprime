@@ -92,7 +92,7 @@ $ gcloud services enable container.googleapis.com
 $ gcloud services enable cloudresourcemanager.googleapis.com
 $ cp terraform.tfvars_example terraform.tfvars
 ```
-**Edit terraform.tfvars and change project_id, region, zones, node-locations, minnode, maxnode, disksize**  
+**Edit terraform.tfvars and change project_id, region, zones, node-locations, minnode, maxnode, disksize, machine**  
 ```bash
 $ terraform init
 $ terraform fmt && terraform validate && terraform plan
@@ -181,6 +181,7 @@ $ ./build/staging/Zotero_VERSION/zotero(.exe))
 
 *Run*:
 ```bash
+$ git submodule update --init --recursive
 $ cd client
 $ ./config.sh
 $ cd zotero-client

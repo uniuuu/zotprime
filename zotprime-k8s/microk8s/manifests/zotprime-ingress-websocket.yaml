@@ -1,17 +1,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-ingress-websocket
   labels:
     apps: zotprime-ingress-websocket
-  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  name: zotprime-ingress-websocket
+  namespace: zotprime
   annotations:
-    cloud.google.com/load-balancer-type: External
-    kubernetes.io/ingress.class: gce
-#    cert-manager.io/issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+#    nginx.ingress.kubernetes.io/configuration-snippet: |
+#       proxy_http_version 1.1;
+#       proxy_set_header Upgrade "websocket";
+#       proxy_set_header Connection "Upgrade";
     nginx.ingress.kubernetes.io/server-snippets: |
       location / {
         proxy_set_header Upgrade $http_upgrade;
@@ -24,18 +25,18 @@ metadata:
         proxy_cache_bypass $http_upgrade;
       }
 spec:
-#  tls:
-#   - secretName: web-ssl
-#     hosts:
-#      - {{ .Values.ingressHostnames.streamserver }}
   rules:
-  - host: {{ .Values.ingressHostnames.streamserver }}
-    http:
-      paths:
-      - backend:
-          service:
-            name: streamserver
-            port:
-              name: streamserver
-        path: /
-        pathType: Prefix
+    - host: stream.zotprime
+      http:
+        paths:
+          - backend:
+              service:
+                name: streamserver
+                port:
+                  name: streamserver
+#                  number: 8081
+#            pathType: Exact
+            path: /
+            pathType: Prefix
+#status:
+#  loadBalancer: {}

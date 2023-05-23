@@ -17,13 +17,9 @@ terraform {
       version = ">= 4.66.0"
     }
 
-    kubectl = {
+    /*  kubectl = {
       source  = "gavinbunney/kubectl"
       version = ">= 1.14.0"
-    }
-    /* null = {
-      source  = "hashicorp/null"
-      version = "~> 3.0"
     } */
   }
 
@@ -91,7 +87,7 @@ module "k8s" {
   node_pools = [
     {
       name         = "nodepool"
-      machine_type = "n2-standard-4"
+      machine_type = var.machine
       #node_locations = "asia-southeast1-a,asia-southeast1-b,asia-southeast1-c"
       node_locations = var.node-locations # node_locations Optional. The list of zones in which the cluster's nodes are located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. Defaults to cluster level node locations if nothing is specified.
       min_count      = var.minnode

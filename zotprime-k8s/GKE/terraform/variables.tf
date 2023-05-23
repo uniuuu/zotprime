@@ -48,6 +48,11 @@ variable "node-locations" {
   default     = "asia-southeast1-b"
 }
 
+variable "machine" {
+  description = "CGP Compute Engine"
+  default     = "n1-standard-1"
+}
+
 
 variable "minnode" {
   description = "Minimum number of node pool"
