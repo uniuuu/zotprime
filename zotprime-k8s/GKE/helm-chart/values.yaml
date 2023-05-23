@@ -1,7 +1,9 @@
-minioSecret:
-  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"
-dbSecret:
-  secretTxt: "TUFSSUFEQl9ST09UX1BBU1NXT1JEPXpvdGVybwpNQVJJQURCX1BBU1NXT1JEPXpvdGVyb3Rlc3QK"
+ingressHostnames:
+  api: api.projectdev.net
+  streamserver: stream.projectdev.net
+  minios3Data: s3min.projectdev.net
+  phpmyadmin: pm.projectdev.net
+  minios3Web: min.projectdev.net
 zotprimeDataserver:
   replicas: 1
   zotprimeDataserver:
@@ -18,6 +20,10 @@ zotprimeDataserver:
       requests:
         cpu: "1"
         memory: 512Mi
+minioSecret:
+  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"
+dbSecret:
+  secretTxt: "TUFSSUFEQl9ST09UX1BBU1NXT1JEPXpvdGVybwpNQVJJQURCX1BBU1NXT1JEPXpvdGVyb3Rlc3QK"
 dataserver:
   ports:
   - name: dataserver-api
