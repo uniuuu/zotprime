@@ -1,7 +1,23 @@
 minioSecret:
-  secretTxt: TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK
+  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"
 dbSecret:
-  secretTxt: TUFSSUFEQl9ST09UX1BBU1NXT1JEPXpvdGVybwpNQVJJQURCX1BBU1NXT1JEPXpvdGVyb3Rlc3QK
+  secretTxt: "TUFSSUFEQl9ST09UX1BBU1NXT1JEPXpvdGVybwpNQVJJQURCX1BBU1NXT1JEPXpvdGVyb3Rlc3QK"
+zotprimeDataserver:
+  replicas: 1
+  zotprimeDataserver:
+    env:
+      dsuri: http://api.projectdev.net/
+      s3Pointuri: s3min.projectdev.net
+    image:
+      repository: uniuu/zotprime-dataserver
+      tag: 2.6.1-rc
+    imagePullPolicy: Always
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: "1"
+        memory: 512Mi
 dataserver:
   ports:
   - name: dataserver-api
@@ -123,22 +139,6 @@ tinymceclean:
     port: 16342
     targetPort: 16342
   type: ClusterIP
-zotprimeDataserver:
-  replicas: 1
-  zotprimeDataserver:
-    env:
-      dsuri: http://api.projectdev.net/
-      s3Pointuri: s3min.projectdev.net
-    image:
-      repository: uniuu/zotprime-dataserver
-      tag: 2.6.1-rc
-    imagePullPolicy: Always
-    resources:
-      limits:
-        memory: 512Mi
-      requests:
-        cpu: "1"
-        memory: 512Mi
 zotprimeDb:
   mariadb:
     args:
@@ -177,10 +177,10 @@ zotprimeElasticsearch:
       tag: 2.6.1-rc
     resources:
       limits:
-        memory: 1Gi
+        memory: 2Gi
       requests:
         cpu: "1"
-        memory: 1Gi
+        memory: 2Gi
   initSysctl:
     containerSecurityContext:
       privileged: true

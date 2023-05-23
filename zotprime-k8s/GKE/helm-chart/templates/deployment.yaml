@@ -66,7 +66,7 @@ spec:
       - hostnames:
         - s3min.projectdev.net
         ip: 10.30.11.11
-      priorityClassName: low-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-low-priority
       restartPolicy: Always
       securityContext: {}
       volumes:
@@ -313,7 +313,7 @@ spec:
           protocol: TCP
         resources: {{- toYaml .Values.zotprimeMemcached.memcached.resources | nindent 10
           }}
-      priorityClassName: high-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -398,7 +398,7 @@ spec:
         - mountPath: /tmp/_key
           name: minio-secret
           readOnly: true
-      priorityClassName: high-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       restartPolicy: Always
       securityContext: {}
       volumes:
@@ -489,7 +489,7 @@ spec:
           timeoutSeconds: 1
         resources: {{- toYaml .Values.zotprimeStreamserver.zotprimeStreamserver.resources
           | nindent 10 }}
-      priorityClassName: medium-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-medium-priority
       restartPolicy: Always
       securityContext: {}
 ---
@@ -526,6 +526,6 @@ spec:
         - containerPort: 16342
         resources: {{- toYaml .Values.zotprimeTinymceclean.zotprimeTinymceclean.resources
           | nindent 10 }}
-      priorityClassName: medium-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-medium-priority
       restartPolicy: Always
       securityContext: {}

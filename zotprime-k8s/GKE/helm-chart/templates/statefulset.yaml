@@ -64,7 +64,7 @@ spec:
         volumeMounts:
         - mountPath: /var/lib/mysql
           name: datadb
-      priorityClassName: high-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       volumes:
       - name: db-secret
         secret:
@@ -148,7 +148,7 @@ spec:
         resources: {}
         securityContext: {{- toYaml .Values.zotprimeElasticsearch.initSysctl.containerSecurityContext
           | nindent 10 }}
-      priorityClassName: high-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
   updateStrategy: {}
   volumeClaimTemplates:
   - metadata:
@@ -243,7 +243,7 @@ spec:
         - mountPath: /probes
           name: probes
           readOnly: true
-      priorityClassName: high-priority
+      priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       terminationGracePeriodSeconds: 20
       volumes:
       - configMap:
