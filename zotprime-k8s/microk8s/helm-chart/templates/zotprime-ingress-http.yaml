@@ -6,8 +6,6 @@ metadata:
     apps: zotprime-ingress-http
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
   annotations:
-    cloud.google.com/load-balancer-type: External
-    kubernetes.io/ingress.class: gce
 #    cert-manager.io/issuer: letsencrypt-staging
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:

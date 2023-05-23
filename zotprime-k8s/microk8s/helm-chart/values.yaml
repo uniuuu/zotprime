@@ -1,18 +1,18 @@
 ingressHostnames:
-  api: api.projectdev.net
-  streamserver: stream.projectdev.net
-  minios3Data: s3min.projectdev.net
-  phpmyadmin: pm.projectdev.net
-  minios3Web: min.projectdev.net
+  api: api.zotprime
+  streamserver: stream.zotprime
+  minios3Data: s3min.zotprime
+  phpmyadmin: pm.zotprime
+  minios3Web: min.zotprime
 zotprimeDataserver:
   replicas: 1
   zotprimeDataserver:
     env:
-      dsuri: http://api.projectdev.net/
-      s3Pointuri: s3min.projectdev.net
+      dsuri: http://api.zotprime/
+      s3Pointuri: s3min.zotprime
     image:
-      repository: uniuu/zotprime-dataserver
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-dataserver
+      tag: latest
     imagePullPolicy: Always
     resources:
       limits:
@@ -154,8 +154,8 @@ zotprimeDb:
       runAsGroup: 999
       runAsUser: 999
     image:
-      repository: uniuu/zotprime-db
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-db
+      tag: latest
     resources:
       limits:
         memory: 512Mi
@@ -179,14 +179,14 @@ zotprimeElasticsearch:
       discoveryType: single-node
       xpackSecurityEnabled: "true"
     image:
-      repository: uniuu/zotprime-elasticsearch
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-elasticsearch
+      tag: latest
     resources:
       limits:
-        memory: 2Gi
+        memory: 1536Mi
       requests:
         cpu: "1"
-        memory: 2Gi
+        memory: 1536Mi
   initSysctl:
     containerSecurityContext:
       privileged: true
@@ -206,8 +206,8 @@ zotprimeLocalstack:
       localstackK8SServiceName: localstack
       services: sns,sqs,apigateway
     image:
-      repository: uniuu/zotprime-localstack
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-localstack
+      tag: latest
     imagePullPolicy: IfNotPresent
     resources:
       limits:
@@ -222,16 +222,14 @@ zotprimeMemcached:
     - -m 2047
     - -I 50M
     image:
-      repository: uniuu/zotprime-memcached
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-memcached
+      tag: latest
     resources:
       limits:
-#        memory: 1536Mi
-        memory: 2Gi
+        memory: 1536Mi
       requests:
         cpu: 200m
-#        memory: 1536Mi
-        memory: 2Gi
+        memory: 1536Mi
   replicas: 1
 zotprimeMinio:
   replicas: 1
@@ -240,8 +238,8 @@ zotprimeMinio:
     - set -o allexport && source tmp/_key/secret-minio.txt && set +o allexport && minio
       server /data --console-address :9001
     image:
-      repository: uniuu/zotprime-minio
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-minio
+      tag: latest
     imagePullPolicy: Always
     resources:
       limits:
@@ -251,8 +249,8 @@ zotprimeMinio:
         memory: 512Mi
   zotprimeMiniomc:
     image:
-      repository: uniuu/zotprime-miniomc
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-miniomc
+      tag: latest
     resources:
       limits:
         memory: 256Mi
@@ -265,8 +263,8 @@ zotprimePhpmyadmin:
       pmaHost: mysql
       pmaPort: "3306"
     image:
-      repository: uniuu/zotprime-phpmyadmin
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-phpmyadmin
+      tag: latest
     resources:
       limits:
         memory: 256Mi
@@ -280,8 +278,8 @@ zotprimeRedis:
     - --protected-mode
     - "no"
     image:
-      repository: uniuu/zotprime-redis
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-redis
+      tag: latest
     resources:
       limits:
         memory: 100Mi
@@ -297,8 +295,8 @@ zotprimeStreamserver:
   replicas: 1
   zotprimeStreamserver:
     image:
-      repository: uniuu/zotprime-streamserver
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-streamserver
+      tag: latest
     resources:
       limits:
         memory: 256Mi
@@ -309,8 +307,8 @@ zotprimeTinymceclean:
   replicas: 1
   zotprimeTinymceclean:
     image:
-      repository: uniuu/zotprime-tinymceclean
-      tag: 2.6.1-rc
+      repository: localhost:32000/zotprime-k8s/zotprime-tinymceclean
+      tag: latest
     imagePullPolicy: Always
     resources:
       limits:

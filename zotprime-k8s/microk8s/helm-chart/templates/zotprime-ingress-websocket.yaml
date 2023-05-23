@@ -6,8 +6,6 @@ metadata:
     apps: zotprime-ingress-websocket
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
   annotations:
-    cloud.google.com/load-balancer-type: External
-    kubernetes.io/ingress.class: gce
 #    cert-manager.io/issuer: letsencrypt-staging
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
