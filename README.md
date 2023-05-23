@@ -52,7 +52,7 @@ $ cd ..
 | S3            | http://localhost:9000 or http://\<VM IP Address\>:9000/                         |
 | PHPMyAdmin    | http://localhost:8083 or http://\<VM IP Address\>:8083/                         |
 | S3 Web UI     | http://localhost:9001 or http://\<VM IP Address\>:9001/                         |
-| Stream Server | http://localhost:8081 or http://\<VM IP Address\>:8081/                         |
+| Stream Server | ws://localhost:8081 or ws://\<VM IP Address\>:8081/                         |
 
 *Default login/password*:
 
@@ -132,7 +132,7 @@ $ kubectl get -A ing
 | S3            | http://s3-any.yourhostname.io                 |
 | PHPMyAdmin    | http://phpmyadmin-any.yourhostname.io         |
 | S3 Web UI     | http://minioweb-any.yourhostname.io           |
-| Stream Server | http://stream-any.yourhostname.io             |
+| Stream Server | ws://stream-any.yourhostname.io             |
 
 *Default login/password*:
 
@@ -200,3 +200,14 @@ $ ./staging/Zotero_VERSION/zotero
 | Zotero        | admin                    | admin              |
 
 ![Sync](doc/sync.png)
+
+
+*###Credits*
+1. https://github.com/FiligranHQ/zotprime
+2. https://github.com/gfacciol/zotero_dataserver-docker
+3. https://github.com/isabekov/dataserver
+4. https://github.com/piernov/zotprime
+5. https://github.com/Dwarf-Planet-Project/zotero_installation
+6. https://github.com/foxsen/zotero-selfhost
+7. https://github.com/zehuanli/zotero-selfhost
+8. https://github.com/fversaci/zotero-prime
