@@ -11,9 +11,9 @@ set -eux
 
 #exec httpd -e debug -DFOREGROUND -k start
 
-if [ -e tmp/_key/secret.txt ]
+if [ -e tmp/_key/secret-minio.txt ]
 then
-    source tmp/_key/secret.txt
+    source tmp/_key/secret-minio.txt
 fi  
 
 host=minio

@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-ingress-http
+  labels:
+    apps: zotprime-ingress-http
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/load-balancer-type: External
+    kubernetes.io/ingress.class: gce
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: min.projectdev.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "zotprime-k8s.fullname" . }}-minio'
+            port:
+              name: minio-ui
+        path: /
+        pathType: Prefix
+  - host: s3min.projectdev.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "zotprime-k8s.fullname" . }}-minio'
+            port:
+              name: minio-data
+        path: /
+        pathType: Prefix
+  - host: pm.projectdev.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "zotprime-k8s.fullname" . }}-phpmyadmin'
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  - host: api.projectdev.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: '{{ include "zotprime-k8s.fullname" . }}-dataserver'
+            port:
+              name: dataserver-api
+        path: /
+        pathType: Prefix

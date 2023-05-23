@@ -5,6 +5,8 @@ metadata:
   labels:
     apps: dataserver
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: {{ .Values.dataserver.type }}
   selector:

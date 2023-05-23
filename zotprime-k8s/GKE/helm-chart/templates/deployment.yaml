@@ -19,6 +19,11 @@ spec:
     spec:
       containers:
       - env:
+        - name: DSURI
+          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.dsuri }}
+        - name: S3POINTURI
+          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.s3Pointuri
+            }}
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.zotprimeDataserver.zotprimeDataserver.image.repository }}:{{
@@ -26,15 +31,48 @@ spec:
           }}
         imagePullPolicy: {{ .Values.zotprimeDataserver.zotprimeDataserver.imagePullPolicy
           }}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -xc
+              - sleep 120; bash /tmp/_conf/init.sh ; exit 0
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 160
+          periodSeconds: 30
         name: zotprime-dataserver
         ports:
         - containerPort: 80
-        - containerPort: 8082
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 150
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
         resources: {{- toYaml .Values.zotprimeDataserver.zotprimeDataserver.resources |
           nindent 10 }}
+        volumeMounts:
+        - mountPath: /tmp/_conf
+          name: dataserver-config
+          readOnly: true
+      hostAliases:
+      - hostnames:
+        - s3min.projectdev.net
+        ip: 10.30.11.11
       priorityClassName: low-priority
       restartPolicy: Always
       securityContext: {}
+      volumes:
+      - configMap:
+          name: {{ include "zotprime-k8s.fullname" . }}-dataserver-config
+        name: dataserver-config
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -312,17 +350,32 @@ spec:
         image: {{ .Values.zotprimeMinio.zotprimeMinio.image.repository }}:{{ .Values.zotprimeMinio.zotprimeMinio.image.tag
           | default .Chart.AppVersion }}
         imagePullPolicy: {{ .Values.zotprimeMinio.zotprimeMinio.imagePullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 20
         name: zotprime-minio
         ports:
         - containerPort: 9000
           name: data
         - containerPort: 9001
           name: ui
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
         resources: {{- toYaml .Values.zotprimeMinio.zotprimeMinio.resources | nindent 10
           }}
         volumeMounts:
         - mountPath: /data
-          name: localvolumeminio
+          name: s3data
         - mountPath: /tmp/_key
           name: minio-secret
           readOnly: true
@@ -341,19 +394,17 @@ spec:
           10 }}
         volumeMounts:
         - mountPath: /data
-          name: localvolumeminio
+          name: s3data
         - mountPath: /tmp/_key
           name: minio-secret
           readOnly: true
-      nodeSelector: {{- toYaml .Values.zotprimeMinio.nodeSelector | nindent 8 }}
       priorityClassName: high-priority
       restartPolicy: Always
       securityContext: {}
       volumes:
-      - hostPath:
-          path: /mnt/disk1/data
-          type: DirectoryOrCreate
-        name: localvolumeminio
+      - name: s3data
+        persistentVolumeClaim:
+          claimName: {{ include "zotprime-k8s.fullname" . }}-dataminio
       - name: minio-secret
         secret:
           secretName: {{ include "zotprime-k8s.fullname" . }}-minio-secret
@@ -418,24 +469,29 @@ spec:
         image: {{ .Values.zotprimeStreamserver.zotprimeStreamserver.image.repository }}:{{
           .Values.zotprimeStreamserver.zotprimeStreamserver.image.tag | default .Chart.AppVersion
           }}
-        imagePullPolicy: {{ .Values.zotprimeStreamserver.zotprimeStreamserver.imagePullPolicy
-          }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 81
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 20
         name: zotprime-streamserver
         ports:
         - containerPort: 81
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 81
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 1
         resources: {{- toYaml .Values.zotprimeStreamserver.zotprimeStreamserver.resources
           | nindent 10 }}
-        volumeMounts:
-        - mountPath: /usr/src/app/config/
-          name: streamserver-config
-          readOnly: true
       priorityClassName: medium-priority
       restartPolicy: Always
       securityContext: {}
-      volumes:
-      - configMap:
-          name: {{ include "zotprime-k8s.fullname" . }}-streamserver-config
-        name: streamserver-config
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -47,7 +47,7 @@ spec:
           - /bin/bash
           - -c
         args: 
-          -  set -o allexport && source tmp/_key/secret.txt && set +o allexport && /usr/local/bin/docker-entrypoint.sh mysqld         
+          -  set -o allexport && source tmp/_key/secret-db.txt && set +o allexport && /usr/local/bin/docker-entrypoint.sh mysqld         
         env:
         - name: MARIADB_USER
           valueFrom:

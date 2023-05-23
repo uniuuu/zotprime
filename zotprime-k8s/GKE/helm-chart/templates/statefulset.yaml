@@ -45,9 +45,25 @@ spec:
           | nindent 10 }}
         volumeMounts:
         - mountPath: /var/lib/mysql/
-          name: datadir
-        - mountPath: /tmp/_key
+          name: datadb
+        - mountPath: tmp/_key/
           name: db-secret
+      initContainers:
+      - command:
+        - chown
+        - -R
+        - 999:999
+        - /var/lib/mysql
+        env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.zotprimeDb.takeDataDirOwnership.image.repository }}:{{ .Values.zotprimeDb.takeDataDirOwnership.image.tag
+          | default .Chart.AppVersion }}
+        name: take-data-dir-ownership
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: datadb
       priorityClassName: high-priority
       volumes:
       - name: db-secret
@@ -57,11 +73,11 @@ spec:
   volumeClaimTemplates:
   - metadata:
       creationTimestamp: null
-      name: datadir
+      name: datadb
     spec:
       accessModes:
       - ReadWriteOnce
-      resources: {{ .Values.zotprimeDb.volumeClaims.datadir | toYaml | nindent 8 }}
+      resources: {{ .Values.zotprimeDb.volumeClaims.datadb | toYaml | nindent 8 }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -117,7 +133,7 @@ spec:
           | nindent 10 }}
         volumeMounts:
         - mountPath: /data
-          name: storage
+          name: dataes
       initContainers:
       - command:
         - sysctl
@@ -137,11 +153,11 @@ spec:
   volumeClaimTemplates:
   - metadata:
       creationTimestamp: null
-      name: storage
+      name: dataes
     spec:
       accessModes:
       - ReadWriteOnce
-      resources: {{ .Values.zotprimeElasticsearch.volumeClaims.storage | toYaml | nindent
+      resources: {{ .Values.zotprimeElasticsearch.volumeClaims.dataes | toYaml | nindent
         8 }}
 ---
 apiVersion: apps/v1
@@ -223,7 +239,7 @@ spec:
         - mountPath: /conf
           name: conf
         - mountPath: /data
-          name: data
+          name: dataredis
         - mountPath: /probes
           name: probes
           readOnly: true
@@ -242,8 +258,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       creationTimestamp: null
-      name: data
+      name: dataredis
     spec:
       accessModes:
       - ReadWriteOnce
-      resources: {{ .Values.zotprimeRedis.volumeClaims.data | toYaml | nindent 8 }}
+      resources: {{ .Values.zotprimeRedis.volumeClaims.dataredis | toYaml | nindent
+        8 }}

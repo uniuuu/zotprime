@@ -1,17 +1,25 @@
+minioSecret:
+  secretTxt: TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK
+dbSecret:
+  secretTxt: TUFSSUFEQl9ST09UX1BBU1NXT1JEPXpvdGVybwpNQVJJQURCX1BBU1NXT1JEPXpvdGVyb3Rlc3QK
 dataserver:
   ports:
   - name: dataserver-api
-    port: 8080
+    port: 80
     targetPort: 80
-  - name: s3
-    port: 8082
-    targetPort: 8082
   type: ClusterIP
+dataserverConfig:
+  initSh: |-
+    #!/bin/sh
+    set -eux
+    cd /var/www/zotero/misc && ./init-mysql.sh
+    cd /var/www/zotero/misc && ./db_update.sh
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext
+    aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero
 dbConfig:
   mariadbDatabasename: zoterotest
   mariadbUser: zotero
-dbSecret:
-  secretTxt: ""
 elasticsearch:
   ports:
   - name: elasticsearch
@@ -40,16 +48,17 @@ memcached:
 minio:
   ports:
   - name: minio-ui
-    port: 80
+    port: 9001
     targetPort: 9001
   - name: minio-data
     port: 9000
     targetPort: 9000
+  - name: minio-data2
+    port: 80
+    targetPort: 9000
   type: ClusterIP
 minioConfig:
   minioUser: zotero
-minioSecret:
-  secretTxt: ""
 mysql:
   ports:
   - name: mariadb
@@ -62,6 +71,10 @@ phpmyadmin:
     port: 80
     targetPort: 80
   type: ClusterIP
+pvc:
+  dataminio:
+    storageClass: standard-rwo
+    storageRequest: 10Gi
 redis:
   ports:
   - name: redis
@@ -101,23 +114,9 @@ redisProbes:
 streamserver:
   ports:
   - name: streamserver
-    port: 8081
+    port: 81
     targetPort: 81
   type: ClusterIP
-streamserverConfig:
-  defaultJs: "var os = require(\"os\");\n// Default config\nvar config = {\n\tdev:
-    false,\n\tlogLevel: 'info',\n\thostname: os.hostname().split('.')[0],\n\thttpPort:
-    81,\n\tproxyProtocol: false,\n\thttps: false,\n\ttrustedProxies: [],\n\tstatusInterval:
-    10,\n\tkeepaliveInterval: 25,\n\tretryTime: 10,\n\tshutdownDelay: 100,\n\tredis:
-    {\n\t\thost: 'redis',\n\t\tprefix: ''\n\t},\n\tapiURL: 'http://dataserver/',\n\tapiVersion:
-    3,\n\tapiRequestHeaders: {},\n\tlongStackTraces: false,\n\tglobalTopics: [\n\t\t'styles',\n\t\t'translators'\n\t],\n\t//
-    Minimum delay before clients should act on global topic notifications -- since
-    these are triggered\n\t// by webhooks or other queued notifications, they need
-    time to be processed elsewhere\n\tglobalTopicsMinDelay: 30 * 1000,\n\t// Notification
-    action period -- clients are given a randomly chosen delay within this time\n\t//
-    period before they should act upon the notification, so that we don't DDoS ourselves\n\tglobalTopicsDelayPeriod:
-    60 * 1000,\n\tcontinuedDelayDefault: 3 * 1000,\n\tcontinuedDelay: 30 * 1000,\n\tstatsD:
-    {\n\t\thost: ''\n\t}\n};\nmodule.exports = config;"
 tinymceclean:
   ports:
   - name: tinymceclean
@@ -127,41 +126,45 @@ tinymceclean:
 zotprimeDataserver:
   replicas: 1
   zotprimeDataserver:
+    env:
+      dsuri: http://api.projectdev.net/
+      s3Pointuri: s3min.projectdev.net
     image:
-      repository: localhost:32000/zotprime-k8s/zotprime-dataserver
-      tag: latest
+      repository: uniuu/zotprime-dataserver
+      tag: 2.6.1-rc
     imagePullPolicy: Always
     resources:
       limits:
-        cpu: 100m
-        memory: 256Mi
-zotprimeDataserverLb:
-  ports:
-  - name: data
-    port: 8080
-    protocol: TCP
-    targetPort: 80
-  type: LoadBalancer
+        memory: 512Mi
+      requests:
+        cpu: "1"
+        memory: 512Mi
 zotprimeDb:
   mariadb:
     args:
-    - set -o allexport && source tmp/_key/secret.txt && set +o allexport && /usr/local/bin/docker-entrypoint.sh
+    - set -o allexport && source tmp/_key/secret-db.txt && set +o allexport && /usr/local/bin/docker-entrypoint.sh
       mysqld
     containerSecurityContext:
       runAsGroup: 999
       runAsUser: 999
     image:
-      repository: localhost:32000/zotprime-db
-      tag: dev
+      repository: uniuu/zotprime-db
+      tag: 2.6.1-rc
     resources:
       limits:
+        memory: 512Mi
+      requests:
         cpu: 500m
         memory: 512Mi
   replicas: 1
+  takeDataDirOwnership:
+    image:
+      repository: alpine
+      tag: "3"
   volumeClaims:
-    datadir:
+    datadb:
       requests:
-        storage: 300M
+        storage: 2Gi
 zotprimeElasticsearch:
   elasticsearch:
     env:
@@ -170,15 +173,14 @@ zotprimeElasticsearch:
       discoveryType: single-node
       xpackSecurityEnabled: "true"
     image:
-      repository: localhost:32000/elasticsearch
-      tag: 8.7.0
+      repository: uniuu/zotprime-elasticsearch
+      tag: 2.6.1-rc
     resources:
       limits:
-        cpu: 500m
         memory: 1Gi
       requests:
-        cpu: 100m
-        memory: 512M
+        cpu: "1"
+        memory: 1Gi
   initSysctl:
     containerSecurityContext:
       privileged: true
@@ -187,7 +189,7 @@ zotprimeElasticsearch:
       tag: 1.27.2
   replicas: 1
   volumeClaims:
-    storage:
+    dataes:
       requests:
         storage: 2Gi
 zotprimeLocalstack:
@@ -198,12 +200,14 @@ zotprimeLocalstack:
       localstackK8SServiceName: localstack
       services: sns,sqs,apigateway
     image:
-      repository: localhost:32000/localstack
-      tag: latest
+      repository: uniuu/zotprime-localstack
+      tag: 2.6.1-rc
     imagePullPolicy: IfNotPresent
     resources:
       limits:
-        cpu: 100m
+        memory: 256Mi
+      requests:
+        cpu: 200m
         memory: 256Mi
   replicas: 1
 zotprimeMemcached:
@@ -212,39 +216,40 @@ zotprimeMemcached:
     - -m 2047
     - -I 50M
     image:
-      repository: memcached
-      tag: "1.5"
+      repository: uniuu/zotprime-memcached
+      tag: 2.6.1-rc
     resources:
       limits:
-        cpu: 200m
         memory: 2000Mi
       requests:
-        cpu: 100m
-        memory: 1000Mi
+        cpu: 200m
+        memory: 2000Mi
   replicas: 1
 zotprimeMinio:
-  nodeSelector:
-    kubernetes.io/hostname: localhost.localdomain
   replicas: 1
   zotprimeMinio:
     args:
-    - set -o allexport && source tmp/_key/secret.txt && set +o allexport && minio
+    - set -o allexport && source tmp/_key/secret-minio.txt && set +o allexport && minio
       server /data --console-address :9001
     image:
-      repository: quay.io/minio/minio
-      tag: latest
+      repository: uniuu/zotprime-minio
+      tag: 2.6.1-rc
     imagePullPolicy: Always
     resources:
       limits:
-        cpu: "1"
+        memory: 512Mi
+      requests:
+        cpu: 500m
         memory: 512Mi
   zotprimeMiniomc:
     image:
-      repository: localhost
-      tag: 32000/zotprime-k8s/zotprime-miniomc
+      repository: uniuu/zotprime-miniomc
+      tag: 2.6.1-rc
     resources:
       limits:
-        cpu: 300m
+        memory: 256Mi
+      requests:
+        cpu: 200m
         memory: 256Mi
 zotprimePhpmyadmin:
   phpmyadmin:
@@ -252,10 +257,12 @@ zotprimePhpmyadmin:
       pmaHost: mysql
       pmaPort: "3306"
     image:
-      repository: localhost:32000/zotprime-phpmyadmin
-      tag: dev
+      repository: uniuu/zotprime-phpmyadmin
+      tag: 2.6.1-rc
     resources:
       limits:
+        memory: 256Mi
+      requests:
         cpu: 100m
         memory: 256Mi
 zotprimeRedis:
@@ -265,43 +272,41 @@ zotprimeRedis:
     - --protected-mode
     - "no"
     image:
-      repository: redis
-      tag: "5.0"
+      repository: uniuu/zotprime-redis
+      tag: 2.6.1-rc
     resources:
+      limits:
+        memory: 100Mi
       requests:
         cpu: 100m
         memory: 100Mi
   replicas: 1
   volumeClaims:
-    data:
+    dataredis:
       requests:
         storage: 1Gi
 zotprimeStreamserver:
   replicas: 1
   zotprimeStreamserver:
     image:
-      repository: localhost:32000/zotprime-k8s/zotprime-streamserver
-      tag: latest
-    imagePullPolicy: Always
+      repository: uniuu/zotprime-streamserver
+      tag: 2.6.1-rc
     resources:
       limits:
-        cpu: 500m
         memory: 256Mi
-zotprimeStreamserverLb:
-  ports:
-  - name: stream
-    port: 8081
-    protocol: TCP
-    targetPort: 81
-  type: LoadBalancer
+      requests:
+        cpu: "1"
+        memory: 256Mi
 zotprimeTinymceclean:
   replicas: 1
   zotprimeTinymceclean:
     image:
-      repository: localhost:32000/zotprime-k8s/zotprime-tinymceclean
-      tag: latest
+      repository: uniuu/zotprime-tinymceclean
+      tag: 2.6.1-rc
     imagePullPolicy: Always
     resources:
       limits:
+        memory: 256Mi
+      requests:
         cpu: 100m
         memory: 256Mi

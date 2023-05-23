@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-streamserver-config
-  labels:
-  {{- include "zotprime-k8s.labels" . | nindent 4 }}
-data:
-  default.js: {{ .Values.streamserverConfig.defaultJs | toYaml | indent 1 }}

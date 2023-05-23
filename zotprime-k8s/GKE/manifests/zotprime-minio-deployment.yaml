@@ -36,7 +36,7 @@ spec:
             - /bin/bash
             - -c
           args: 
-            -  set -o allexport && source tmp/_key/secret.txt && set +o allexport && minio server /data --console-address :9001 
+            -  set -o allexport && source tmp/_key/secret-minio.txt && set +o allexport && minio server /data --console-address :9001 
 #| tee /data/test.log
 #    lifecycle:
 #      preStop:
