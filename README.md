@@ -11,7 +11,7 @@ Table of contents
   * [Client Build](#client-build)
 
 ## Localhost and VM installation
-Localhost installation is for setup when server and client will run on the same computer.
+Localhost installation is for setup when server and client will run on the same computer.  
 VM (virtual machine) installation is for setup when server and clinet are on different hosts. I.e. server is in VM and client is running on another computer.
 
 ### Dependencies and source code
@@ -34,7 +34,14 @@ $ cp .env_example .env
 $ cp docker-compose-prod.yml  docker-compose.yml
 ```
 **Edit .env and change DSHOST.**  
-For Localhost Installation: DSHOST=http://localhost:8080/ | For VM Installation: DSHOST=http://\<VM IP Address\>:8080/  
+For Localhost Installation:
+```
+DSHOST=http://localhost:8080/ 
+```
+For VM Installation: 
+```
+DSHOST=http://\<VM IP Address\>:8080/
+```
 *Run*:
 ```bash
 $ sudo docker compose up -d
@@ -150,17 +157,17 @@ $ kubectl get -A ing
 
 ### Client build from Linux
 *Edit and run*:
-- For Localhost Install argument's are: 
+- For Localhost Installation argument's are: 
   ```
   HOST_DS=http://localhost:8080/
   HOST_ST=ws://localhost:8081/
   ```
-- For VM Install argument's are:
+- For VM Installation arguments are:
   ```
   HOST_DS=http://<VM IP Address>:8080/
-  HOST_ST=ws://<VM Ip Address:8081/
+  HOST_ST=ws://<VM IP Address:8081/
   ```
-- For GKE Install argument's are:
+- For GKE Installation arguments are:
   ```
   HOST_DS=http://api-any.yourhostname.io/
   HOST_ST=ws://stream-any.yourhostname.io/
