@@ -11,6 +11,10 @@ Table of contents
   * [Client Build](#client-build)
 
 ## Localhost and VM installation
+Localhost installation is for setup when server and client will run on the same computer.  
+VM (virtual machine) installation is for setup when server and clinet are on different hosts. I.e. server is in VM and client is running on another computer.
+
+## Localhost and VM installation
 
 #### Dependencies and source code
 
@@ -23,7 +27,7 @@ $ sudo apt install docker-compose-plugin
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone --recursive https://github.com/uniuuu/zotprime.git
-$ git checkout production
+$ git checkout production   
 $ cd zotprime
 ```
 *Configure*:
@@ -32,18 +36,19 @@ $ cp .env_example .env
 $ cp docker-compose-prod.yml  docker-compose.yml
 ```
 **Edit .env and change DSHOST.**  
-For Localhost Installation: DSHOST=http://localhost:8080/   
-Fot VM Installation: DSHOST=http://\<VM IP Address\>:8080/  
-*Run*:
-```bash
-$ cp .env_example .env
-$ cp docker-compose-prod.yml  docker-compose.yml
+For Localhost Installation:
 ```
-edit .env and add strong passwords 
+DSHOST=http://localhost:8080/ 
+```
+For VM Installation: 
+```
+DSHOST=http://\<VM IP Address\>:8080/
+```
+*Run*:
 ```bash
 $ sudo docker compose up -d
 ```
-#### Initialize databases
+### Initialize databases
 *Initialize databases*:
 ```bash
 $ ./bin/init.sh
@@ -111,7 +116,7 @@ $ kubectl config get-contexts
 $ kubectl get all --all-namespaces
 ```
 **Edit ./helm-chart/values.yaml and change dsuri:, s3Pointuri:, api:, streamserver:, minios3Data:, phpmyadmin:, minios3Web: .**    
-Replace to your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointuri:**, **minios3Data:**), Stream Server (**streamserver:**), Phpmyadmin (**phpmyadmin:**) and S3 Minio Web (**minios3Web:**):  
+Replace with your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointuri:**, **minios3Data:**), Stream Server (**streamserver:**), Phpmyadmin (**phpmyadmin:**) and S3 Minio Web (**minios3Web:**):  
 - dsuri: http://api-any.yourhostname.io/  
 - s3Pointuri: s3-any.yourhostname.io  
 - api: api-any.yourhostname.io  
@@ -152,19 +157,19 @@ $ kubectl get -A ing
 
 ## Client Build
 
-#### Client build Windows and Linux
+### Client build from Linux
 *Edit and run*:
-- For Localhost Install argument's are: 
+- For Localhost Installation argument's are: 
   ```
   HOST_DS=http://localhost:8080/
-  HOST_ST=ws://localhost:9000/
+  HOST_ST=ws://localhost:8081/
   ```
-- For VM Install argument's are:
+- For VM Installation arguments are:
   ```
   HOST_DS=http://<VM IP Address>:8080/
-  HOST_ST=ws://<VM Ip Address:9000/
+  HOST_ST=ws://<VM IP Address:8081/
   ```
-- For GKE Install argument's are:
+- For GKE Installation arguments are:
   ```
   HOST_DS=http://api-any.yourhostname.io/
   HOST_ST=ws://stream-any.yourhostname.io/
@@ -175,15 +180,15 @@ Replace arguments in the respective command below and run it:
 ```bash
 $ DOCKER_BUILDKIT=1 docker build --progress=plain --file client.Dockerfile \
       --build-arg HOST_DS=http://localhost:8080/ \
-      --build-arg HOST_ST=ws://localhost:9000/ \
+      --build-arg HOST_ST=ws://localhost:8081/ \
       --build-arg MLW=l --output build .
 ```
 *Run client*:
 ```bash
 $ ./build/staging/Zotero_VERSION/zotero(.exe))
 ```
-#### Mac client build
-
+### Client build from Mac and Windows
+For [m|w]: m=Mac, l=Linux  
 *Run*:
 ```bash
 $ git submodule update --init --recursive
