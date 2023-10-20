@@ -45,7 +45,7 @@ RUN git submodule update --init --recursive
 WORKDIR /usr/src/app/client/
 #ARG CONFIG=config.sh
 ARG HOST_DS=http://localhost:8080/
-ARG HOST_ST=ws://localhost:9000/
+ARG HOST_ST=ws://localhost:8081/
 RUN set -eux; \
         sed -i "s#https://api.zotero.org/#$HOST_DS#g" zotero-client/resource/config.js; \
         sed -i "s#wss://stream.zotero.org/#$HOST_ST#g" zotero-client/resource/config.js; \
