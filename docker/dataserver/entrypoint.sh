@@ -54,6 +54,10 @@ set -eux
 
 # Chmod
 chmod 777 /var/www/zotero/tmp
+chown apache -R /var/www/zotero
+#chmod 755 /var/www/zotero/htdocs/
+find /var/www/zotero/ -type d -exec chmod 755 {} \;
+chmod 644 /var/www/zotero/htdocs/.htaccess 
 
 sed -i 's/AGPL-3.0"/AGPL-3.0-only"/g' /var/www/zotero/composer.json
 
