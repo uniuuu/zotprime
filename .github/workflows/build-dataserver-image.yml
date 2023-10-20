@@ -1,11 +1,11 @@
-name: Dataserver Docker Image
+name: Build Dataserver Docker Image
 
 on:
   push:
     paths:
       - docker/dataserver/**
       - ds.Dockerfile
-      - .github/workflows/dataserver-image.yml
+      - .github/workflows/build-dataserver-image.yml
     branches: [ "development" ]
 
   pull_request:
@@ -13,7 +13,7 @@ on:
     paths:
       - docker/dataserver/**
       - ds.Dockerfile
-      - .github/workflows/dataserver-image.yml
+      - .github/workflows/build-dataserver-image.yml
       
 jobs:
 
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Build the Dataserver Docker image
       run: docker build . --file ds.Dockerfile --tag zotprime-dataserver:$(date +%s)

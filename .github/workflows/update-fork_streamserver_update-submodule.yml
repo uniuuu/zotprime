@@ -1,0 +1,79 @@
+name: Update fork stream-server and push updated submodule to ZotPrime
+
+on:
+  schedule:
+    - cron:  '20 7 * * 1,4'
+    # scheduled at 07:20 every Monday and Thursday
+  workflow_dispatch:  # click the button on Github repo!
+permissions:
+  contents: write
+jobs:
+  upstream_commits:
+    runs-on: ubuntu-latest
+    name: Check upstream latest commits
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v4
+      with:
+        repository: uniuuu/stream-server
+        token: ${{ secrets.API_TOKEN_GITHUB }}
+    - name: Fetch upstream changes
+      id: sync
+      uses: ivanmilov/upstream_check_new_commits@v1
+      with:
+        upstream_repository: zotero/stream-server
+        upstream_branch: master
+        target_branch: master
+
+    outputs:
+      newcommit: ${{ steps.sync.outputs.has_new_commits }}
+
+#    - name: Notify if new commits
+#      if: ${{ steps.sync.outputs.has_new_commits == 'true' }}
+#      uses: ivanmilov/telegram_notify_action@v1
+#      with:
+#        api_key: ${{secrets.TELEGRAM_API_KEY}}
+#        chat_id: ${{secrets.TELEGRAM_CHAT_ID}}
+#        message: "New commit in upstream repo ${{github.repository}}"
+
+  sync-fork:
+    needs: upstream_commits
+    if: needs.upstream_commits.outputs.newcommit == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: uniuuu/stream-server
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+      - uses: fregante/setup-git-user@v2
+      - name: rebase with upstream
+        id: rebase
+        continue-on-error: true
+        run: |
+          git remote add upstream https://github.com/zotero/stream-server.git
+          git fetch upstream
+          git checkout master
+          git rebase upstream/master
+          git push origin master  
+
+#    outputs:
+#      diffstat: ${{ steps.rebase.outputs.diff }}
+
+  update-submodule:
+    needs: sync-fork
+#    if: needs.sync-fork.outputs.diffstat == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+#        with:
+#          token: ${{ secrets.API_TOKEN_GITHUB }}
+      - uses: fregante/setup-git-user@v2
+      - name: Checkout submodules
+        run: |
+          git submodule update --init --recursive --remote stream-server
+          git add .
+          git commit -m 'Github Actions Update Submodule stream-server'
+          git push origin development
+    

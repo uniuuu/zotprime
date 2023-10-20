@@ -1,0 +1,55 @@
+name: Update fork dataserver and push updated submodule to ZotPrime
+
+on:
+  schedule:
+    - cron:  '10 7 * * 1,4'
+    # scheduled at 07:10 every Monday and Thursday
+  workflow_dispatch:  # click the button on Github repo!
+permissions:
+  contents: write
+jobs:
+  sync-fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: uniuuu/dataserver
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+      - uses: fregante/setup-git-user@v2
+      - name: rebase with upstream
+        id: rebase
+        run: |
+          git remote add upstream https://github.com/zotero/dataserver.git
+          git fetch upstream
+          git checkout master
+          git diff upstream/master --quiet 
+          exitdiff=$?
+          if [[$exitdiff == 1 ]]; then
+            echo "diff=true" >> $GITHUB_OUTPUT
+            git rebase upstream/master
+            git push origin master  
+          else
+            echo "diff=false" >> $GITHUB_OUTPUT
+          fi
+
+    outputs:
+      diffstat: ${{ steps.rebase.outputs.diff }}
+
+  update-submodule:
+    needs: sync-fork
+    if: needs.sync-fork.outputs.diffstat == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+      - uses: fregante/setup-git-user@v2
+      - name: Checkout submodules
+        run: |
+          git submodule update --init --recursive --remote dataserver
+          git add .
+          git commit -m 'Github Actions Update Submodule dataserver'
+          git push origin development
+    

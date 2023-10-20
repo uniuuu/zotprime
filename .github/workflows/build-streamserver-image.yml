@@ -1,11 +1,11 @@
-name: Streamserver Docker Image
+name: Build Streamserver Docker Image
 
 on:
   push:
     paths:
       - stream-server/**
       - docker/stream-server/**
-      - .github/workflows/streamserver-image.yml
+      - .github/workflows/build-streamserver-image.yml
     branches: [ "development" ]
 
   pull_request:
@@ -13,7 +13,7 @@ on:
     paths:
       - stream-server/**
       - docker/stream-server/**
-      - .github/workflows/streamserver-image.yml
+      - .github/workflows/build-streamserver-image.yml
 
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Checkout submodules
       run: git submodule update --init stream-server
     - name: Build the Streamserver Docker Image

@@ -1,11 +1,11 @@
-name: Client Build 
+name: Test Client Build with docker
 
 on:
   push:
     paths:
       - client/**
       - clientbuildtest.Dockerfile
-      - .github/workflows/client-build-test.yml
+      - .github/workflows/test-client-build-docker.yml
     branches: [ "development" ]
 
   pull_request:
@@ -13,7 +13,7 @@ on:
     paths:
       - client/**
       - clientbuildtest.Dockerfile
-      - .github/workflows/client-build-test.yml
+      - .github/workflows/test-client-build-docker.yml
       
 jobs:
 
@@ -22,6 +22,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build Client
       run: DOCKER_BUILDKIT=1 docker build . --file clientbuildtest.Dockerfile --output build --tag client:$(date +%s)
