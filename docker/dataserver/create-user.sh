@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 # ./create_user.sh <user_id> <username> <password> <email> <library_id>
 
 MYSQL="mysql -h mysql -P 3306 -u root -pzotero"
