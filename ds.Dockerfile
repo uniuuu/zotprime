@@ -323,7 +323,7 @@ COPY docker/dataserver/FullText.inc.php /var/www/zotero/model/
 COPY docker/db/init-mysql.sh /var/www/zotero/misc/
 COPY docker/db/db_update.sh /var/www/zotero/misc/
 COPY docker/db/www.sql /var/www/zotero/misc/
-COPY docker/db/shard.sql /var/www/zotero/misc/
+#COPY docker/db/shard.sql /var/www/zotero/misc/
 
 
 
