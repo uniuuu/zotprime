@@ -14,7 +14,7 @@ on:
       - client/**
       - clientbuildtest.Dockerfile
       - .github/workflows/test-client-build-docker.yml
-      
+  workflow_dispatch:      
 jobs:
 
   build:

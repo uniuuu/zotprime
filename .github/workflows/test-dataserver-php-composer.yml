@@ -11,6 +11,7 @@ on:
     paths:
       - dataserver/**
       - .github/workflows/test-dataserver-php-composer.yml
+  workflow_dispatch:
 permissions:
   contents: read
 
