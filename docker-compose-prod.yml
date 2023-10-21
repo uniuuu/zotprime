@@ -23,6 +23,7 @@ services:
       - xpack.security.enabled=false
       - cluster.routing.allocation.disk.threshold_enabled=false 
       - discovery.type=single-node
+      - logger.level=WARN
     volumes:
       - /etc/localtime:/etc/localtime:ro
     networks:
