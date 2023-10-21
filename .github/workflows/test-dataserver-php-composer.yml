@@ -1,16 +1,16 @@
-name: Dataserver PHP Composer Install
+name: Test Composer Install For Dataserver PHP
 
 on:
   push:
     branches: [ "development" ]
     paths:
       - dataserver/**
-      - .github/workflows/dataserver-php.yml
+      - .github/workflows/test-dataserver-php-composer.yml
   pull_request:
     branches: [ "development" ]
     paths:
       - dataserver/**
-      - .github/workflows/dataserver-php.yml
+      - .github/workflows/test-dataserver-php-composer.yml
 permissions:
   contents: read
 
@@ -35,7 +35,7 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Install PHP
       uses: shivammathur/setup-php@v2
