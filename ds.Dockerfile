@@ -24,7 +24,7 @@
 ##    && pip3 install -v --no-cache-dir \
 ##    awscli \
 #    && rm -rf /var/cache/apk/*
-FROM alpine:3
+FROM alpine:3 as stage
 ARG ZOTPRIME_VERSION=2
 
 #FROM php:8.1-alpine
@@ -65,6 +65,7 @@ ARG ZOTPRIME_VERSION=2
 #        php82-zip \
 #        php82-pecl-msgpack \
 #        php82-pecl-xdebug; \
+
 RUN set -eux; \
         apk update && apk upgrade --available; \
         apk add --update --no-cache \
@@ -168,6 +169,9 @@ RUN set -eux; \
         && rm -rf /var/cache/apk/*
 
 
+
+
+
 #    libc6 \
 #            libdigest-hmac-perl \
 #            libfile-util-perl \
@@ -254,7 +258,7 @@ RUN set -eux; \
 #RUN php -i | grep iconv
 
 
-
+FROM stage AS build
 
 RUN set -eux; \
         sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf; \
