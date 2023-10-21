@@ -1,9 +1,9 @@
-name: Update fork dataserver and push updated submodule to ZotPrime
+name: Update fork tinymce-clean-server and push updated submodule to ZotPrime
 
 on:
   schedule:
-    - cron:  '10 7 * * 1,4'
-    # scheduled at 07:10 every Monday and Thursday
+    - cron:  '30 7 * * 1,4'
+    # scheduled at 07:30 every Monday and Thursday
   workflow_dispatch:  # click the button on Github repo!
 permissions:
   contents: write
@@ -15,13 +15,13 @@ jobs:
     - name: Checkout main
       uses: actions/checkout@v4
       with:
-        repository: uniuuu/dataserver
+        repository: uniuuu/tinymce-clean-server
         token: ${{ secrets.API_TOKEN_GITHUB }}
     - name: Fetch upstream changes
       id: sync
       uses: ivanmilov/upstream_check_new_commits@v1
       with:
-        upstream_repository: zotero/dataserver
+        upstream_repository: zotero/tinymce-clean-server
         upstream_branch: master
         target_branch: master
 
@@ -36,13 +36,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: uniuuu/dataserver
+          repository: uniuuu/tinymce-clean-server
           token: ${{ secrets.API_TOKEN_GITHUB }}
       - uses: fregante/setup-git-user@v2
       - name: rebase with upstream
         id: rebase
         run: |
-          git remote add upstream https://github.com/zotero/dataserver.git
+          git remote add upstream https://github.com/zotero/tinymce-clean-server.git
           git fetch upstream
           git checkout master
           git rebase upstream/master
@@ -59,8 +59,8 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
-          git submodule update --init --recursive --remote dataserver
+          git submodule update --init --recursive --remote tinymce-clean-server
           git add .
-          git commit -m 'Github Actions Update Submodule dataserver'
+          git commit -m 'Github Actions Update Submodule tinymce-clean-server'
           git push origin development
     

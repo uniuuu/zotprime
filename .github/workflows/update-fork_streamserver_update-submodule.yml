@@ -49,7 +49,6 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: rebase with upstream
         id: rebase
-        continue-on-error: true
         run: |
           git remote add upstream https://github.com/zotero/stream-server.git
           git fetch upstream
@@ -57,12 +56,8 @@ jobs:
           git rebase upstream/master
           git push origin master  
 
-#    outputs:
-#      diffstat: ${{ steps.rebase.outputs.diff }}
-
   update-submodule:
     needs: sync-fork
-#    if: needs.sync-fork.outputs.diffstat == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -1,11 +1,11 @@
 [submodule "tinymce-clean-server"]
 	path = tinymce-clean-server
 	url = https://github.com/uniuuu/tinymce-clean-server
-	branch = stage
+	branch = master
 [submodule "stream-server"]
 	path = stream-server
 	url = https://github.com/uniuuu/stream-server
-	branch = stage
+	branch = master
 [submodule "client/zotero-client"]
 	path = client/zotero-client
 	url = https://github.com/uniuuu/zotero
@@ -19,4 +19,4 @@
 [submodule "dataserver"]
 	path = dataserver
 	url = https://github.com/uniuuu/dataserver.git
-	branch = stage
+	branch = master
