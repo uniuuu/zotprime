@@ -1,6 +1,8 @@
-name: Push updated submodule to ZotPrime
+name: Push updated submodule zotero-build to ZotPrime
 
-on: [repository_dispatch]
+on: 
+    repository_dispatch:
+    workflow_dispatch:  # click the button on Github repo!
 
 
 jobs:
@@ -76,5 +78,5 @@ jobs:
         with:
           github_token: ${{ secrets.API_TOKEN_GITHUB }}
           default_bump: ${{ env.SEMVER }}
-          release_branches: new_dev
+          release_branches: development
           append_to_pre_release_tag: false
