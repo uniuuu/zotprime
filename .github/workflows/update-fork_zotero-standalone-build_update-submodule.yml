@@ -2,13 +2,35 @@ name: Update fork zotero-standalone-build and push updated submodule to ZotPrime
 
 on:
   schedule:
-    - cron:  '0 7 * * 1,4'
+    - cron:  '00 7 * * 1,4'
     # scheduled at 07:00 every Monday and Thursday
   workflow_dispatch:  # click the button on Github repo!
 permissions:
   contents: write
 jobs:
+  upstream_commits:
+    runs-on: ubuntu-latest
+    name: Check upstream latest commits
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v4
+      with:
+        repository: uniuuu/zotero-standalone-build
+        token: ${{ secrets.API_TOKEN_GITHUB }}
+    - name: Fetch upstream changes
+      id: sync
+      uses: ivanmilov/upstream_check_new_commits@v1
+      with:
+        upstream_repository: zotero/zotero-standalone-build
+        upstream_branch: master
+        target_branch: master
+
+    outputs:
+      newcommit: ${{ steps.sync.outputs.has_new_commits }}
+
   sync-fork:
+    needs: upstream_commits
+    if: needs.upstream_commits.outputs.newcommit == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,30 +45,15 @@ jobs:
           git remote add upstream https://github.com/zotero/zotero-standalone-build.git
           git fetch upstream
           git checkout master
-          git diff upstream/master --quiet 
-          exitdiff=$?
-          if [[$exitdiff == 1 ]]; then
-            echo "diff=true" >> $GITHUB_OUTPUT
-            git rebase upstream/master
-            git push origin master  
-          else
-            echo "diff=false" >> $GITHUB_OUTPUT
-          fi
-#            echo "::set-output name=diff::true"
-#            echo "::set-output name=diff::false"
-
-    outputs:
-      diffstat: ${{ steps.rebase.outputs.diff }}
+          git rebase upstream/master
+          git push origin master  
 
   update-submodule:
     needs: sync-fork
-    if: needs.sync-fork.outputs.diffstat == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.API_TOKEN_GITHUB }}
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
