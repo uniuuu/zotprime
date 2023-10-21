@@ -1,71 +1,5 @@
-#FROM alpine:3 AS builder
-#ARG ZOTPRIME_VERSION=2
-##RUN apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
-##ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-#RUN set -eux; \
-#        apk update && apk upgrade --available
-#RUN set -eux \
-#    && apk add --no-cache \
-#        python3 \
-#        py3-pip \
-#        build-base \
-#        git \
-#        autoconf \
-#        automake \ 
-##        util-linux \
-#    && cd /tmp \
-#    && git clone --depth=1 "https://github.com/samhocevar/rinetd" \
-#    && cd rinetd \
-#    && ./bootstrap \
-#    && ./configure --prefix=/usr \
-#    && make -j $(nproc) \
-#    && strip rinetd \
-##    && pip3 install --upgrade pip \
-##    && pip3 install -v --no-cache-dir \
-##    awscli \
-#    && rm -rf /var/cache/apk/*
-FROM alpine:3 as stage
+FROM alpine:3 as stage1
 ARG ZOTPRIME_VERSION=2
-
-#FROM php:8.1-alpine
-#FROM php:alpine
-#COPY --from=builder /tmp/rinetd/rinetd /usr/sbin/rinetd
-
-
-#COPY --from=builder /usr/lib/preloadable_libiconv.so /usr/lib/preloadable_libiconv.so
-
-#COPY --from=builder /usr/bin/aws /usr/bin/aws
-
-#libapache2-mod-php7.0  
-#php7.0-mysql php7.0-pgsql php7.0-redis php7.0-dev php-pear composer
-
-
-#RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-#RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" # DEV
-
-
-#RUN set -eux; \
-#        apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
-
-#ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
-
-#RUN set -eux; \
-#        apk update && apk upgrade --available; \
-#        apk add --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted \
-#        php82-apache2 \
-#        php82-bcmath \
-#        php82-common \
-#        php82-cli \
-#        php82-dev \
-#        php82-pdo_pgsql \
-#        php82-pear \
-#        php82-pgsql \
-#        php82-tidy \
-#        php82-zip \
-#        php82-pecl-msgpack \
-#        php82-pecl-xdebug; \
-
 RUN set -eux; \
         apk update && apk upgrade --available; \
         apk add --update --no-cache \
@@ -138,10 +72,13 @@ RUN set -eux; \
         unzip \
         uwsgi \
         wget \
-#        && rm -rf /var/cache/apk/*
-#RUN set -eux; \
-#        apk update && apk upgrade --available \
-#        && apk add --update --no-cache \
+        && rm -vrf /var/cache/apk/*
+
+FROM stage1 AS stage2
+
+RUN set -eux; \
+        apk update && apk upgrade --available \
+        && apk add --update --no-cache \
 #        autoconf \
 #        dpkg-dev \
 #        file \
@@ -166,7 +103,7 @@ RUN set -eux; \
 #        && apk del ${BUILD_DEPENDS} \
 #        && docker-php-source delete \
         && rm -rf /tmp/pear \
-        && rm -rf /var/cache/apk/*
+        && rm -vrf /var/cache/apk/*
 
 
 
@@ -258,7 +195,7 @@ RUN set -eux; \
 #RUN php -i | grep iconv
 
 
-FROM stage AS build
+FROM stage2 AS build
 
 RUN set -eux; \
         sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf; \
