@@ -9,7 +9,6 @@ permissions:
   contents: write
 jobs:
   sync-fork:
-#    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -26,7 +25,8 @@ jobs:
           git rebase upstream/master
           git push origin master
 
-  update-submodule:
+  update-submodule-and-push-tag:
+    needs: sync-fork
     runs-on: ubuntu-latest
     steps:
 
@@ -36,24 +36,19 @@ jobs:
           echo "payload Foo '${{ github.event.client_payload.semver }}'"
           echo "payload '${{ toJson(github.event.client_payload) }}'"
           echo "SEMVER=${{ github.event.client_payload.semver }}" >> $GITHUB_ENV
-          if [ $SEMVER="path" ]; then commit=fix; else if [ $SEMVER="minor" ]; then commit=feat; else commit='BREAKING CHANGE'; fi fi;
+          if [ $SEMVER="path" ]; then commit='Bump tag fix. zotero-standalone-build update'; else if [ $SEMVER="minor" ]; then commit='Bump tag feat. zotero-standalone-build update'; else commit='Bump tag BREAKING CHANGE. zotero-standalone-build update'; fi fi;
           echo "message=$commit" >> $GITHUB_ENV
-        
-
-       
+         
       - name: Print1 
         run: |
           echo $SEMVER
           echo ${{ env.SEMVER }}
-  
-
-        
+    
       - name: print2
         run: | 
            echo $message
            echo ${{ env.message }}
   
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -64,8 +59,6 @@ jobs:
    
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-            # Optional. Commit message for the created commit.
-            # Defaults to "Apply automatic changes"
           commit_message: ${{ env.message }}
   
       - name: Bump version and push tag
