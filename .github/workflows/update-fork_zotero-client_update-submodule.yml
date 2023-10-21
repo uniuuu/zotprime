@@ -22,8 +22,8 @@ jobs:
       uses: ivanmilov/upstream_check_new_commits@v1
       with:
         upstream_repository: zotero/zotero
-        upstream_branch: master
-        target_branch: master
+        upstream_branch: main
+        target_branch: main
 
     outputs:
       newcommit: ${{ steps.sync.outputs.has_new_commits }}
@@ -44,9 +44,9 @@ jobs:
         run: |
           git remote add upstream https://github.com/zotero/zotero.git
           git fetch upstream
-          git checkout master
-          git rebase upstream/master
-          git push origin master  
+          git checkout main
+          git rebase upstream/main
+          git push origin main  
 
   update-submodule:
     needs: sync-fork
