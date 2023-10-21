@@ -115,7 +115,7 @@ class Zotero_Storage {
 		$cmd = $s3Client->getCommand('GetObject', [
 			'Bucket' => Z_CONFIG::$S3_BUCKET,
 			'Key' => $key,
-			'ResponseContentType' => $contentType
+			'ResponseContentType' => $info['zip'] ? 'application/zip' : $contentType
 		]);
 		return (string) $s3Client->createPresignedRequest($cmd, "+$ttl seconds")->getUri();
 	}
@@ -565,16 +565,13 @@ class Zotero_Storage {
 		$item->save();
 		
 		// Note: We set the size on the shard so that usage queries are instantaneous
-		$sql = "INSERT INTO storageFileItems (storageFileID, itemID, mtime, size) VALUES (?,?,?,?)
-				ON DUPLICATE KEY UPDATE storageFileID=?, mtime=?, size=?";
+		$sql = "INSERT INTO storageFileItems (storageFileID, itemID, mtime, size) VALUES (?,?,?,?) AS new
+				ON DUPLICATE KEY UPDATE storageFileID=new.storageFileID, mtime=new.mtime, size=new.size";
 		Zotero_DB::query(
 			$sql,
 			[
 				$storageFileID,
 				$item->id,
-				$info->mtime,
-				$info->size,
-				$storageFileID,
 				$info->mtime,
 				$info->size
 			],
@@ -933,21 +930,15 @@ class Zotero_Storage {
 			foreach ($shardIDs as $shardID) {
 				$sql = "SELECT libraryID, storageUsage AS `bytes` FROM shardLibraries
 					WHERE libraryID IN
-					(" . implode(', ', array_fill(0, sizeOf($ownedLibraries), '?')) . ")
-					GROUP BY libraryID WITH ROLLUP";
+					(" . implode(', ', array_fill(0, sizeOf($ownedLibraries), '?')) . ")";
 				$libraries = Zotero_DB::query($sql, $ownedLibraries, $shardID);
 				if ($libraries) {
 					foreach ($libraries as $library) {
-						if ($library['libraryID']) {
-							$usage['groups'][] = array(
-								'id' => Zotero_Groups::getGroupIDFromLibraryID($library['libraryID']),
-								'usage' => $library['bytes']
-							);
-						}
-						// ROLLUP row
-						else {
-							$groupBytes += $library['bytes'];
-						}
+						$usage['groups'][] = [
+							'id' => Zotero_Groups::getGroupIDFromLibraryID($library['libraryID']),
+							'usage' => $library['bytes']
+						];
+						$groupBytes += $library['bytes'];
 					}
 				}
 			}
