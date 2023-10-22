@@ -40,7 +40,7 @@ DSHOST=http://localhost:8080/
 ```
 For VM Installation: 
 ```
-DSHOST=http://\<VM IP Address\>:8080/
+DSHOST=http://<VM IP Address>:8080/
 ```
 *Run*:
 ```bash
@@ -172,7 +172,7 @@ $ kubectl get -A ing
   HOST_DS=http://api-any.yourhostname.io/
   HOST_ST=ws://stream-any.yourhostname.io/
   ```
-- For Argument MLW=[m|w]: w=Windows, l=Linux  
+- For Argument MLW=[w|l]: w=Windows, l=Linux  
 
 Replace arguments in the respective command below and run it:  
 ```bash
@@ -185,8 +185,8 @@ $ DOCKER_BUILDKIT=1 docker build --progress=plain --file client.Dockerfile \
 ```bash
 $ ./build/staging/Zotero_VERSION/zotero(.exe))
 ```
-### Client build from Mac and Windows
-For [m|w]: m=Mac, l=Linux  
+### Client build from Mac
+For [m|l|w]: m=Mac, l=Linux, w=Windows  
 *Run*:
 ```bash
 $ git submodule update --init --recursive
