@@ -16,7 +16,6 @@ RUN set -eux; \
         libxslt \
         mariadb-client \
         memcached \
-#        mysql-client \
         net-tools \
         php81 \
         php81-apache2 \
@@ -43,7 +42,6 @@ RUN set -eux; \
         php81-pdo_pgsql \
         php81-pear \
         php81-pecl-igbinary \
-#        php81-pecl-mcrypt \
         php81-pecl-memcached \
         php81-pecl-msgpack \
         php81-pecl-redis \
@@ -75,135 +73,22 @@ RUN set -eux; \
         && rm -vrf /var/cache/apk/*
 
 FROM stage1 AS stage2
-
 RUN set -eux; \
         apk update && apk upgrade --available \
         && apk add --update --no-cache \
-#        autoconf \
-#        dpkg-dev \
-#        file \
-#        g++ \
-#        gcc \
-#        libc-dev \
-#        libmemcached-dev \
-#        make \
-#        pcre-dev icu-dev gettext-dev libxslt-dev libmemcached-dev libffi-dev ${PHPIZE_DEPS}; \
-#        && pear channel-update pear.php.net; \
-#        pecl channel-update pecl.php.net; \
-#        pear config-set php_ini /etc/php81/php.ini; \
-#        pear install http_request2 \
-#        pecl install redis igbinary; \
-#        pecl install --configureoptions 'with-libmemcached-dir="no" with-zlib-dir="no" with-system-fastlz="no" enable-memcached-igbinary="yes" enable-memcached-msgpack="no" enable-memcached-json="no" enable-memcached-protocol="no" enable-memcached-sasl="yes" enable-memcached-session="yes"' memcached \
         && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
         && composer require --no-plugins --no-scripts pear/http_request2 \
-#        docker-php-ext-install -j$(nproc) mysqli intl pdo_mysql gettext sysvshm sysvsem sysvmsg xsl pcntl calendar exif ffi shmop sockets opcache; \
-#        docker-php-ext-enable calendar memcached mysqli redis gettext intl pdo_mysql sysvshm sysvsem sysvmsg xsl pcntl igbinary exif ffi shmop sockets opcache; \
-#        && apk del autoconf dpkg-dev file g++ gcc libc-dev make \
-#        apk del pcre-dev icu-dev gettext-dev libxslt-dev libmemcached-dev libffi-dev ${PHPIZE_DEPS} \
-#        && apk del ${BUILD_DEPENDS} \
-#        && docker-php-source delete \
         && rm -rf /tmp/pear \
         && rm -vrf /var/cache/apk/*
 
-
-
-
-
-#    libc6 \
-#            libdigest-hmac-perl \
-#            libfile-util-perl \
-#            libjson-xs-perl \
-#            libplack-perl \
-#            libswitch-perl 
-#            mariadb-server \
-#    nodejs \
-#    npm \
-#            vim \
-#            awscli \
-#build-essential
-#        apache2-http2 \
-#        ca-certificates \
-#        libapache2-mod-php \
-#        libapache2-mod-uwsgi \
-#        rinetd \
-#        rsyslog \
-#        util-linux \
-#        uwsgi-plugin-psgi \
-
-#RUN set -eux; \
-#        docker-php-ext-install iconv
-
-#RUN set -eux; \
-#        docker-php-ext-install redis 
-
-#RUN set -eux; \
-#        docker-php-source delete \
-#        && apk del ${BUILD_DEPENDS}
-
-#RUN pecl install ZendOpcache
-#RUN docker-php-ext-install pgsql
-#RUN docker-php-ext-install pdo_pgsql
-#RUN docker-php-ext-install igbinary
-#RUN docker-php-ext-install memcached
-        
-
-#RUN ls -lha /etc/
-#RUN ls -lha /etc/php82/conf.d
-#RUN ls -lha /etc/php82/php.ini
-#RUN docker-php-ext-enable pdo_pgsql
-#RUN docker-php-ext-enable pgsql
-#RUN docker-php-ext-enable ZendOpcache
-
-#RUN pecl install -o -f redis \
-#&&  rm -rf /tmp/pear \
-#&&  docker-php-ext-enable redis
-
-#Debug Rsyslog
-#RUN sed -i '/^DAEMON=\/usr\/sbin\/rsyslogd/a RSYSLOGD_OPTIONS="-dn"' /etc/init.d/rsyslog
-
-#DEBUGGING
-#RUN php -i
-#RUN php -v
-#RUN php --ini
-#RUN php -m
-#RUN composer show -p
-#RUN aws --version 
-#RUN set -eux; \ 
-#    ls -lha /etc/php81
-
-
-#RUN grep -R 'display_errors' /usr/local/etc/php
-#RUN ls -lha /usr/local/etc/php
-#RUN httpd -M
-#RUN ls -lha /usr/lib/apache2/
-#RUN find / -name mod_php81.so
-#RUN ls -lha /etc/apache2/
-#RUN grep -R 'LoadModule' /etc/
-#RUN ls -lha /etc/apache2/conf.d/
-#RUN ls -lha /usr/local/etc/php/conf.d/
-#RUN whereis php
-
-#RUN ls -lha /etc/php81/conf.d
-#RUN ls -lha /usr/local/etc/php
-#RUN ls -lha /etc/php81/php.ini
-#RUN grep -R  'display_errors' /etc/
-#RUN grep -R  'log_errors' /etc/
-#RUN grep -R  'display_startup_errors' /etc/
-#RUN grep -R -A 10 -B 10 'error_reporting' /etc/
-#RUN php --ri iconv 
-#RUN ls -lha /usr/bin/php 
-#RUN php -i | grep iconv
-
-
 FROM stage2 AS build
-
 RUN set -eux; \
         sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf; \
         sed -i "s/#LoadModule\ headers_module/LoadModule\ headers_module/" /etc/apache2/httpd.conf; \
+        sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf;
 #        sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf; \
 #        sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf; \
 #        sed -i "s/#LoadModule\ session_crypto_module/LoadModule\ session_crypto_module/" /etc/apache2/httpd.conf; \
-        sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf; 
 #        sed -i "s#^DocumentRoot \".*#DocumentRoot \"/var/www/zotero/htdocs\"#g" /etc/apache2/httpd.conf; \
 #        sed -i "s#/var/www/localhost/htdocs#/var/www/zotero/htdocs#" /etc/apache2/httpd.conf; \
 #        printf "\n<Directory \"/var/www/zotero/htdocs\">\n\tAllowOverride All\n</Directory>\n" >> /etc/apache2/httpd.conf
@@ -213,8 +98,8 @@ RUN set -eux; \
         sed -i 's/max_execution_time = 30/max_execution_time = 300/g' /etc/php81/php.ini; \
         sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php81/php.ini; \
         sed -i 's/display_errors = On/display_errors = Off/g' /etc/php81/php.ini; \
-#        sed -i 's/display_errors = Off/display_errors = On/g' /etc/php81/php.ini; \    
         sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \& ~E_NOTICE \& ~E_STRICT \& ~E_DEPRECATED/g' /etc/php81/php.ini
+#        sed -i 's/display_errors = Off/display_errors = On/g' /etc/php81/php.ini; \    
 #        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \& ~E_NOTICE/g' /etc/php81/php.ini
 #        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \| E_NOTICE \| E_WARNING/g' /etc/php81/php.ini
 
@@ -230,8 +115,6 @@ RUN set -eux; \
              && /bin/sh -c 'echo -e "[default]\nregion = us-east-1" > ~/.aws/config' \
              && /bin/sh -c 'echo -e "[default]\naws_access_key_id = zotero\naws_secret_access_key = zoterodocker" > ~/.aws/credentials'
 
-
-
 RUN set -eux; \
         rm -rvf /var/log/apache2; \
         mkdir -p /var/log/apache2; \
@@ -244,15 +127,7 @@ RUN set -eux; \
 # Chown log directory
         chown -R --no-dereference 100:101 /var/log/apache2
 
-# Rinetd
-#RUN set -eux; \
-#        echo "0.0.0.0		8082		minio		9000" >> /etc/rinetd.conf
-
-#Install uws
-#WORKDIR /var/
-
 COPY dataserver/. /var/www/zotero/
-
 RUN rm -rf /var/www/zotero/include/Zend
 COPY Zend /var/www/zotero/include/Zend
 COPY config/create-user.sh /var/www/zotero/admin/
@@ -264,9 +139,6 @@ COPY config/FullText.inc.php /var/www/zotero/model/
 COPY dbconfig/init-mysql.sh /var/www/zotero/misc/
 COPY dbconfig/db_update.sh /var/www/zotero/misc/
 COPY dbconfig/www.sql /var/www/zotero/misc/
-#COPY dbconfig/shard.sql /var/www/zotero/misc/
-
-
 
 ENV APACHE_RUN_USER=apache
 ENV APACHE_RUN_GROUP=apache
@@ -275,11 +147,9 @@ ENV APACHE_PID_FILE=/var/run/apache2/apache2.pid
 ENV APACHE_RUN_DIR=/var/run/apache2
 ENV APACHE_LOG_DIR=/var/log/apache2
 
+EXPOSE 80/tcp
+
 # Expose and entrypoint
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
-#VOLUME /var/www/zotero
-EXPOSE 80/tcp
-#EXPOSE 81/TCP
-#EXPOSE 82/TCP
 ENTRYPOINT ["/entrypoint.sh"]
