@@ -16,16 +16,24 @@ services:
         ipv4_address: 10.5.5.2
   zotprime-elasticsearch:
     image: "uniuu/zotprime-elasticsearch:${VER}"
-    mem_limit: 512m
-    mem_reservation: 256M
+    mem_limit: 1024m
+    mem_reservation: 1024m
     environment:
       - cluster.name=zotero
       - xpack.security.enabled=false
       - cluster.routing.allocation.disk.threshold_enabled=false 
       - discovery.type=single-node
       - logger.level=WARN
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     networks:
       zotprime:
         ipv4_address: 10.5.5.3

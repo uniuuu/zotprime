@@ -25,27 +25,47 @@ services:
         ipv4_address: 10.5.5.2
   zotprime-elasticsearch:
     image: "uniuu/zotprime-elasticsearch:${VER}"
-    mem_limit: 512m
-    mem_reservation: 256M
+    mem_limit: 1024m
+    mem_reservation: 1024m
     build:
       context: ./stack/elasticsearch
       dockerfile: es.Dockerfile
     environment:
       - cluster.name=zotero
       - xpack.security.enabled=false
-      - cluster.routing.allocation.disk.threshold_enabled=false 
-       #     - cluster.routing.allocation.disk.watermark.flood_stage=500mb
+#      - cluster.routing.allocation.disk.threshold_enabled=false 
       - discovery.type=single-node
-#      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
       - logger.level=WARN
+#      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - cluster.routing.allocation.disk.watermark.flood_stage=500mb
     volumes:
       - /etc/localtime:/etc/localtime:ro
-#   privileged: true
-   #user: root
-   #command: "sysctl -w vm.max_map_count=262144 && su elasticsearch -c bin/elasticsearch"
- #  sysctls:
- #           - vm.max_map_count=262144
-#   command: "sysctl -w vm.max_map_count=262144"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+#    sysctls:
+#      - vm.max_map_count=262144
+#    cap-add:
+#      - SYS_ADMIN
+#    privileged: true
+#    user: root
+#    command: 
+#      - /bin/bash
+#      - -c
+#      - |
+#       sysctl -w vm.max_map_count=262144 &&
+#       su elasticsearch -c bin/elasticsearch
+#    command:
+#      - /bin/bash
+#      - -c
+#      - |
+#       sysctl -w vm.max_map_count=262144 && 
+#       su elasticsearch -c bin/es-docker
     networks:
       zotprime:
         ipv4_address: 10.5.5.3
