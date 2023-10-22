@@ -27,12 +27,13 @@ var config = {
 	],
 	// Minimum delay before clients should act on global topic notifications -- since these are triggered
 	// by webhooks or other queued notifications, they need time to be processed elsewhere
-	globalTopicsMinDelay: 30 * 1000,
+	globalTopicsMinDelay: 60 * 1000,
 	// Notification action period -- clients are given a randomly chosen delay within this time
 	// period before they should act upon the notification, so that we don't DDoS ourselves
-	globalTopicsDelayPeriod: 180 * 1000,
-	continuedDelayDefault: 3 * 1000,
+	globalTopicsDelayPeriod: 1800 * 1000,
+	defaultDelay: 3 * 1000,
 	continuedDelay: 30 * 1000,
+	notContinuedDelay: 250,
 	statsD: {
 		host: ''
 	}

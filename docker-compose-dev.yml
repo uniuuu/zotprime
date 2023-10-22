@@ -4,7 +4,7 @@ services:
     image: "uniuu/zotprime-db:${VER}"
 #    image: mysql:5.6
     build:
-      context: .
+      context: ./stack/db
       dockerfile: db.Dockerfile
     restart: always
 #    command: --default-authentication-plugin=mysql_native_password
@@ -25,33 +25,54 @@ services:
         ipv4_address: 10.5.5.2
   zotprime-elasticsearch:
     image: "uniuu/zotprime-elasticsearch:${VER}"
-    mem_limit: 512m
-    mem_reservation: 256M
+    mem_limit: 1024m
+    mem_reservation: 1024m
     build:
-      context: .
+      context: ./stack/elasticsearch
       dockerfile: es.Dockerfile
     environment:
       - cluster.name=zotero
       - xpack.security.enabled=false
-      - cluster.routing.allocation.disk.threshold_enabled=false 
-       #     - cluster.routing.allocation.disk.watermark.flood_stage=500mb
+#      - cluster.routing.allocation.disk.threshold_enabled=false 
       - discovery.type=single-node
-#      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - logger.level=WARN
+#      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - cluster.routing.allocation.disk.watermark.flood_stage=500mb
     volumes:
       - /etc/localtime:/etc/localtime:ro
-#   privileged: true
-   #user: root
-   #command: "sysctl -w vm.max_map_count=262144 && su elasticsearch -c bin/elasticsearch"
- #  sysctls:
- #           - vm.max_map_count=262144
-#   command: "sysctl -w vm.max_map_count=262144"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+#    sysctls:
+#      - vm.max_map_count=262144
+#    cap-add:
+#      - SYS_ADMIN
+#    privileged: true
+#    user: root
+#    command: 
+#      - /bin/bash
+#      - -c
+#      - |
+#       sysctl -w vm.max_map_count=262144 &&
+#       su elasticsearch -c bin/elasticsearch
+#    command:
+#      - /bin/bash
+#      - -c
+#      - |
+#       sysctl -w vm.max_map_count=262144 && 
+#       su elasticsearch -c bin/es-docker
     networks:
       zotprime:
         ipv4_address: 10.5.5.3
   zotprime-redis:
     image: "uniuu/zotprime-redis:${VER}"
     build:
-      context: .
+      context: ./stack/redis
       dockerfile: r.Dockerfile
  #   privileged: true
  #    user: root
@@ -65,7 +86,7 @@ services:
   zotprime-memcached:
     image: "uniuu/zotprime-memcached:${VER}"
     build:
-      context: .
+      context: ./stack/memcached
       dockerfile: m.Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -75,7 +96,7 @@ services:
   zotprime-localstack:
     image: "uniuu/zotprime-localstack:${VER}"
     build:
-      context: .
+      context: ./stack/localstack
       dockerfile: ls.Dockerfile
     environment:
       - SERVICES=sns,sqs,apigateway
@@ -87,14 +108,15 @@ services:
   zotprime-minio:
     image: "uniuu/zotprime-minio:${VER}"
     build:
-      context: .
+      context: ./stack/minio
       dockerfile: minio.Dockerfile
     environment:
       - MINIO_ROOT_USER=${MINIOROOTUSER}
       - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
+#      - "9000:9000"
+#      - "8082:9000"
       - "9001:9001"
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -105,7 +127,7 @@ services:
     image: "uniuu/zotprime-miniomc:${VER}"
     restart: always
     build:
-      context: .
+      context: ./stack/minio
       dockerfile: miniomc.Dockerfile
     environment:
       - MINIO_ROOT_USER=${MINIOROOTUSER}
@@ -128,7 +150,7 @@ services:
   zotprime-dataserver:
     image: "uniuu/zotprime-dataserver:${VER}"
     build:
-      context: .
+      context: ./stack/dataserver
       dockerfile: ds.Dockerfile
 #    extra_hosts:
 #      - "zotero.localhost:127.0.0.1"
@@ -169,7 +191,7 @@ services:
   zotprime-tinymceclean:
     image: "uniuu/zotprime-tinymceclean:${VER}"
     build:
-      context: .
+      context: ./stack/tinymce-clean-server
       dockerfile: tmcs.Dockerfile
     depends_on:
       - zotprime-db
@@ -187,7 +209,7 @@ services:
   zotprime-streamserver:
     image: "uniuu/zotprime-streamserver:${VER}"
     build:
-      context: .
+      context: ./stack/stream-server
       dockerfile: sts.Dockerfile
     ports:
       - "8081:81"
@@ -208,7 +230,7 @@ services:
   zotprime-phpmyadmin:
     image: "uniuu/zotprime-phpmyadmin:${VER}"
     build:
-      context: .
+      context: ./stack/phpmyadmin
       dockerfile: pa.Dockerfile
     ports:
       - "8083:80"

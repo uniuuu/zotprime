@@ -14,8 +14,6 @@ Table of contents
 Localhost installation is for setup when server and client will run on the same computer.  
 VM (virtual machine) installation is for setup when server and clinet are on different hosts. I.e. server is in VM and client is running on another computer.
 
-## Localhost and VM installation
-
 #### Dependencies and source code
 
 *Install latest docker compose plugin*:
@@ -42,7 +40,7 @@ DSHOST=http://localhost:8080/
 ```
 For VM Installation: 
 ```
-DSHOST=http://\<VM IP Address\>:8080/
+DSHOST=http://<VM IP Address>:8080/
 ```
 *Run*:
 ```bash
@@ -116,7 +114,7 @@ $ kubectl config get-contexts
 $ kubectl get all --all-namespaces
 ```
 **Edit ./helm-chart/values.yaml and change dsuri:, s3Pointuri:, api:, streamserver:, minios3Data:, phpmyadmin:, minios3Web: .**    
-Replace with your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointuri:**, **minios3Data:**), Stream Server (**streamserver:**), Phpmyadmin (**phpmyadmin:**) and S3 Minio Web (**minios3Web:**):  
+Replace to your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointuri:**, **minios3Data:**), Stream Server (**streamserver:**), Phpmyadmin (**phpmyadmin:**) and S3 Minio Web (**minios3Web:**):  
 - dsuri: http://api-any.yourhostname.io/  
 - s3Pointuri: s3-any.yourhostname.io  
 - api: api-any.yourhostname.io  
@@ -174,7 +172,7 @@ $ kubectl get -A ing
   HOST_DS=http://api-any.yourhostname.io/
   HOST_ST=ws://stream-any.yourhostname.io/
   ```
-- For Argument MLW=[m|w]: w=Windows, l=Linux  
+- For Argument MLW=[w|l]: w=Windows, l=Linux  
 
 Replace arguments in the respective command below and run it:  
 ```bash
@@ -187,8 +185,8 @@ $ DOCKER_BUILDKIT=1 docker build --progress=plain --file client.Dockerfile \
 ```bash
 $ ./build/staging/Zotero_VERSION/zotero(.exe))
 ```
-### Client build from Mac and Windows
-For [m|w]: m=Mac, l=Linux  
+### Client build from Mac
+For [m|l|w]: m=Mac, l=Linux, w=Windows  
 *Run*:
 ```bash
 $ git submodule update --init --recursive
