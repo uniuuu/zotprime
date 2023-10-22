@@ -4,8 +4,8 @@ on:
   push:
     paths:
       - '.github/workflows/build-all-images.yml'
-      - '*.Dockerfile'
-      - '*.dockerignore'
+      - 'stack/**/*.Dockerfile'
+      - 'stack/**/*.dockerignore'
       - 'docker-compose-dev.yml'
     branches: [ "development" ]
 
@@ -13,14 +13,19 @@ on:
     branches: [ "development" ]
     paths:
       - '.github/workflows/build-all-images.yml'
-      - '*.Dockerfile'
-      - '*.dockerignore'
+      - 'stack/**/*.Dockerfile'
+      - 'stack/**/*.dockerignore'
       - 'docker-compose-dev.yml'
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout submodules
+        run: | 
+           git submodule update --init stack/dataserver/dataserver
+           git submodule update --init stack/stream-server/stream-server
+           git submodule update --init stack/tinymce-clean-server/tinymce-clean-server
       - name: Bootstrap config
         run: cp .env_example .env
       - name: Build the stack

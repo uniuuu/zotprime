@@ -4,12 +4,12 @@ on:
   push:
     branches: [ "development" ]
     paths:
-      - dataserver/**
+      - stack/dataserver/**
       - .github/workflows/test-dataserver-php-composer.yml
   pull_request:
     branches: [ "development" ]
     paths:
-      - dataserver/**
+      - stack/dataserver/**
       - .github/workflows/test-dataserver-php-composer.yml
   workflow_dispatch:
 permissions:
@@ -44,21 +44,21 @@ jobs:
         php-version: ${{ matrix.php-version }}
 
     - name: Checkout submodules
-      run: git submodule update --init dataserver
+      run: git submodule update --init stack/dataserver/dataserver
 
     - name: Update composer.json AGPL version
-      working-directory: ./dataserver
+      working-directory: stack/dataserver/dataserver
       run: sed -i 's/AGPL-3.0/AGPL-3.0-only/g' composer.json
 
 
     - name: Validate composer.json and composer.lock
-      working-directory: ./dataserver
+      working-directory: stack/dataserver/dataserver
       run: composer validate --strict
 
 
     - name: "Determine composer cache directory"
       id: "determine-composer-cache-directory"
-      working-directory: ./dataserver
+      working-directory: stack/dataserver/dataserver
       run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
 
     - name: "Cache dependencies installed with composer"
@@ -79,7 +79,7 @@ jobs:
 #          ${{ runner.os }}-php-
 
     - name: Install dependencies
-      working-directory: ./dataserver
+      working-directory: stack/dataserver/dataserver
       run: composer install --prefer-dist --no-progress
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"

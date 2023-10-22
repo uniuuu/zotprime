@@ -57,7 +57,7 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
-          git submodule update --init --recursive --remote dataserver
+          git submodule update --init --recursive --remote stack/dataserver/dataserver
           git add .
           git commit -m 'Github Actions Update Submodule dataserver'
           git push origin development

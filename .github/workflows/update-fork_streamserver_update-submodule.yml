@@ -65,7 +65,7 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
-          git submodule update --init --recursive --remote stream-server
+          git submodule update --init --recursive --remote stack/stream-server/stream-server
           git add .
           git commit -m 'Github Actions Update Submodule stream-server'
           git push origin development

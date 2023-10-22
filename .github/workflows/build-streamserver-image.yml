@@ -1,18 +1,17 @@
 name: Build Streamserver Docker Image
 
 on:
+  workflow_dispatch:
   push:
     paths:
-      - stream-server/**
-      - docker/stream-server/**
+      - stack/stream-server/**
       - .github/workflows/build-streamserver-image.yml
     branches: [ "development" ]
 
   pull_request:
     branches: [ "development" ]
     paths:
-      - stream-server/**
-      - docker/stream-server/**
+      - stack/stream-server/**
       - .github/workflows/build-streamserver-image.yml
 
 
@@ -25,10 +24,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Checkout submodules
-      run: git submodule update --init stream-server
+      run: git submodule update --init stack/stream-server/stream-server
     - name: Build the Streamserver Docker Image
 #      working-directory: ./stream-server
-      run: docker build . --file sts.Dockerfile --tag zotprime-streamserver:$(date +%s)
+      run: |
+         cd stack/stream-server
+         DOCKER_BUILDKIT=1 docker build . --progress=plain --file sts.Dockerfile --tag zotprime-streamserver:$(date +%s)
 #      uses: docker/build-push-action@v2
 #      with:
 #        context: .

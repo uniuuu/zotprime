@@ -219,10 +219,10 @@ RUN set -eux; \
 #        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \| E_NOTICE \| E_WARNING/g' /etc/php81/php.ini
 
 # Enable the new virtualhost
-COPY docker/dataserver/zotero.conf /etc/apache2/conf.d/
+COPY config/zotero.conf /etc/apache2/conf.d/
 
 # Override gzip configuration
-COPY docker/dataserver/gzip.conf /etc/apache2/conf.d/
+COPY config/gzip.conf /etc/apache2/conf.d/
 
 # AWS local credentials
 RUN set -eux; \
@@ -255,16 +255,16 @@ COPY dataserver/. /var/www/zotero/
 
 RUN rm -rf /var/www/zotero/include/Zend
 COPY Zend /var/www/zotero/include/Zend
-COPY docker/dataserver/create-user.sh /var/www/zotero/admin/
-COPY docker/dataserver/config.inc.php /var/www/zotero/include/config/
-COPY docker/dataserver/dbconnect.inc.php /var/www/zotero/include/config/
-COPY docker/dataserver/header.inc.php /var/www/zotero/include/
-COPY docker/dataserver/Storage.inc.php /var/www/zotero/model/
-COPY docker/dataserver/FullText.inc.php /var/www/zotero/model/
-COPY docker/db/init-mysql.sh /var/www/zotero/misc/
-COPY docker/db/db_update.sh /var/www/zotero/misc/
-COPY docker/db/www.sql /var/www/zotero/misc/
-#COPY docker/db/shard.sql /var/www/zotero/misc/
+COPY config/create-user.sh /var/www/zotero/admin/
+COPY config/config.inc.php /var/www/zotero/include/config/
+COPY config/dbconnect.inc.php /var/www/zotero/include/config/
+COPY config/header.inc.php /var/www/zotero/include/
+COPY config/Storage.inc.php /var/www/zotero/model/
+COPY config/FullText.inc.php /var/www/zotero/model/
+COPY dbconfig/init-mysql.sh /var/www/zotero/misc/
+COPY dbconfig/db_update.sh /var/www/zotero/misc/
+COPY dbconfig/www.sql /var/www/zotero/misc/
+#COPY dbconfig/shard.sql /var/www/zotero/misc/
 
 
 
@@ -276,7 +276,7 @@ ENV APACHE_RUN_DIR=/var/run/apache2
 ENV APACHE_LOG_DIR=/var/log/apache2
 
 # Expose and entrypoint
-COPY docker/dataserver/entrypoint.sh /
+COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 #VOLUME /var/www/zotero
 EXPOSE 80/tcp

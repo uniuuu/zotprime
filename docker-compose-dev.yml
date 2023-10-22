@@ -4,7 +4,7 @@ services:
     image: "uniuu/zotprime-db:${VER}"
 #    image: mysql:5.6
     build:
-      context: .
+      context: ./stack/db
       dockerfile: db.Dockerfile
     restart: always
 #    command: --default-authentication-plugin=mysql_native_password
@@ -28,7 +28,7 @@ services:
     mem_limit: 512m
     mem_reservation: 256M
     build:
-      context: .
+      context: ./stack/elasticsearch
       dockerfile: es.Dockerfile
     environment:
       - cluster.name=zotero
@@ -52,7 +52,7 @@ services:
   zotprime-redis:
     image: "uniuu/zotprime-redis:${VER}"
     build:
-      context: .
+      context: ./stack/redis
       dockerfile: r.Dockerfile
  #   privileged: true
  #    user: root
@@ -66,7 +66,7 @@ services:
   zotprime-memcached:
     image: "uniuu/zotprime-memcached:${VER}"
     build:
-      context: .
+      context: ./stack/memcached
       dockerfile: m.Dockerfile
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -76,7 +76,7 @@ services:
   zotprime-localstack:
     image: "uniuu/zotprime-localstack:${VER}"
     build:
-      context: .
+      context: ./stack/localstack
       dockerfile: ls.Dockerfile
     environment:
       - SERVICES=sns,sqs,apigateway
@@ -88,14 +88,15 @@ services:
   zotprime-minio:
     image: "uniuu/zotprime-minio:${VER}"
     build:
-      context: .
+      context: ./stack/minio
       dockerfile: minio.Dockerfile
     environment:
       - MINIO_ROOT_USER=${MINIOROOTUSER}
       - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
+#      - "9000:9000"
+#      - "8082:9000"
       - "9001:9001"
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -106,7 +107,7 @@ services:
     image: "uniuu/zotprime-miniomc:${VER}"
     restart: always
     build:
-      context: .
+      context: ./stack/minio
       dockerfile: miniomc.Dockerfile
     environment:
       - MINIO_ROOT_USER=${MINIOROOTUSER}
@@ -129,7 +130,7 @@ services:
   zotprime-dataserver:
     image: "uniuu/zotprime-dataserver:${VER}"
     build:
-      context: .
+      context: ./stack/dataserver
       dockerfile: ds.Dockerfile
 #    extra_hosts:
 #      - "zotero.localhost:127.0.0.1"
@@ -170,7 +171,7 @@ services:
   zotprime-tinymceclean:
     image: "uniuu/zotprime-tinymceclean:${VER}"
     build:
-      context: .
+      context: ./stack/tinymce-clean-server
       dockerfile: tmcs.Dockerfile
     depends_on:
       - zotprime-db
@@ -188,7 +189,7 @@ services:
   zotprime-streamserver:
     image: "uniuu/zotprime-streamserver:${VER}"
     build:
-      context: .
+      context: ./stack/stream-server
       dockerfile: sts.Dockerfile
     ports:
       - "8081:81"
@@ -209,7 +210,7 @@ services:
   zotprime-phpmyadmin:
     image: "uniuu/zotprime-phpmyadmin:${VER}"
     build:
-      context: .
+      context: ./stack/phpmyadmin
       dockerfile: pa.Dockerfile
     ports:
       - "8083:80"

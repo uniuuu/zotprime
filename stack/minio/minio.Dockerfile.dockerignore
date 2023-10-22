@@ -17,4 +17,6 @@ stream-server
 tinymce-clean-server
 Zend
 zotprime-k8s
-
+miniomc.Dockerfile.dockerignore
+miniomc.Dockerfile
+mc-entrypoint.sh

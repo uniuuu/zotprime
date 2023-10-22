@@ -1,11 +1,3 @@
-[submodule "tinymce-clean-server"]
-	path = tinymce-clean-server
-	url = https://github.com/uniuuu/tinymce-clean-server
-	branch = master
-[submodule "stream-server"]
-	path = stream-server
-	url = https://github.com/uniuuu/stream-server
-	branch = master
 [submodule "client/zotero-client"]
 	path = client/zotero-client
 	url = https://github.com/uniuuu/zotero
@@ -17,7 +9,13 @@
 	path = client/zotero-build
 	url = https://github.com/uniuuu/zotero-build
 	branch = master
-[submodule "dataserver"]
-	path = dataserver
+
+[submodule "stack/dataserver/dataserver"]
+	path = stack/dataserver/dataserver
 	url = https://github.com/uniuuu/dataserver.git
-	branch = master
+[submodule "stack/tinymce-clean-server/tinymce-clean-server"]
+	path = stack/tinymce-clean-server/tinymce-clean-server
+	url = https://github.com/uniuuu/tinymce-clean-server.git
+[submodule "stack/stream-server/stream-server"]
+	path = stack/stream-server/stream-server
+	url = https://github.com/uniuuu/stream-server.git

@@ -57,7 +57,7 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
-          git submodule update --init --recursive --remote tinymce-clean-server
+          git submodule update --init --recursive --remote stack/tinymce-clean-server/tinymce-clean-server
           git add .
           git commit -m 'Github Actions Update Submodule tinymce-clean-server'
           git push origin development

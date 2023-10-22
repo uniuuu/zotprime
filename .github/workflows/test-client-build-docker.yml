@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - client/**
-      - clientbuildtest.Dockerfile
+      - client/clientbuildtest.Dockerfile
       - .github/workflows/test-client-build-docker.yml
     branches: [ "development" ]
 
@@ -12,7 +12,7 @@ on:
     branches: [ "development" ]
     paths:
       - client/**
-      - clientbuildtest.Dockerfile
+      - client/clientbuildtest.Dockerfile
       - .github/workflows/test-client-build-docker.yml
   workflow_dispatch:      
 jobs:
@@ -24,4 +24,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build Client
-      run: DOCKER_BUILDKIT=1 docker build . --file clientbuildtest.Dockerfile --output build --tag client:$(date +%s)
+      run: | 
+         cd client
+         DOCKER_BUILDKIT=1 docker build . --file clientbuildtest.Dockerfile --output build --tag client:$(date +%s)
