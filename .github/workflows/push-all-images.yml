@@ -41,7 +41,6 @@ jobs:
           username: ${{ secrets.DOCKERHUBUSERNAME }}
           password: ${{ secrets.DOCKERHUBTOKEN }}
 
-
       -
         run: git checkout production
       -
@@ -51,4 +50,95 @@ jobs:
           context: ./stack/dataserver
           file: stack/dataserver/ds.Dockerfile
           push: true
-          tags: uniuu/dataserver:${{ env.VERSION }}
+          tags: uniuu/zotprime-dataserver:${{ env.VERSION }}
+
+      -
+        name: Build and push stream-server
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/stream-server
+          file: stack/stream-server/sts.Dockerfile
+          push: true
+          tags: uniuu/zotprime-streamserver:${{ env.VERSION }}
+
+      -
+        name: Build and push db
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/db
+          file: stack/db/db.Dockerfile
+          push: true
+          tags: uniuu/zotprime-db:${{ env.VERSION }}
+
+      -
+        name: Build and push localstack
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/localstack
+          file: stack/localstack/ls.Dockerfile
+          push: true
+          tags: uniuu/zotprime-localstack:${{ env.VERSION }}
+
+      -
+        name: Build and push memcached
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/memcached
+          file: stack/memcached/m.Dockerfile
+          push: true
+          tags: uniuu/zotprime-memcached:${{ env.VERSION }}
+
+      -
+        name: Build and push elasticsearch
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/elasticsearch
+          file: stack/elasticsearch/es.Dockerfile
+          push: true
+          tags: uniuu/zotprime-elasticsearch:${{ env.VERSION }}
+
+      -
+        name: Build and push minio
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/minio
+          file: stack/minio/minio.Dockerfile
+          push: true
+          tags: uniuu/zotprime-minio:${{ env.VERSION }}
+
+      -
+        name: Build and push miniomc
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/minio
+          file: stack/minio/miniomc.Dockerfile
+          push: true
+          tags: uniuu/zotprime-miniomc:${{ env.VERSION }}
+
+      -
+        name: Build and push phpmyadmin
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/phpmyadmin
+          file: stack/phpmyadmin/pa.Dockerfile
+          push: true
+          tags: uniuu/zotprime-phpmyadmin:${{ env.VERSION }}
+
+      -
+        name: Build and push redis
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/redis
+          file: stack/redis/r.Dockerfile
+          push: true
+          tags: uniuu/zotprime-redis:${{ env.VERSION }}
+
+
+      -
+        name: Build and push tinymce-clean-server
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/tinymce-clean-server
+          file: stack/tinymce-clean-server/tmcs.Dockerfile
+          push: true
+          tags: uniuu/zotprime-tinymceclean:${{ env.VERSION }}
