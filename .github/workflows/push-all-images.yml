@@ -48,7 +48,7 @@ jobs:
         name: Build and push dataserver
         uses: docker/build-push-action@v5
         with:
-          context: ./dataserver
-          file: dataserver/ds.Dockerfile
+          context: ./stack/dataserver
+          file: stack/dataserver/ds.Dockerfile
           push: false
           tags: uniuu/dataserver:${{ env.VERSION }}
