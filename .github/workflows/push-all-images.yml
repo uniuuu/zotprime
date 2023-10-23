@@ -42,7 +42,11 @@ jobs:
           password: ${{ secrets.DOCKERHUBTOKEN }}
 
       -
-        run: git checkout production
+        run: | 
+           git checkout production
+           git submodule update --init --recursive --remote stack/tinymce-clean-server/tinymce-clean-server
+           git submodule update --init --recursive --remote stack/stream-server/stream-server
+           git submodule update --init --recursive --remote stack/dataserver/dataserver
       -
         name: Build and push dataserver
         uses: docker/build-push-action@v5
