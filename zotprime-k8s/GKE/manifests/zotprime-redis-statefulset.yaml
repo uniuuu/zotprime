@@ -32,7 +32,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: redis
-        image: uniuu/zotprime-redis:2.6.1-rc
+        image: uniuu/zotprime-redis:v2.7.0
         command:
           - "redis-server"
         args:

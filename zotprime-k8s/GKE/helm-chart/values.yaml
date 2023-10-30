@@ -12,7 +12,7 @@ zotprimeDataserver:
       s3Pointuri: s3min.projectdev.net
     image:
       repository: uniuu/zotprime-dataserver
-      tag: 2.6.1-rc
+      tag: v2.7.0
     imagePullPolicy: Always
     resources:
       limits:
@@ -155,7 +155,7 @@ zotprimeDb:
       runAsUser: 999
     image:
       repository: uniuu/zotprime-db
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
         memory: 512Mi
@@ -180,7 +180,7 @@ zotprimeElasticsearch:
       xpackSecurityEnabled: "true"
     image:
       repository: uniuu/zotprime-elasticsearch
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
         memory: 2Gi
@@ -207,7 +207,7 @@ zotprimeLocalstack:
       services: sns,sqs,apigateway
     image:
       repository: uniuu/zotprime-localstack
-      tag: 2.6.1-rc
+      tag: v2.7.0
     imagePullPolicy: IfNotPresent
     resources:
       limits:
@@ -223,7 +223,7 @@ zotprimeMemcached:
     - -I 50M
     image:
       repository: uniuu/zotprime-memcached
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
 #        memory: 1536Mi
@@ -241,7 +241,7 @@ zotprimeMinio:
       server /data --console-address :9001
     image:
       repository: uniuu/zotprime-minio
-      tag: 2.6.1-rc
+      tag: v2.7.0
     imagePullPolicy: Always
     resources:
       limits:
@@ -252,7 +252,7 @@ zotprimeMinio:
   zotprimeMiniomc:
     image:
       repository: uniuu/zotprime-miniomc
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
         memory: 256Mi
@@ -266,7 +266,7 @@ zotprimePhpmyadmin:
       pmaPort: "3306"
     image:
       repository: uniuu/zotprime-phpmyadmin
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
         memory: 256Mi
@@ -281,7 +281,7 @@ zotprimeRedis:
     - "no"
     image:
       repository: uniuu/zotprime-redis
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
         memory: 100Mi
@@ -298,7 +298,7 @@ zotprimeStreamserver:
   zotprimeStreamserver:
     image:
       repository: uniuu/zotprime-streamserver
-      tag: 2.6.1-rc
+      tag: v2.7.0
     resources:
       limits:
         memory: 256Mi
@@ -310,7 +310,7 @@ zotprimeTinymceclean:
   zotprimeTinymceclean:
     image:
       repository: uniuu/zotprime-tinymceclean
-      tag: 2.6.1-rc
+      tag: v2.7.0
     imagePullPolicy: Always
     resources:
       limits:

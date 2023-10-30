@@ -18,7 +18,7 @@ spec:
       name: zotprime-dataserver
     spec:
       containers:
-        - image: uniuu/zotprime-dataserver:2.6.1-rc
+        - image: uniuu/zotprime-dataserver:v2.7.0
           imagePullPolicy: Always
           name: zotprime-dataserver
           ports:
