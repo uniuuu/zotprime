@@ -6,6 +6,6 @@ logs
 **/secret*.txt
 **/secret*.yaml
 **/zotprime*secret.yaml
-docker-compose.yml
+docker-compose-test.yml
 **/cred.json
 .vscode/
