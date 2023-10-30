@@ -1,3 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    apps: memcached
+  name: memcached
+  namespace: zotprime
+spec:
+  ports:
+    - name: memcached
+      port: 11211
+      targetPort: 11211
+  selector:
+    apps: zotprime-memcached
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +37,7 @@ spec:
     spec:
       containers:
       - name: memcached
-        image: uniuu/zotprime-memcached:2.6.1-rc
+        image: uniuu/zotprime-memcached:v2.7.0
         resources:
           limits:
 #            cpu: 200m

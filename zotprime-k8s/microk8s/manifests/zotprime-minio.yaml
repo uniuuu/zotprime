@@ -1,3 +1,63 @@
+apiVersion: v1
+data:
+  secret-minio.txt: TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK
+kind: Secret
+metadata:
+  name: minio-secret
+  namespace: zotprime
+type: Opaque
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minio-config
+  namespace: zotprime
+data:
+  minio-user: zotero
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    apps: minio
+  name: minio
+  namespace: zotprime
+spec:
+  clusterIP: 10.152.183.11
+  ports:
+    - name: minio-ui
+      port: 9001
+      targetPort: 9001
+    - name: minio-data
+      port: 9000
+      targetPort: 9000
+    - name: minio-data2
+      port: 80
+      targetPort: 9000
+  selector:
+    apps: zotprime-minio
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dataminio
+  namespace: zotprime
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard-rwo
+
+---
 # The `spec.containers[0].args` contains the command run on the pod
 # The `/data` directory corresponds to the `spec.containers[0].volumeMounts[0].mountPath`
 # That mount path corresponds to a Kubernetes HostPath which binds `/data` to a local drive or volume on the worker node where the pod runs
@@ -23,7 +83,7 @@ spec:
     spec:
       containers:
         - name: zotprime-minio
-          image: uniuu/zotprime-minio:2.6.1-rc
+          image: uniuu/zotprime-minio:v2.7.0
           imagePullPolicy: Always
           resources:
             limits:
@@ -80,7 +140,7 @@ spec:
 #             subPath: secret.txt
               readOnly: true
         - name: zotprime-miniomc
-          image: uniuu/zotprime-miniomc:2.6.1-rc
+          image: uniuu/zotprime-miniomc:v2.7.0
           resources:
             limits:
               memory: 256Mi
