@@ -8,13 +8,13 @@
 bin
 build
 client
-#dataserver
+dataserver
 doc
 docker
 docker-compose.yml
 logs
 stream-server
 tinymce-clean-server
-#Zend
+Zend
 zotprime-k8s
 

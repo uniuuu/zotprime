@@ -19,4 +19,3 @@
 [submodule "stack/stream-server/stream-server"]
 	path = stack/stream-server/stream-server
 	url = https://github.com/uniuuu/stream-server.git
-

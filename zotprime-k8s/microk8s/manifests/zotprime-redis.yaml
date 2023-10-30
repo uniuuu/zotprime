@@ -1,3 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: zotprime
+data:
+  redis.conf:  |+
+    cluster-enabled no
+    appendonly yes
+    protected-mode no
+    dir /data
+    port 6379
+
+# cluster-node-timeout 15000
+# cluster-config-file /data/nodes.conf
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-probes
+  namespace: zotprime
+data:
+  readiness.sh: |-
+    #!/bin/sh
+    pingResponse="$(redis-cli -h localhost ping)"
+    if [ "$?" -eq "124" ]; then
+      echo "PING timed out"
+      exit 1
+    fi
+    if [ "$pingResponse" != "PONG"]; then
+      echo "$pingResponse"
+      exit 1
+    fi
+  liveness.sh: |-
+    #!/bin/sh
+    pingResponse="$(redis-cli -h localhost ping | head -n1 | awk '{print $1;}')"
+    if [ "$?" -eq "124" ]; then
+      echo "PING timed out"
+      exit 1
+    fi
+    if [ "$pingResponse" != "PONG"] && [ "$pingResponse" != "LOADING" ] && [ "$pingResponse" != "MASTERDOWN" ]; then
+      echo "$pingResponse"
+      exit 1
+    fi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: zotprime
+#  annotations:
+#    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  labels:
+    apps: redis
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: redis
+  selector:
+    apps: zotprime-redis
+  clusterIP: None
+#  publishNotReadyAddresses: True
+
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
