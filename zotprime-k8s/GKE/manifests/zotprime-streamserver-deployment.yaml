@@ -18,7 +18,7 @@ spec:
       name: zotprime-streamserver
     spec:
       containers:
-        - image: uniuu/zotprime-streamserver:2.6.1-rc
+        - image: uniuu/zotprime-streamserver:v2.7.0
           name: zotprime-streamserver
           ports:
             - containerPort: 81           

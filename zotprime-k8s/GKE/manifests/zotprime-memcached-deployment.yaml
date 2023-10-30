@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: memcached
-        image: uniuu/zotprime-memcached:2.6.1-rc
+        image: uniuu/zotprime-memcached:v2.7.0
         resources:
           limits:
 #            cpu: 200m
