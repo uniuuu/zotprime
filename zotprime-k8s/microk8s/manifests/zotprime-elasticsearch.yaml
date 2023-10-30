@@ -1,4 +1,20 @@
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: zotprime
+  labels:
+    apps: elasticsearch
+spec:
+  ports:
+  - port: 9300
+    name: elasticsearch
+  clusterIP: None
+  selector:
+    apps: zotprime-elasticsearch
+
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -30,7 +46,7 @@ spec:
           privileged: true
       containers:
       - name: elasticsearch
-        image: uniuu/zotprime-elasticsearch:2.6.1-rc
+        image: uniuu/zotprime-elasticsearch:v2.7.0
         env:
         - name: CLUSTER_NAME
           value: zotero
