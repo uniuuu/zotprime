@@ -16,4 +16,3 @@ spec:
   selector:
     apps: zotprime-streamserver
   type: ClusterIP
-

@@ -30,7 +30,6 @@ $ cd zotprime
 *Configure*:
 ```bash
 $ cp .env_example .env
-$ cp docker-compose-prod.yml  docker-compose.yml
 ```
 **Edit .env and change DSHOST.**  
 For Localhost Installation:

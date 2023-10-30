@@ -53,6 +53,9 @@ spec:
           requests:
             cpu: "1"
             memory: 2Gi
+          requests:
+            cpu: "1"
+            memory: 2Gi
         ports:
         - containerPort: 9300
           name: transport

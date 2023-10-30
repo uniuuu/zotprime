@@ -1,5 +1,4 @@
 ---
-# Source: localstack/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,6 +7,7 @@ metadata:
   labels:
     apps: localstack   
 spec:
+    apps: localstack
   ports:
     - name: "localstack-sns"
       port: 4575

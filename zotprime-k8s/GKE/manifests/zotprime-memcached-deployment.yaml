@@ -32,4 +32,3 @@ spec:
           - -m 2047
           - -I 50M
       priorityClassName: high-priority
-

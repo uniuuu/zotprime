@@ -1,5 +1,4 @@
 ---
-# Source: localstack/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7,8 +6,6 @@ metadata:
   namespace: "zotprime"
   labels:
     apps: zotprime-localstack
-#  annotations:
-    
 spec:
   replicas: 1
   strategy:
