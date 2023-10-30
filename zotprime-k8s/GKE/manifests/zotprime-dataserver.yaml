@@ -1,3 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dataserver-config
+  namespace: zotprime
+data:
+  init.sh: |
+    #!/bin/sh
+
+    set -eux
+
+    cd /var/www/zotero/misc && ./init-mysql.sh
+    cd /var/www/zotero/misc && ./db_update.sh
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext
+    aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    apps: dataserver
+  name: dataserver
+  namespace: zotprime
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: dataserver-api
+      port: 80
+      targetPort: 80
+#    - name: s3
+#      port: 8082
+#      targetPort: 8082
+  selector:
+    apps: zotprime-dataserver
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
