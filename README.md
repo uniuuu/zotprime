@@ -15,7 +15,6 @@ Localhost installation is for setup when server and client will run on the same 
 VM (virtual machine) installation is for setup when server and clinet are on different hosts. I.e. server is in VM and client is running on another computer.
 
 ### Dependencies and source code
-
 *Install latest docker compose plugin*:
 ```bash
 $ sudo apt update
@@ -71,12 +70,12 @@ $ cd ..
 | PHPMyAdmin    | root                     | zotero             |
 
 ## GKE Installation
-
 *Clone the repository:*
+*Run*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone https://github.com/uniuuu/zotprime.git
-$ git checkout tags/<tag> -b <somename>   
+$ git checkout production  
 $ cd zotprime
 ```
 *Install Google Cloud SDK: https://cloud.google.com/sdk/docs/install*  
@@ -123,11 +122,11 @@ Replace to your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointur
 - phpmyadmin: phpmyadmin-any.yourhostname.io  
 - minios3Web: minioweb-any.yourhostname.io  
 ```bash
-$ kubectl apply -f zotprime-namespace.yaml
+$ kubectl create namespace zotprime
 $ helm install zotprime-k8s helm-chart --namespace zotprime
 $ kubectl get -A cm,secrets,deploy,rs,sts,pod,pvc,svc,ing
 ```
-*Get Ingress IP's and setup A records in DNS hosting*:  
+*Obtain Ingress IP's and setup A records in DNS hosting*:  
 Wait while GCP will provision IP's verify with below command output in ADDRESS column  
 ```bash
 $ kubectl get -A ing
@@ -151,27 +150,93 @@ $ kubectl get -A ing
 | PHPMyAdmin    | root                     | zotero             |
 
 ## MicroK8s Installation
+*Clone the repository:*
+*Run*:
+```bash
+$ mkdir /path/to/your/app && cd /path/to/your/app
+$ git clone https://github.com/uniuuu/zotprime.git
+$ git checkout production  
+```
+*Install Microk8s: https://microk8s.io/docs/getting-started*  
+*Install Kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/*  
+*Install Helm: https://helm.sh/docs/intro/install/* 
+**Install microk8s modules**
+*Run*:
+```bash
+microk8s enable hostpath-storage
+microk8s enable helm
+microk8s enable registry
+microk8s enable dns
+microk8s enable ingress
+```
+**Enable metallb based on guide https://microk8s.io/docs/addon-metallb. Use available IP range from your LAN.**
+*Run*:
+```bash
+microk8s enable metallb:<IP-range>
+```
+**Check cluster and install Zotprime Helm Chart**
+*Run*:
+```bash
+$ kubectl config get-contexts
+$ kubectl get all --all-namespaces
+```
+**Edit /etc/hosts on your server that runs microk8s and add:**    
+ 
+**Build and push images to microk8s registry**
+```bash
+$ cd zotprime/microk8s/scripts
+$ ./buildimages.sh
+$ ./pushimages.sh
+```
+```bash
+$ cd ../
+$ kubectl create namespace zotprime
+$ helm install zotprime-k8s helm-chart --namespace zotprime
+$ kubectl apply manifests/zotprime-ingress-http.yaml
+$ kubectl apply manifests/zotprime-ingress-websocket.yaml
+$ kubectl get -A cm,secrets,deploy,rs,sts,pod,pvc,svc,ing
+```
+*Obtain Ingress IP's and setup A records in all DNS servers in client server LAN*:  
+```bash
+$ kubectl get -A ing
+```
+*Available endpoints*:
+
+| Name          | URL                                           |
+| ------------- | --------------------------------------------- |
+| Zotero API    | http://api.zotprime               |
+| S3            | http://s3min.zotprime              |
+| PHPMyAdmin    | http://pm.zotprime         |
+| S3 Web UI     | http://min.zotprime           |
+| Stream Server | ws://stream.zotprime             |
+
+*Default login/password*:
+
+| Name          | Login                    | Password           |
+| ------------- | ------------------------ | ------------------ |
+| Zotero API    | admin                    | admin              |
+| S3 Web UI     | zotero                   | zoterodocker       |
+| PHPMyAdmin    | root                     | zotero             |
 
 
 ## Client Build
-
 ### Client build from Linux
 *Edit and run*:
 - For Localhost Installation argument's are: 
-  ```
+```
   HOST_DS=http://localhost:8080/
   HOST_ST=ws://localhost:8081/
-  ```
+```
 - For VM Installation arguments are:
   ```
   HOST_DS=http://<VM IP Address>:8080/
   HOST_ST=ws://<VM IP Address:8081/
-  ```
+```
 - For GKE Installation arguments are:
-  ```
+```
   HOST_DS=http://api-any.yourhostname.io/
   HOST_ST=ws://stream-any.yourhostname.io/
-  ```
+```
 - For Argument MLW=[w|l]: w=Windows, l=Linux  
 
 Replace arguments in the respective command below and run it:  
