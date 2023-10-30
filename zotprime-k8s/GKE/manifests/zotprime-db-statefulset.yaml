@@ -38,8 +38,6 @@ spec:
         resources:
           limits:
             memory: 512Mi
-#            cpu: "1"
-#            cpu: "0.5"
           requests:
             memory: 512Mi
             cpu: "0.5"
@@ -64,7 +62,6 @@ spec:
           mountPath: /var/lib/mysql/
         - name: db-secret
           mountPath: tmp/_key/
-#          subPath: _key/
         securityContext:
           runAsUser: 999
           runAsGroup: 999

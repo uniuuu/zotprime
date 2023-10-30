@@ -15,4 +15,3 @@ spec:
   selector:
     apps: zotprime-db
   clusterIP: None
-#  publishNotReadyAddresses: True

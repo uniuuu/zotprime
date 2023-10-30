@@ -3,8 +3,6 @@ kind: Service
 metadata:
   name: redis
   namespace: zotprime
-#  annotations:
-#    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
   labels:
     apps: redis
 spec:
@@ -15,4 +13,3 @@ spec:
   selector:
     apps: zotprime-redis
   clusterIP: None
-#  publishNotReadyAddresses: True

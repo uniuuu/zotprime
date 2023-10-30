@@ -11,10 +11,6 @@ metadata:
     kubernetes.io/ingress.class: "gce"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-#    nginx.ingress.kubernetes.io/configuration-snippet: |
-#       proxy_http_version 1.1;
-#       proxy_set_header Upgrade "websocket";
-#       proxy_set_header Connection "Upgrade";
     nginx.ingress.kubernetes.io/server-snippets: |
       location / {
         proxy_set_header Upgrade $http_upgrade;
@@ -36,7 +32,5 @@ spec:
                 name: streamserver
                 port:
                   name: streamserver
-#                  number: 8081
-#            pathType: Exact
             path: /
             pathType: Prefix

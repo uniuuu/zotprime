@@ -10,9 +10,7 @@ data:
     protected-mode no
     dir /data
     port 6379
-
-# cluster-node-timeout 15000
-# cluster-config-file /data/nodes.conf
+    
 ---
 apiVersion: v1
 kind: ConfigMap

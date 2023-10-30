@@ -6,17 +6,12 @@ metadata:
   name: localstack
   namespace: "zotprime"
   labels:
-    apps: localstack
-#  annotations:
-    
+    apps: localstack   
 spec:
-#  type: NodePort
-#  externalTrafficPolicy: ""
   ports:
     - name: "localstack-sns"
       port: 4575
       targetPort: "sns-4575"
-#      nodePort: 31566
     - name: "localstack-sqs"
       port: 4576
       targetPort: "sqs-4576"

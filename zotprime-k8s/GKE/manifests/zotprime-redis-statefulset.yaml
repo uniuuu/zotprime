@@ -15,7 +15,6 @@ spec:
     metadata:
       labels:
         apps: zotprime-redis
-#        appCluster: redis-cluster
     spec:
       terminationGracePeriodSeconds: 20
       affinity:
@@ -44,7 +43,6 @@ spec:
             cpu: "100m"
             memory: "100Mi"
           limits:
-#            cpu: "100m"
             memory: "100Mi"
         ports:
             - name: redis

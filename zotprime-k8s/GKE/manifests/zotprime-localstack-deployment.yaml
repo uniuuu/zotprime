@@ -22,7 +22,6 @@ spec:
       labels:
         apps: zotprime-localstack
     spec:
-#      serviceAccountName: localstack
       securityContext:
         {}
       containers:
@@ -194,28 +193,9 @@ spec:
             - name: "ext-svc-4559"
               containerPort: 4559
               protocol: TCP
-#          livenessProbe:
-#            failureThreshold: 3
-#            initialDelaySeconds: 0
-#            periodSeconds: 10
-#            successThreshold: 1
-#            timeoutSeconds: 1
-#            httpGet:
-#              path: /_localstack/health
-#              port: edge
-#          readinessProbe:
-#            failureThreshold: 3
-#            initialDelaySeconds: 0
-#            periodSeconds: 10
-#            successThreshold: 1
-#            timeoutSeconds: 1
-#            httpGet:
-#              path: /_localstack/health
-#              port: edge
           resources:
             limits:
               memory: 256Mi
-#              cpu: "0.1"
             requests:
               memory: 256Mi
               cpu: "0.2"
@@ -224,22 +204,9 @@ spec:
               value: "sns,sqs,apigateway"
             - name: DEBUG
               value: "0"
-#            - name: EXTERNAL_SERVICE_PORTS_START
-#              value: "4510"
-#            - name: EXTERNAL_SERVICE_PORTS_END
-#              value: "4560"
             - name: LOCALSTACK_K8S_SERVICE_NAME
               value: localstack
             - name: LOCALSTACK_K8S_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-#            - name: LAMBDA_RUNTIME_EXECUTOR
-#              value: "docker"
-#            - name: LAMBDA_K8S_IMAGE_PREFIX
-#              value: "localstack/lambda-"
-#            - name: LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT
-#              value: "60"
-#            - name: OVERRIDE_IN_DOCKER
-#              value: "1"
-#      volumes:

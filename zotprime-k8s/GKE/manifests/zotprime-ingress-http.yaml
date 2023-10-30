@@ -9,8 +9,6 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cloud.google.com/load-balancer-type: "External"
     kubernetes.io/ingress.class: "gce"
-#    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-#    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   rules:
     - host: min.projectdev.net
@@ -42,7 +40,6 @@ spec:
               service:
                 name: phpmyadmin
                 port:
-#                  name: phpmyadmin
                   number: 80
     - host: api.projectdev.net
       http:
@@ -54,4 +51,3 @@ spec:
                 name: dataserver
                 port:
                   name: dataserver-api
-#                  number: 8080

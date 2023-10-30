@@ -21,7 +21,6 @@ spec:
         image: uniuu/zotprime-memcached:v2.7.0
         resources:
           limits:
-#            cpu: 200m
             memory: 2000Mi
           requests:
             cpu: 200m
@@ -33,8 +32,4 @@ spec:
           - -m 2047
           - -I 50M
       priorityClassName: high-priority
-#      - name: memcached-exporter
-#        image: prom/memcached-exporter
-#        ports:
-#          - containerPort: 9150
-#            protocol: TCP
+

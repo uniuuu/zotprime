@@ -5,11 +5,3 @@ metadata:
   namespace: zotprime
 spec:
   timeoutSec: 3600
-#  healthCheck:
-#    checkIntervalSec: 30
-#    timeoutSec: 20
-#    healthyThreshold: 1
-#    unhealthyThreshold: 3
-#    type: HTTP
-#    requestPath: /health
-#    port: 81
