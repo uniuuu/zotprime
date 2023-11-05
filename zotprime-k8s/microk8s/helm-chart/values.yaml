@@ -95,7 +95,7 @@ phpmyadmin:
   type: ClusterIP
 pvc:
   dataminio:
-    storageClass: standard-rwo
+    storageClass: microk8s-hostpath
     storageRequest: 10Gi
 redis:
   ports:
