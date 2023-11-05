@@ -58,7 +58,7 @@ jobs:
       - name: Checkout submodules
         run: |
           git submodule update --init --recursive --remote client/zotero-client
-          git add .
-          git commit -m 'Github Actions Update Submodule client/zotero-client'
+          git add -A
+          git diff-index --quiet HEAD || git commit -m 'Github Actions Update Submodule client/zotero-client'
           git push origin development
     
