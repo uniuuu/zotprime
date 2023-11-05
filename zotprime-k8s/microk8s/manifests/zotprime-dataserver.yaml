@@ -14,6 +14,7 @@ data:
     aws --endpoint-url "http://minio:9000" s3 mb s3://zotero
     aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext
     aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero
+
 ---
 apiVersion: v1
 kind: Service
@@ -22,19 +23,19 @@ metadata:
     apps: dataserver
   name: dataserver
   namespace: zotprime
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   ports:
     - name: dataserver-api
       port: 80
       targetPort: 80
-#    - name: s3
-#      port: 8082
-#      targetPort: 8082
   selector:
     apps: zotprime-dataserver
   type: ClusterIP
 status:
   loadBalancer: {}
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -61,7 +62,6 @@ spec:
           name: zotprime-dataserver
           ports:
             - containerPort: 80
-#            - containerPort: 8082
           env:
             - name: DSURI
               value: http://api.projectdev.net/
@@ -77,7 +77,6 @@ spec:
               port: 80
             initialDelaySeconds: 160
             periodSeconds: 30
-#            timeoutSeconds: 5
           readinessProbe:
             failureThreshold: 3
             initialDelaySeconds: 150
@@ -90,7 +89,6 @@ spec:
           resources:
             limits:
               memory: 512Mi
-#              cpu: "0.3"
             requests:
               memory: 512Mi
               cpu: "1"

@@ -21,7 +21,6 @@ metadata:
   name: zotprime-elasticsearch
   namespace: zotprime
   labels:
-#    component: elasticsearch
     apps: zotprime-elasticsearch
 spec:
   selector:
@@ -32,7 +31,6 @@ spec:
   template:
     metadata:
       labels:
-#        component: elasticsearch
         apps: zotprime-elasticsearch
     spec:
       initContainers:
@@ -60,45 +58,19 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-#        - name: NODE_NAME
-#          valueFrom:
-#            fieldRef:
-#              fieldPath: metadata.name
-#        - name: NUMBER_OF_MASTERS
-#          value: "2"
-#        - name: NODE_MASTER
-#          value: "true"
-#        - name: NODE_INGEST
-#          value: "false"
-#        - name: NODE_DATA
-#          value: "false"
-#        - name: HTTP_ENABLE
-#          value: "false"
-#        - name: ES_JAVA_OPTS
-#          value: -Xms256m -Xmx256m
         - name: PROCESSORS
           valueFrom:
             resourceFieldRef:
               resource: limits.cpu
         resources:
           limits:
-#            cpu: "0.5"
-#            cpu: "1"
-#            memory: 2Gi
             memory: 2Gi
           requests:
             cpu: "1"
-#            cpu: "0.25"
-#            memory: 1500Mi
             memory: 2Gi
         ports:
         - containerPort: 9300
           name: transport
-#        livenessProbe:
-#          tcpSocket:
-#            port: transport
-#          initialDelaySeconds: 120
-#          periodSeconds: 10
         volumeMounts:
         - name: dataes
           mountPath: /data
@@ -107,7 +79,6 @@ spec:
   - metadata:
       name: dataes
     spec:
-#      storageClassName: standard
       accessModes: [ ReadWriteOnce ]
       resources:
         requests:

@@ -1,5 +1,5 @@
+
 ---
-# Source: localstack/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,16 +7,11 @@ metadata:
   namespace: "zotprime"
   labels:
     apps: localstack
-#  annotations:
-    
 spec:
-#  type: NodePort
-#  externalTrafficPolicy: ""
   ports:
     - name: "localstack-sns"
       port: 4575
       targetPort: "sns-4575"
-#      nodePort: 31566
     - name: "localstack-sqs"
       port: 4576
       targetPort: "sqs-4576"
@@ -27,7 +22,6 @@ spec:
     apps: zotprime-localstack
 
 ---
-# Source: localstack/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,8 +29,6 @@ metadata:
   namespace: "zotprime"
   labels:
     apps: zotprime-localstack
-#  annotations:
-    
 spec:
   replicas: 1
   strategy:
@@ -44,13 +36,11 @@ spec:
   selector:
     matchLabels:
       apps: zotprime-localstack
-      
   template:
     metadata:
       labels:
         apps: zotprime-localstack
     spec:
-#      serviceAccountName: localstack
       securityContext:
         {}
       containers:
@@ -222,28 +212,9 @@ spec:
             - name: "ext-svc-4559"
               containerPort: 4559
               protocol: TCP
-#          livenessProbe:
-#            failureThreshold: 3
-#            initialDelaySeconds: 0
-#            periodSeconds: 10
-#            successThreshold: 1
-#            timeoutSeconds: 1
-#            httpGet:
-#              path: /_localstack/health
-#              port: edge
-#          readinessProbe:
-#            failureThreshold: 3
-#            initialDelaySeconds: 0
-#            periodSeconds: 10
-#            successThreshold: 1
-#            timeoutSeconds: 1
-#            httpGet:
-#              path: /_localstack/health
-#              port: edge
           resources:
             limits:
               memory: 256Mi
-#              cpu: "0.1"
             requests:
               memory: 256Mi
               cpu: "0.2"
@@ -252,22 +223,9 @@ spec:
               value: "sns,sqs,apigateway"
             - name: DEBUG
               value: "0"
-#            - name: EXTERNAL_SERVICE_PORTS_START
-#              value: "4510"
-#            - name: EXTERNAL_SERVICE_PORTS_END
-#              value: "4560"
             - name: LOCALSTACK_K8S_SERVICE_NAME
               value: localstack
             - name: LOCALSTACK_K8S_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-#            - name: LAMBDA_RUNTIME_EXECUTOR
-#              value: "docker"
-#            - name: LAMBDA_K8S_IMAGE_PREFIX
-#              value: "localstack/lambda-"
-#            - name: LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT
-#              value: "60"
-#            - name: OVERRIDE_IN_DOCKER
-#              value: "1"
-#      volumes:

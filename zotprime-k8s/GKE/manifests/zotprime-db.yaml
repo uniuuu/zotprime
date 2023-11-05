@@ -6,8 +6,6 @@ metadata:
   name: db-secret
   namespace: zotprime
 type: Opaque
-
-
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -36,9 +34,6 @@ spec:
   selector:
     apps: zotprime-db
   clusterIP: None
-#  publishNotReadyAddresses: True
-
-
 ---
 apiVersion: apps/v1
 kind: StatefulSet

@@ -14,8 +14,6 @@ data:
     aws --endpoint-url "http://minio:9000" s3 mb s3://zotero
     aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext
     aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero
-
-
 ---
 apiVersion: v1
 kind: Service
@@ -24,6 +22,8 @@ metadata:
     apps: dataserver
   name: dataserver
   namespace: zotprime
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
 spec:
@@ -39,8 +39,6 @@ spec:
   type: ClusterIP
 status:
   loadBalancer: {}
-
-
 ---
 apiVersion: apps/v1
 kind: Deployment
