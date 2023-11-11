@@ -115,7 +115,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
     command: server /data --console-address ":9001"
     ports:
-#      - "9000:9000"
+      - "9000:9000"
 #      - "8082:9000"
       - "9001:9001"
     volumes:
@@ -157,7 +157,7 @@ services:
 #      - "zotero-fulltext.localhost:127.0.0.1"
     ports:
       - "8080:80"
-      - "8082:8082"
+#      - "8082:8082"
 #      - "9000:9000"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
