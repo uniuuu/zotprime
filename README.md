@@ -70,17 +70,16 @@ $ cd ..
 
 ## GKE Installation
 *Clone the repository:*
-*Run*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone https://github.com/uniuuu/zotprime.git
 $ git checkout production  
 $ cd zotprime
 ```
-*Install Google Cloud SDK: https://cloud.google.com/sdk/docs/install*  
-*Install Terraform: https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli*  
-*Install Kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/*  
-*Install Helm: https://helm.sh/docs/intro/install/*  
+**Install Google Cloud SDK: https://cloud.google.com/sdk/docs/install**  
+**Install Terraform: https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli**  
+**Install Kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/**  
+**Install Helm: https://helm.sh/docs/intro/install/**  
 *Run*:
 ```bash
 $ gcloud init
@@ -90,6 +89,7 @@ $ gcloud projects add-iam-policy-binding <PROJECT_ID> --member="serviceAccount:N
 ```
 - <PROJECT_ID> is name of your project ID  
 - NAME@PROJECT_ID.iam.gserviceaccount.com is email ID of service account  
+*Run*:
 ```bash
 $ cd ./zotprime-k8s/GKE/terraform
 $ gcloud iam service-accounts keys create cred.json --iam-account=NAME@PROJECT_ID.iam.gserviceaccount.com
@@ -99,6 +99,7 @@ $ gcloud services enable cloudresourcemanager.googleapis.com
 $ cp terraform.tfvars_example terraform.tfvars
 ```
 **Edit terraform.tfvars and change project_id, region, zones, node-locations, minnode, maxnode, disksize, machine**  
+*Run*:
 ```bash
 $ terraform init
 $ terraform fmt && terraform validate && terraform plan
@@ -106,12 +107,13 @@ $ terraform apply
 $ gcloud container clusters get-credentials zotprime-k8s-prod
 $ cd ..
 ```
-**Check cluster and install Zotprime Helm Chart**
+**Check cluster and install Zotprime Helm Chart**  
+*Run*:
 ```bash
 $ kubectl config get-contexts
 $ kubectl get all --all-namespaces
 ```
-**Edit ./helm-chart/values.yaml and change dsuri:, s3Pointuri:, api:, streamserver:, minios3Data:, phpmyadmin:, minios3Web: .**    
+**Edit ./helm-chart/values.yaml and change dsuri:, s3Pointuri:, api:, streamserver:, minios3Data:, phpmyadmin:, minios3Web: .**  
 Replace to your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointuri:**, **minios3Data:**), Stream Server (**streamserver:**), Phpmyadmin (**phpmyadmin:**) and S3 Minio Web (**minios3Web:**):  
 - dsuri: http://api-any.yourhostname.io/  
 - s3Pointuri: s3-any.yourhostname.io  
@@ -120,6 +122,7 @@ Replace to your hostnames api (**dsuri:**, **api:**), S3 Minio Data (**s3Pointur
 - minios3Data: s3-any.yourhostname.io  
 - phpmyadmin: phpmyadmin-any.yourhostname.io  
 - minios3Web: minioweb-any.yourhostname.io  
+*Run*:
 ```bash
 $ kubectl create namespace zotprime
 $ helm install zotprime-k8s helm-chart --namespace zotprime
@@ -127,6 +130,7 @@ $ kubectl get -A cm,secrets,deploy,rs,sts,pod,pvc,svc,ing
 ```
 *Obtain Ingress IP's and setup A records in DNS hosting*:  
 Wait while GCP will provision IP's verify with below command output in ADDRESS column  
+*Run*:
 ```bash
 $ kubectl get -A ing
 ```
@@ -150,17 +154,15 @@ $ kubectl get -A ing
 
 ## MicroK8s Installation
 *Clone the repository:*
-*Run*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone https://github.com/uniuuu/zotprime.git
 $ git checkout production  
 ```
-*Install Microk8s: https://microk8s.io/docs/getting-started*  
-*Install Kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/*  
-*Install Helm: https://helm.sh/docs/intro/install/* 
-**Install microk8s modules**
-*Run*:
+**Install Microk8s: https://microk8s.io/docs/getting-started**  
+**Install Kubectl: https://kubernetes.io/docs/tasks/tools/install-kubectl/**  
+**Install Helm: https://helm.sh/docs/intro/install/**  
+*Install microk8s modules:*
 ```bash
 microk8s enable hostpath-storage
 microk8s enable helm
@@ -168,32 +170,34 @@ microk8s enable registry
 microk8s enable dns
 microk8s enable ingress
 ```
-**Enable metallb based on guide https://microk8s.io/docs/addon-metallb. Use available IP range from your LAN.**
+**Enable metallb based on guide https://microk8s.io/docs/addon-metallb. Use available IP range from your LAN.**  
 *Run*:
 ```bash
 microk8s enable metallb:<IP-range>
 ```
-**Check cluster and install Zotprime Helm Chart**
+**Check cluster**    
 *Run*:
 ```bash
 $ kubectl config get-contexts
 $ kubectl get all --all-namespaces
 ```
-**Edit /etc/hosts on your server that runs microk8s and add:**    
- 
-**Build and push images to microk8s registry**
+**Build and push images to Microk8s registry**  
+*Run*:
 ```bash
 $ cd zotprime/microk8s/scripts
 $ ./buildimages.sh
 $ ./pushimages.sh
 ```
+**Install Zotprime Helm Chart**  
+*Run*:
 ```bash
 $ cd ../
 $ kubectl create namespace zotprime
 $ helm install zotprime-k8s helm-chart --namespace zotprime
 $ kubectl get -A cm,secrets,deploy,rs,sts,pod,pvc,svc,ing
 ```
-*Obtain Ingress IP's and setup A records in all DNS servers in client server LAN*:  
+**Obtain Ingress IP's and setup A records in all DNS servers (or add in /etc/hosts) in client and server LAN** 
+*Run*:
 ```bash
 $ kubectl get -A ing
 ```
@@ -225,7 +229,7 @@ $ kubectl get -A ing
   HOST_ST=ws://localhost:8081/
 ```
 - For VM Installation arguments are:
-  ```
+```
   HOST_DS=http://<VM IP Address>:8080/
   HOST_ST=ws://<VM IP Address:8081/
 ```
@@ -234,13 +238,18 @@ $ kubectl get -A ing
   HOST_DS=http://api-any.yourhostname.io/
   HOST_ST=ws://stream-any.yourhostname.io/
 ```
-- For Argument MLW=[w|l]: w=Windows, l=Linux  
+- For Microk8s Installation arguments are:
+```
+  HOST_DS=http://api.zotprime/
+  HOST_ST=ws://stream.zotprime/
+```
+- Edit argument MLW=[w|l]: w=Windows, l=Linux  
 
-Replace arguments in the respective command below and run it:  
+*Replace respective arguments in the command below and run it*:  
 ```bash
 $ DOCKER_BUILDKIT=1 docker build --progress=plain --file client.Dockerfile \
-      --build-arg HOST_DS=http://localhost:8080/ \
-      --build-arg HOST_ST=ws://localhost:8081/ \
+      --build-arg HOST_DS=http://<input argument>:8080/ \
+      --build-arg HOST_ST=ws://<input argument>:8081/ \
       --build-arg MLW=l --output build .
 ```
 *Run client*:
@@ -262,7 +271,6 @@ $ ./fetch_xulrunner.sh -p m
 $ ./fetch_pdftools
 $ ./scripts/dir_build -p m
 ```
-
 *Run client*:
 ```bash
 $ ./staging/Zotero_VERSION/zotero
