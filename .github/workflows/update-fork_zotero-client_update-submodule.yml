@@ -12,18 +12,32 @@ jobs:
     runs-on: ubuntu-latest
     name: Check upstream latest commits
     steps:
-    - name: Checkout main
+    - name: Checkout 6.0
       uses: actions/checkout@v4
       with:
         repository: uniuuu/zotero
         token: ${{ secrets.API_TOKEN_GITHUB }}
     - name: Fetch upstream changes
       id: sync
-      uses: ivanmilov/upstream_check_new_commits@v1
-      with:
-        upstream_repository: zotero/zotero
-        upstream_branch: main
-        target_branch: main
+      run: |
+        git remote add upstream https://github.com/zotero/zotero
+        git fetch --all
+        git pull upstream/6.0 6.0
+        git push origin 6.0
+
+#      uses: ivanmilov/upstream_check_new_commits@v1
+#      with:
+#        upstream_repository: zotero/zotero
+#        upstream_branch: 6.0
+#        target_branch: 6.0
+
+#      uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+#      with:
+#        target_sync_branch: 6.0
+#        target_repo_token: ${{ secrets.API_TOKEN_GITHUB }}
+#        upstream_sync_branch: 6.0
+#        upstream_sync_repo: zotero/zotero
+
 
     outputs:
       newcommit: ${{ steps.sync.outputs.has_new_commits }}
@@ -57,7 +71,7 @@ jobs:
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
-          git submodule update --init --recursive --remote client/zotero-client
+          git submodule update --init --remote client/zotero-client
           git add -A
           git diff-index --quiet HEAD || git commit -m 'Github Actions Update Submodule client/zotero-client'
           git push origin development
