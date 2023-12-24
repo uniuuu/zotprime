@@ -12,9 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Check upstream latest commits
     steps:
-    - name: Checkout 6.0
+    - name: Checkout
       uses: actions/checkout@v4
       with:
+        ref: 6.0
         repository: uniuuu/zotero
         token: ${{ secrets.API_TOKEN_GITHUB }}
     - name: Fetch upstream changes
@@ -23,7 +24,6 @@ jobs:
         git config pull.rebase true
         git remote add upstream https://github.com/zotero/zotero
         git fetch --all
-        git checkout origin/6.0
         git pull upstream 6.0
         git push origin 6.0
 
