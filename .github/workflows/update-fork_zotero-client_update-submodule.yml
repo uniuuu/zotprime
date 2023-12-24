@@ -27,7 +27,7 @@ jobs:
 
       uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
       with:
-        target_sync_branch: '6.0'
+        target_sync_branch: "6.0"
         target_repo_token: ${{ secrets.API_TOKEN_GITHUB }}
         upstream_sync_branch: 6.0
         upstream_sync_repo: zotero/zotero
