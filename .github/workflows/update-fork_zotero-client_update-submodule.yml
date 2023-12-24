@@ -22,8 +22,8 @@ jobs:
       uses: ivanmilov/upstream_check_new_commits@v1
       with:
         upstream_repository: zotero/zotero
-        upstream_branch: 6.0
-        target_branch: 6.0
+        upstream_branch: '6.0'
+        target_branch: '6.0'
 
     outputs:
       newcommit: ${{ steps.sync.outputs.has_new_commits }}
