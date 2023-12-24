@@ -19,11 +19,19 @@ jobs:
         token: ${{ secrets.API_TOKEN_GITHUB }}
     - name: Fetch upstream changes
       id: sync
-      uses: ivanmilov/upstream_check_new_commits@v1
+#      uses: ivanmilov/upstream_check_new_commits@v1
+#      with:
+#        upstream_repository: zotero/zotero
+#        upstream_branch: 6.0
+#        target_branch: 6.0
+
+      uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
       with:
-        upstream_repository: zotero/zotero
-        upstream_branch: 6\.0
-        target_branch: 6\.0
+        target_sync_branch: 6.0
+        target_repo_token: ${{ secrets.API_TOKEN_GITHUB }}
+        upstream_sync_branch: 6.0
+        upstream_sync_repo: zotero/zotero
+
 
     outputs:
       newcommit: ${{ steps.sync.outputs.has_new_commits }}
