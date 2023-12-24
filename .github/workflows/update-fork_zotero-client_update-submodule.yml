@@ -21,8 +21,8 @@ jobs:
       id: sync
       run: |
         git remote add upstream https://github.com/zotero/zotero
-        git fetch --all
-        git pull upstream/6.0 6.0
+#        git fetch --all
+        git pull upstream 6.0
         git push origin 6.0
 
 #      uses: ivanmilov/upstream_check_new_commits@v1
