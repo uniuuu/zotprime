@@ -19,18 +19,23 @@ jobs:
         token: ${{ secrets.API_TOKEN_GITHUB }}
     - name: Fetch upstream changes
       id: sync
+      run: |
+        git remote add upstream https://github.com/zotero/zotero
+        git pull upstream/6.0 6.0
+        git push origin 6.0
+
 #      uses: ivanmilov/upstream_check_new_commits@v1
 #      with:
 #        upstream_repository: zotero/zotero
 #        upstream_branch: 6.0
 #        target_branch: 6.0
 
-      uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
-      with:
-        target_sync_branch: "6.0"
-        target_repo_token: ${{ secrets.API_TOKEN_GITHUB }}
-        upstream_sync_branch: 6.0
-        upstream_sync_repo: zotero/zotero
+#      uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+#      with:
+#        target_sync_branch: 6.0
+#        target_repo_token: ${{ secrets.API_TOKEN_GITHUB }}
+#        upstream_sync_branch: 6.0
+#        upstream_sync_repo: zotero/zotero
 
 
     outputs:
