@@ -21,8 +21,9 @@ jobs:
       id: sync
       run: |
         git config pull.rebase true
-        git checkout 6.0
         git remote add upstream https://github.com/zotero/zotero
+        git fetch --all
+        git checkout 6.0
         git pull upstream 6.0
         git push origin 6.0
 
