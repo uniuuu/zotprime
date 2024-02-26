@@ -28,10 +28,17 @@ echo "INSERT INTO shards VALUES (2, 1, 'zotero_shard_2', 'up', '1');" | $MYSQL z
 echo "INSERT INTO libraries VALUES (1, 'user', '0000-00-00 00:00:00', 0, 1, 0)" | $MYSQL zotero_master
 echo "INSERT INTO libraries VALUES (2, 'group', '0000-00-00 00:00:00', 0, 1, 0)" | $MYSQL zotero_master
 echo "INSERT INTO users VALUES (1, 1, 'admin')" | $MYSQL zotero_master
-echo "INSERT INTO keys (keyID, key, userID, name) VALUES (1, MD5('admin'), 'admin@zotero.org', )" | $MYSQL zotero_master
-
+# echo "INSERT INTO \`keys\` (userID, \`key\`, name) VALUES (1, 'admin', 'admin@zotero.org')" | $MYSQL zotero_master
 echo "INSERT INTO \`groups\` VALUES (1, 2, 'Shared', 'shared', 'Private', 'admins', 'all', 'members', '', '', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 1) " | $MYSQL zotero_master
 echo "INSERT INTO groupUsers VALUES (1, 1, 'owner', '0000-00-00 00:00:00', '0000-00-00 00:00:00')" | $MYSQL zotero_master
+
+# Load in www schema
+$MYSQL zotero_www < $SCRIPTS_DIR/www.sql
+
+echo "INSERT INTO users VALUES (1, 'admin', MD5('admin'), 'normal')" | $MYSQL zotero_www
+echo "INSERT INTO users_email (userID, email) VALUES (1, 'admin@zotero.org')" | $MYSQL zotero_www
+echo "INSERT INTO storage_institutions (institutionID, domain, storageQuota) VALUES (1, 'zotero.org', 10000)" | $MYSQL zotero_www
+echo "INSERT INTO storage_institution_email (institutionID, email) VALUES (1, 'contact@zotero.org')" | $MYSQL zotero_www
 
 # Load in shard schema
 cat /var/www/zotero/misc/shard.sql | $MYSQL zotero_shard_1
