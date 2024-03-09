@@ -6,12 +6,12 @@ MYSQL="mysql -h mysql -P 3306 -u root"
 # ${2} password
 
 if [ $($MYSQL -s -N zotero_www -e "SELECT count(*) FROM users WHERE username='${1}'") != 0 ]; then
-        echo 'The username is used. Try another.'
+        echo "The username ${1} is already used. Try another one."
         exit 1
 fi
 
 if [ $($MYSQL -s -N zotero_www -e "SELECT count(*) FROM users_email WHERE email='${2}'") != 0 ]; then
-        echo 'The email is used. Try another.'
+        echo "The email ${2} is already used. Try another one."
         exit 1
 fi
 
