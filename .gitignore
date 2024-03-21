@@ -9,3 +9,4 @@ logs
 docker-compose-test.yml
 **/cred.json
 .vscode/
+!/.idea/
