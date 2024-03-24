@@ -3,7 +3,7 @@ ARG ZOTPRIME_VERSION=2
 RUN set -eux; \
         apk update && apk upgrade --available; \
         apk add --update --no-cache \
-        apache2 \   
+        apache2 \
         apache2-utils \
         aws-cli \
         bash \
@@ -70,6 +70,7 @@ RUN set -eux; \
         unzip \
         uwsgi \
         wget \
+        && ln -s /usr/bin/php81 /usr/bin/php \
         && rm -vrf /var/cache/apk/*
 
 FROM stage1 AS stage2
