@@ -19,7 +19,8 @@ RUN git submodule update --init client/zotero-client
 
 WORKDIR /usr/src/app/client/zotero-client
 #RUN git checkout tags/6.0.26 -b v6.0.26
-RUN git checkout 6.0
+#RUN git checkout 6.0
+RUN git checkout main
 RUN rm -rf *
 RUN git checkout -- .
 RUN git submodule update --init --recursive
