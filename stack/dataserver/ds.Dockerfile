@@ -1,4 +1,4 @@
-FROM alpine:3 as stage1
+FROM alpine:3.17 as stage1
 ARG ZOTPRIME_VERSION=2
 RUN set -eux; \
         apk update && apk upgrade --available; \
