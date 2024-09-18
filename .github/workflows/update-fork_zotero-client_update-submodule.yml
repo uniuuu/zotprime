@@ -15,23 +15,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        ref: origin/6.0
+        # ref: origin/6.0
         repository: uniuuu/zotero
         token: ${{ secrets.API_TOKEN_GITHUB }}
     - name: Fetch upstream changes
       id: sync
-      run: |
-        git config pull.rebase true
-        git remote add upstream https://github.com/zotero/zotero
-        git fetch --all
-        git pull upstream 6.0
-        git push origin 6.0
+      # run: |
+      #   git config pull.rebase true
+      #   git remote add upstream https://github.com/zotero/zotero
+      #   git fetch --all
+      #   git pull upstream 6.0
+      #   git push origin 6.0
 
-#      uses: ivanmilov/upstream_check_new_commits@v1
-#      with:
-#        upstream_repository: zotero/zotero
-#        upstream_branch: 6.0
-#        target_branch: 6.0
+      uses: ivanmilov/upstream_check_new_commits@v1
+      with:
+        upstream_repository: zotero/zotero
+        upstream_branch: main
+        target_branch: main
 
 #      uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
 #      with:
