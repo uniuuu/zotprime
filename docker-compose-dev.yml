@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   zotprime-db:
     image: "uniuu/zotprime-db:${VER}"
