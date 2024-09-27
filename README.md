@@ -12,7 +12,7 @@ Table of contents
 
 ## Localhost and VM installation
 Localhost installation is for setup when server and client will run on the same computer.  
-VM (virtual machine) installation is for setup when server and clinet are on different hosts. I.e. server is in VM and client is running on another computer.
+VM (virtual machine) installation is for setup when server and client are on different hosts. I.e. server is in VM and client is running on another computer.
 
 ### Dependencies and source code
 *Install latest docker compose plugin*:
