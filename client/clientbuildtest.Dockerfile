@@ -1,10 +1,25 @@
 
-FROM node:16-alpine as intermediate
+FROM node:20-alpine AS intermediate
 ARG ZOTPRIME_VERSION=2
 
 RUN set -eux; \ 
     apk update && apk upgrade && \
-    apk add --update --no-cache git bash curl python3 zip perl rsync \
+    apk add --update --no-cache \
+    git \
+    git-lfs \
+    grep \
+    bash \
+    coreutils \
+    curl \
+    ncurses \
+    openssl \
+    perl \
+    python3 \
+    rsync \
+    tar \
+    xz \
+    zip \
+    7zip \
     && rm -rf /var/cache/apk/*
 WORKDIR /usr/src/app
 RUN mkdir client
@@ -14,6 +29,8 @@ RUN git remote add -f origin https://github.com/uniuuu/zotprime
 RUN echo "client/" >> .git/info/sparse-checkout
 RUN git pull origin development
 RUN git submodule update --init --recursive
+WORKDIR /usr/src/app/client/zotero-client
+RUN git lfs pull 
 WORKDIR /usr/src/app/client/
 RUN set -eux; \
     sed -i "s#'http://zotero.org/'#'http://localhost:8080/'#g" zotero-client/resource/config.js; \ 
@@ -30,14 +47,9 @@ RUN set -eux; \
     npm install
 RUN set -eux; \
     npm run build
-WORKDIR /usr/src/app/client/zotero-standalone-build
 RUN set -eux; \
-    ./fetch_xulrunner.sh -p l
-RUN set -eux; \
-    ./fetch_pdftools
-RUN set -eux; \
-    ./scripts/dir_build -p l
+    app/scripts/dir_build -p l
 
 
 FROM scratch AS export-stage
-COPY --from=intermediate /usr/src/app/client/zotero-standalone-build/staging/* .
+COPY --from=intermediate /usr/src/app/client/zotero-client/app/staging/* .

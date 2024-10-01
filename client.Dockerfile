@@ -1,47 +1,24 @@
-
-FROM node:16-alpine as intermediate
 ARG ZOTPRIME_VERSION=2
-
+FROM node:20-alpine AS stage-1
 RUN set -eux; \ 
     apk update && apk upgrade && \
-    apk add --update --no-cache git bash curl python3 zip perl rsync 7zip \
-#    python2 \
-#    util-linux \
+    apk add --update --no-cache \
+    git \
+    git-lfs \
     && rm -rf /var/cache/apk/*
 WORKDIR /usr/src/app
-COPY . .
-
-RUN git submodule update --init client/zotero-build
-RUN git submodule update --init client/zotero-standalone-build
-RUN git submodule update --init client/zotero-client
-
-
+COPY .git .git
+COPY client client
 
 WORKDIR /usr/src/app/client/zotero-client
-#RUN git checkout tags/6.0.26 -b v6.0.26
-#RUN git checkout 6.0
-RUN git checkout main
-RUN rm -rf *
-RUN git checkout -- .
+#RUN git checkout tags/7.0.6 -b v7.0.6
+#RUN git checkout 7.0.6-hotfix
+# RUN git checkout main
+# RUN rm -rf *
+# RUN git checkout -- .
 RUN git submodule update --init --recursive
-
-WORKDIR /usr/src/app/client/zotero-standalone-build 
-#RUN git checkout tags/6.0.23 -b v6.0.23
-#RUN rm -rf *
-#RUN git checkout -- .
-RUN git submodule update --init --recursive
-
-WORKDIR /usr/src/app/client/zotero-build 
-#RUN git checkout 00e854c6588f329b714250e450f4f7f663aa0222
-RUN git checkout tags/apr20 -b v_apr20
-RUN git status
-RUN git submodule update --init --recursive
-
-#WORKDIR /usr/src/app
-
-#RUN git submodule update --init --recursive client/zotero-build
-#RUN git submodule update --init --recursive client/zotero-standalone-build
-#RUN git submodule update --init --recursive client/zotero-client
+RUN git lfs pull
+RUN git submodule foreach git lfs pull
 
 WORKDIR /usr/src/app/client/
 #ARG CONFIG=config.sh
@@ -53,21 +30,53 @@ RUN set -eux; \
         sed -i "s#https://www.zotero.org/#$HOST_DS#g" zotero-client/resource/config.js; \
         sed -i "s#https://zoteroproxycheck.s3.amazonaws.com/test##g" zotero-client/resource/config.js
 #    ./$CONFIG
+
+FROM node:20-alpine AS stage-2
+
+RUN set -eux; \ 
+    apk update && apk upgrade && \
+    apk add --update --no-cache \
+    file \
+    git \
+    git-lfs \
+    grep \
+    bash \
+    coreutils \
+    curl \
+    ncurses \
+    openssl \
+    perl \
+    python3 \
+    rsync \
+#    util-linux \
+    tar \
+    xz \
+    zip \
+    7zip \
+    && rm -rf /var/cache/apk/*
+WORKDIR /usr/src/app
+
+COPY --from=stage-1 /usr/src/app .
+
+RUN ls -lha
+
 WORKDIR /usr/src/app/client/zotero-client
+
+RUN ls -lha
+
 #RUN set -eux; \
 #     npx browserslist@latest --update-db --legacy-peer-deps
+
 ARG MLW=l
+
 RUN set -eux; \
-    npm install --legacy-peer-deps
+    npm i
+
 RUN set -eux; \
-    npm run build
-WORKDIR /usr/src/app/client/zotero-standalone-build
+     npm run build
+
 RUN set -eux; \
-    /bin/bash -c "./fetch_xulrunner.sh -p $MLW"
-RUN set -eux; \
-    ./fetch_pdftools
-RUN set -eux; \
-    ./scripts/dir_build -p $MLW
+     app/scripts/dir_build -p $MLW
 
 FROM scratch AS export-stage
-COPY --from=intermediate /usr/src/app/client/zotero-standalone-build/staging .
+COPY --from=stage-2 /usr/src/app/client/zotero-client/app/staging .
