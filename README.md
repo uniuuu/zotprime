@@ -257,7 +257,11 @@ $ DOCKER_BUILDKIT=1 docker build --progress=plain --file client.Dockerfile \
 $ ./build/staging/Zotero_VERSION/zotero(.exe))
 ```
 ### Client build from Mac
-For [m|l|w]: m=Mac, l=Linux, w=Windows  
+For [m]: m=Mac  
+*Install Git and Git LFS.*
+```bash
+sudo port install git-lfs
+```
 *Run*:
 ```bash
 $ git submodule update --init --recursive
@@ -266,10 +270,7 @@ $ ./config.sh
 $ cd zotero-client
 $ npm install
 $ npm run build
-$ cd ../zotero-standalone-build
-$ ./fetch_xulrunner.sh -p m
-$ ./fetch_pdftools
-$ ./scripts/dir_build -p m
+$ app/scripts/dir_build -p m
 ```
 *Run client*:
 ```bash
