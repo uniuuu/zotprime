@@ -11,11 +11,11 @@ COPY .git .git
 COPY client client
 
 WORKDIR /usr/src/app/client/zotero-client
-#RUN git checkout tags/7.0.6 -b v7.0.6
+RUN git checkout tags/7.0.6 -b v7.0.6
 #RUN git checkout 7.0.6-hotfix
 # RUN git checkout main
-# RUN rm -rf *
-# RUN git checkout -- .
+RUN rm -rf *
+RUN git checkout -- .
 RUN git submodule update --init --recursive
 RUN git lfs pull
 RUN git submodule foreach git lfs pull
