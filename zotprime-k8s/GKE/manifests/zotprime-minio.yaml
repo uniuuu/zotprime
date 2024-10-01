@@ -84,7 +84,7 @@ spec:
     spec:
       containers:
         - name: zotprime-minio
-          image: uniuu/zotprime-minio:v2.7.0
+          image: uniuu/zotprime-minio:v2.8.0
           imagePullPolicy: Always
           resources:
             limits:
@@ -131,7 +131,7 @@ spec:
               mountPath: "/tmp/_key"
               readOnly: true
         - name: zotprime-miniomc
-          image: uniuu/zotprime-miniomc:v2.7.0
+          image: uniuu/zotprime-miniomc:v2.8.0
           resources:
             limits:
               memory: 256Mi

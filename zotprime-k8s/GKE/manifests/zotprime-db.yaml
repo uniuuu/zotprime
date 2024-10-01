@@ -68,7 +68,7 @@ spec:
           mountPath: /var/lib/mysql 
       containers:
       - name: mariadb
-        image: uniuu/zotprime-db:v2.7.0
+        image: uniuu/zotprime-db:v2.8.0
         ports:
         - containerPort: 3306
           name: mariadb-port

@@ -12,7 +12,7 @@ Table of contents
 
 ## Localhost and VM installation
 Localhost installation is for setup when server and client will run on the same computer.  
-VM (virtual machine) installation is for setup when server and clinet are on different hosts. I.e. server is in VM and client is running on another computer.
+VM (virtual machine) installation is for setup when server and client are on different hosts. I.e. server is in VM and client is running on another computer.
 
 ### Dependencies and source code
 *Install latest docker compose plugin*:
@@ -23,8 +23,7 @@ $ sudo apt install docker-compose-plugin
 *Clone the repository (with **--recursive**)*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
-$ git clone --recursive https://github.com/uniuuu/zotprime.git
-$ git checkout production   
+$ git clone -b production --recursive --single-branch https://github.com/uniuuu/zotprime.git
 $ cd zotprime
 ```
 *Configure*:
@@ -156,7 +155,7 @@ $ kubectl get -A ing
 *Clone the repository:*
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
-$ git clone https://github.com/uniuuu/zotprime.git
+$ git clone https://github.com/uniuuu/zotprime.git 
 $ git checkout production  
 ```
 **Install Microk8s: https://microk8s.io/docs/getting-started**  
@@ -257,7 +256,11 @@ $ DOCKER_BUILDKIT=1 docker build --progress=plain --file client.Dockerfile \
 $ ./build/staging/Zotero_VERSION/zotero(.exe))
 ```
 ### Client build from Mac
-For [m|l|w]: m=Mac, l=Linux, w=Windows  
+For [m]: m=Mac  
+*Install Git LFS.*
+```bash
+sudo port install git-lfs
+```
 *Run*:
 ```bash
 $ git submodule update --init --recursive
@@ -266,10 +269,7 @@ $ ./config.sh
 $ cd zotero-client
 $ npm install
 $ npm run build
-$ cd ../zotero-standalone-build
-$ ./fetch_xulrunner.sh -p m
-$ ./fetch_pdftools
-$ ./scripts/dir_build -p m
+$ app/scripts/dir_build -p m
 ```
 *Run client*:
 ```bash

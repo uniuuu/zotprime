@@ -45,7 +45,7 @@ spec:
           privileged: true
       containers:
       - name: elasticsearch
-        image: uniuu/zotprime-elasticsearch:v2.7.0
+        image: uniuu/zotprime-elasticsearch:v2.8.0
         env:
         - name: CLUSTER_NAME
           value: zotero
