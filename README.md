@@ -23,8 +23,7 @@ $ sudo apt install docker-compose-plugin
 *Clone the repository (with **--recursive**)*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
-$ git clone --recursive https://github.com/uniuuu/zotprime.git
-$ git checkout production   
+$ git clone -b production --recursive --single-branch https://github.com/uniuuu/zotprime.git
 $ cd zotprime
 ```
 *Configure*:
@@ -156,7 +155,7 @@ $ kubectl get -A ing
 *Clone the repository:*
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
-$ git clone https://github.com/uniuuu/zotprime.git
+$ git clone https://github.com/uniuuu/zotprime.git 
 $ git checkout production  
 ```
 **Install Microk8s: https://microk8s.io/docs/getting-started**  
@@ -258,7 +257,7 @@ $ ./build/staging/Zotero_VERSION/zotero(.exe))
 ```
 ### Client build from Mac
 For [m]: m=Mac  
-*Install Git and Git LFS.*
+*Install Git LFS.*
 ```bash
 sudo port install git-lfs
 ```
