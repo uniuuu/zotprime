@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL="mysql -h mysql -P 3306 -u root"
+MYSQL="mysql -h mysql -P 3306 -u root -pzotero"
 # ${1} owner (username)
 # ${2} group name (low-case alphanumeric text without spaces)
 # ${3} group fullname

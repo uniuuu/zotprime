@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL="mysql -h mysql -P 3306 -u root"
+MYSQL="mysql -h mysql -P 3306 -u root -pzotero"
 # ${1} user name
 # ${2} group name
 
@@ -17,9 +17,9 @@ if [ "$groupID" == "" ]; then
 fi
 
 isMember=$(echo "SELECT count(*) FROM groupUsers WHERE groupID=$groupID AND userID=$userID" | $MYSQL zotero_master -s -N)
-if [ ${isMember} != 0 ]; then
+if [ ${isMember} == 0 ]; then
         # add user to group
-        echo "DELETE FROM groupUsers WHERE groupID=$groupID AND userID=$userID" | $MYSQL zotero_master
+        echo "INSERT INTO groupUsers (groupID, userID, role) VALUES ($groupID, $userID, 'member')" | $MYSQL zotero_master
 fi
 
-echo "User $userID is removed from the group $groupID!"
+echo "User $userID is member of the group $groupID!"

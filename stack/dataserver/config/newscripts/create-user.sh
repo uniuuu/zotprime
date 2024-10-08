@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL="mysql -h mysql -P 3306 -u root"
+MYSQL="mysql -h mysql -P 3306 -u root -pzotero"
 # ${1} username
 # ${2} email
 # ${2} password

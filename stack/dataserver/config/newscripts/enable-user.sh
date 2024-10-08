@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL="mysql -h mysql -P 3306 -u root"
+MYSQL="mysql -h mysql -P 3306 -u root -pzotero"
 # ${1} username
 
 userID=$(echo "SELECT userID FROM users WHERE username='${1}';" | $MYSQL zotero_www -s -N)
