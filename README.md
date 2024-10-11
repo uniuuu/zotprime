@@ -5,14 +5,16 @@ ZotPrime is a fully packaged repository aimed to make on-premise [Zotero](https:
 Table of contents
 =================
 
-  * [Localhost and VM Installation](#localhost-and-vm-installation)
+  * [Docker Installation](#docker-installation)
   * [GKE Installation](#gke-installation)
   * [MicroK8s Installation](#microk8s-installation)
   * [Client Build](#client-build)
 
-## Localhost and VM installation
-Localhost installation is for setup when server and client will run on the same computer.  
-VM (virtual machine) installation is for setup when server and client are on different hosts. I.e. server is in VM and client is running on another computer.
+## Docker Installation
+*Identify your Server IP Address*:
+
+You may install ZotPrime server in baremetal, or in virtual machine, or in your PC host - where you would run client too. For any of these installations you will have to identify your Server IP Address. In baremetal it would be IP address of your network interface connected to LAN. In virtual machine it would be either IP address of your hypervisor's or VMM's virtual network interface that is connected to host computer, or it would be IP address of your host's network interface connected to LAN if you want to expose it to LAN for connecting from other computers to this virtual machine, and you will need to do port forwarding from the host's network interface IP address to virtual network interface IP address for all ports listed below under [Available endpoints](#available-endpoints). If you install both server and client in same PC host then you can use 127.0.0.1 (localhost) as Server IP Address.
+
 
 ### Dependencies and source code
 *Install latest docker compose plugin*:
@@ -20,7 +22,7 @@ VM (virtual machine) installation is for setup when server and client are on dif
 $ sudo apt update
 $ sudo apt install docker-compose-plugin
 ```
-*Clone the repository (with **--recursive**)*:
+*Clone production branch of the repository*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone -b production --recursive --single-branch https://github.com/uniuuu/zotprime.git
@@ -31,13 +33,8 @@ $ cd zotprime
 $ cp .env_example .env
 ```
 **Edit .env and change DSHOST.**  
-For Localhost Installation:
 ```
-DSHOST=http://localhost:8080/ 
-```
-For VM Installation: 
-```
-DSHOST=http://<VM IP Address>:8080/
+DSHOST=http://\<Server IP Address\>:8080/
 ```
 *Run*:
 ```bash
@@ -49,17 +46,17 @@ $ sudo docker compose up -d
 $ ./bin/init.sh
 $ cd ..
 ```
-*Available endpoints*:
+### Available endpoints:
 
 | Name          | URL                                           |
 | ------------- | --------------------------------------------- |
-| Zotero API    | http://localhost:8080 or  http://\<VM IP Address\>:8080/                        |
-| S3            | http://localhost:9000 or http://\<VM IP Address\>:9000/                         |
-| PHPMyAdmin    | http://localhost:8083 or http://\<VM IP Address\>:8083/                         |
-| S3 Web UI     | http://localhost:9001 or http://\<VM IP Address\>:9001/                         |
-| Stream Server | ws://localhost:8081 or ws://\<VM IP Address\>:8081/                         |
+| Zotero API    | http://\<Server IP Address\>:8080/                        |
+| S3            | http://\<Server IP Address\>:9000/                         |
+| PHPMyAdmin    | http://\<Server IP Address\>:8083/                         |
+| S3 Web UI     | http://\<Server IP Address\>:9001/                         |
+| Stream Server | ws://\<Server IP Address\>:8081/                         |
 
-*Default login/password*:
+### Default login/password:
 
 | Name          | Login                    | Password           |
 | ------------- | ------------------------ | ------------------ |
@@ -253,15 +250,10 @@ $ sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/remove-user
 ## Client Build
 ### Client build from Linux
 *Edit and run*:
-- For Localhost Installation argument's are: 
+- For Docker Installation argument's are: 
 ```
-  HOST_DS=http://localhost:8080/
-  HOST_ST=ws://localhost:8081/
-```
-- For VM Installation arguments are:
-```
-  HOST_DS=http://<VM IP Address>:8080/
-  HOST_ST=ws://<VM IP Address:8081/
+  HOST_DS=http://\<Server IP Address\>:8080/
+  HOST_ST=ws://\<Server IP Address\>:8081/
 ```
 - For GKE Installation arguments are:
 ```
