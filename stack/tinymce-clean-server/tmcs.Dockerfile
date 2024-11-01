@@ -1,4 +1,4 @@
-FROM node:7-alpine
+FROM node:8-alpine
 ARG ZOTPRIME_VERSION=2
 
 WORKDIR /usr/src/app
