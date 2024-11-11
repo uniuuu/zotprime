@@ -41,6 +41,7 @@ RUN set -eux; \
     git-lfs \
     grep \
     bash \
+    binutils \
     coreutils \
     curl \
     ncurses \
