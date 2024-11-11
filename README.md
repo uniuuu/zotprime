@@ -35,6 +35,8 @@ $ cp .env_example .env
 **Edit .env and change DSHOST.**  
 ```
 DSHOST=http://\<Server IP Address\>:8080/
+
+S3HOST=http://\<Server IP Address\>:9000/
 ```
 *Run*:
 ```bash
