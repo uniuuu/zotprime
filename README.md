@@ -28,23 +28,19 @@ $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone -b production --recursive --single-branch https://github.com/uniuuu/zotprime.git
 $ cd zotprime
 ```
-*Configure*:
-```bash
-$ cp .env_example .env
-```
-**Edit .env and change DSHOST.**  
-```
-DSHOST=http://\<Server IP Address\>:8080/
-```
+
+### Start server.
 *Run*:
 ```bash
-$ sudo docker compose up -d
+$ ./bin/install.sh
 ```
+*Configure*:
+**When prompted input the IP address of the server**  
+
 ### Initialize databases
 *Initialize databases*:
 ```bash
 $ ./bin/init.sh
-$ cd ..
 ```
 ### Available endpoints:
 
