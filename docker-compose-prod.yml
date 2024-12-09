@@ -69,6 +69,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
+      - miniodata:/data
       - /etc/localtime:/etc/localtime:ro
     networks:
       zotprime:
@@ -153,6 +154,8 @@ services:
         ipv4_address: 10.5.5.11
 volumes:
   dbdata:
+   driver: local
+  miniodata:
    driver: local
 networks:
   zotprime:
