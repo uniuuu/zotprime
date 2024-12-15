@@ -118,6 +118,7 @@ services:
 #      - "8082:9000"
       - "9001:9001"
     volumes:
+      - miniodata:/data
       - /etc/localtime:/etc/localtime:ro
     networks:
       zotprime:
@@ -246,6 +247,8 @@ services:
 
 volumes:
   dbdata:
+   driver: local
+  miniodata:
    driver: local
 
 networks:

@@ -157,6 +157,7 @@ volumes:
    driver: local
   miniodata:
    driver: local
+   
 networks:
   zotprime:
     driver: bridge
