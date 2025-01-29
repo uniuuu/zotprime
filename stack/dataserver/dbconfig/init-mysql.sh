@@ -40,7 +40,7 @@ $MYSQL zotero_www < www.sql
 echo "INSERT INTO users VALUES (1, 'admin', MD5('admin'))" | $MYSQL zotero_www
 echo "INSERT INTO users_email (userID, email) VALUES (1, 'admin@zotero.org')" | $MYSQL zotero_www
 echo "INSERT INTO storage_institutions (institutionID, domain, storageQuota) VALUES (1, 'zotero.org', 10000)" | $MYSQL zotero_www
-echo "INSERT INTO storage_institution_email (institutionID, email) VALUES (1, 'contact@zotero.org')" | $MYSQL zotero_www
+echo "INSERT INTO storage_institution_email (institutionID, email) VALUES (1, 'admin@zotero.org')" | $MYSQL zotero_www
 
 # Load in shard schema
 cat shard.sql | $MYSQL zotero_shard_1
