@@ -131,19 +131,15 @@ COPY dataserver/. /var/www/zotero/
 RUN rm -rf /var/www/zotero/include/Zend
 COPY Zend /var/www/zotero/include/Zend
 COPY config/create-user.sh /var/www/zotero/admin/
-COPY config/newscripts/add-user-group.sh /var/www/zotero/admin/
-COPY config/newscripts/create-group.sh /var/www/zotero/admin/
-COPY config/newscripts/create-user.sh /var/www/zotero/admin/create-user2.sh
-COPY config/newscripts/disable-user.sh /var/www/zotero/admin/
-COPY config/newscripts/enable-user.sh /var/www/zotero/admin/
-COPY config/newscripts/list-groups.sh /var/www/zotero/admin/
-COPY config/newscripts/list-users.sh /var/www/zotero/admin/
-COPY config/newscripts/remove-user-group.sh /var/www/zotero/admin/
+COPY config/list-users.sh /var/www/zotero/admin/
+COPY config/disable-user.sh /var/www/zotero/admin/
+COPY config/enable-user.sh /var/www/zotero/admin/
 COPY config/config.inc.php /var/www/zotero/include/config/
 COPY config/dbconnect.inc.php /var/www/zotero/include/config/
 COPY config/header.inc.php /var/www/zotero/include/
 COPY config/Storage.inc.php /var/www/zotero/model/
 COPY config/FullText.inc.php /var/www/zotero/model/
+COPY config/ApiController.php /var/www/zotero/controllers/
 COPY dbconfig/init-mysql.sh /var/www/zotero/misc/
 COPY dbconfig/db_update.sh /var/www/zotero/misc/
 COPY dbconfig/www.sql /var/www/zotero/misc/

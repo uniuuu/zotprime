@@ -59,6 +59,7 @@ jobs:
         with:
           context: ./stack/dataserver
           file: stack/dataserver/ds.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-dataserver:${{ env.VERSION }}
 
@@ -68,6 +69,7 @@ jobs:
         with:
           context: ./stack/stream-server
           file: stack/stream-server/sts.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-streamserver:${{ env.VERSION }}
 
@@ -77,6 +79,7 @@ jobs:
         with:
           context: ./stack/db
           file: stack/db/db.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-db:${{ env.VERSION }}
 
@@ -86,6 +89,7 @@ jobs:
         with:
           context: ./stack/localstack
           file: stack/localstack/ls.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-localstack:${{ env.VERSION }}
 
@@ -95,6 +99,7 @@ jobs:
         with:
           context: ./stack/memcached
           file: stack/memcached/m.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-memcached:${{ env.VERSION }}
 
@@ -104,6 +109,7 @@ jobs:
         with:
           context: ./stack/elasticsearch
           file: stack/elasticsearch/es.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-elasticsearch:${{ env.VERSION }}
 
@@ -113,6 +119,7 @@ jobs:
         with:
           context: ./stack/minio
           file: stack/minio/minio.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-minio:${{ env.VERSION }}
 
@@ -122,6 +129,7 @@ jobs:
         with:
           context: ./stack/minio
           file: stack/minio/miniomc.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-miniomc:${{ env.VERSION }}
 
@@ -131,6 +139,7 @@ jobs:
         with:
           context: ./stack/phpmyadmin
           file: stack/phpmyadmin/pa.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-phpmyadmin:${{ env.VERSION }}
 
@@ -140,6 +149,7 @@ jobs:
         with:
           context: ./stack/redis
           file: stack/redis/r.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-redis:${{ env.VERSION }}
 
@@ -150,5 +160,6 @@ jobs:
         with:
           context: ./stack/tinymce-clean-server
           file: stack/tinymce-clean-server/tmcs.Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-tinymceclean:${{ env.VERSION }}

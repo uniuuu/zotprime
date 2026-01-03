@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zotprime-db-config
+  namespace: zotprime
+data:
+  mariadb-databasename: "zotprimeprod"
+  mariadb-user: "zotprimeprod"
+  admin-username: "admin"
+  admin-password: "admin"
+  admin-email: "admin@zotero.org"

@@ -10,6 +10,12 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-p${MYSQLROOTPASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
     networks:
       zotprime:
         ipv4_address: 10.5.5.2
@@ -26,6 +32,12 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
     ulimits:
       memlock:
         soft: -1
@@ -40,6 +52,11 @@ services:
     image: "uniuu/zotprime-redis:${VER}"
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       zotprime:
         ipv4_address: 10.5.5.4
@@ -47,6 +64,11 @@ services:
     image: "uniuu/zotprime-memcached:${VER}"
     volumes:
       - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z -w1 localhost 11211 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       zotprime:
         ipv4_address: 10.5.5.5
@@ -71,6 +93,12 @@ services:
     volumes:
       - miniodata:/data
       - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     networks:
       zotprime:
         ipv4_address: 10.5.5.7
@@ -87,13 +115,28 @@ services:
       - RUN_GROUP=apache
       - SERVER_IP=${SERVER_IP}
       - S3_ENDPOINT=${S3_ENDPOINT:-${SERVER_IP}:9000} # Default to SERVER_IP:9000, allow override for external S3
+      - AUTH_SALT=${AUTH_SALT}
+      - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
+      - MYSQLROOTPASSWORD=${MYSQLROOTPASSWORD}
+      - MYSQLUSER=${MYSQLUSER}
+      - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - MINIOROOTUSER=${MINIOROOTUSER}
+      - MINIOROOTPASSWORD=${MINIOROOTPASSWORD}
     depends_on:
-      - zotprime-db
-      - zotprime-elasticsearch
-      - zotprime-redis
-      - zotprime-memcached 
-      - zotprime-tinymceclean
-      - zotprime-streamserver
+      zotprime-db:
+        condition: service_healthy
+      zotprime-elasticsearch:
+        condition: service_healthy
+      zotprime-redis:
+        condition: service_healthy
+      zotprime-memcached:
+        condition: service_healthy
+      zotprime-minio:
+        condition: service_healthy
+      zotprime-tinymceclean:
+        condition: service_started
+      zotprime-streamserver:
+        condition: service_started
     links:
       - zotprime-db:mysql
       - zotprime-elasticsearch:elasticsearch
@@ -165,19 +208,35 @@ services:
       - MYSQLDATABASE=${MYSQLDATABASE}
       - MYSQLUSER=${MYSQLUSER}
       - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - AUTH_SALT=${AUTH_SALT}
+      - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
+      - MINIOROOTUSER=${MINIOROOTUSER}
+      - MINIOROOTPASSWORD=${MINIOROOTPASSWORD}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
     volumes:
       - ./stack/init/auto-init.sh:/auto-init.sh:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - zotprime-db
-      - zotprime-elasticsearch
-      - zotprime-redis
-      - zotprime-memcached
-      - zotprime-localstack
-      - zotprime-minio
-      - zotprime-dataserver
-      - zotprime-tinymceclean
-      - zotprime-streamserver
+      zotprime-db:
+        condition: service_healthy
+      zotprime-elasticsearch:
+        condition: service_healthy
+      zotprime-redis:
+        condition: service_healthy
+      zotprime-memcached:
+        condition: service_healthy
+      zotprime-minio:
+        condition: service_healthy
+      zotprime-localstack:
+        condition: service_started
+      zotprime-dataserver:
+        condition: service_started
+      zotprime-tinymceclean:
+        condition: service_started
+      zotprime-streamserver:
+        condition: service_started
     links:
       - zotprime-db:mysql
       - zotprime-localstack:localstack

@@ -6,6 +6,11 @@ ZotPrime is a fully packaged repository aimed to make on-premise [Zotero](https:
 
 Feel free to open issues or pull requests if you did not manage to use it.
 
+## Supported Architectures
+
+- x86_64 (amd64)
+- ARM64 (aarch64)
+
 ---
 
 ## Table of Contents
@@ -295,40 +300,96 @@ Setup A records in DNS servers or add entries to `/etc/hosts` on client and serv
 
 ## Manage Users and Groups
 
-### Create New User
+The `admin.sh` script provides a unified interface for managing users and groups.
 
+### User Management
+
+#### Create User
 ```bash
-sudo ./bin/create-user.sh {UID} {USERNAME} {PASSWORD} {EMAIL} {LIBRARY_ID}
+./bin/admin.sh docker user create <username> <email> <password>
 ```
 
-### List Users
-
+Example:
 ```bash
-sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/list-users.sh
+./bin/admin.sh docker user create alice alice@example.com password123
 ```
 
-### Create Shared Group Library
-
+#### List Users
 ```bash
-sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/create-group.sh {OWNER_USER_NAME} {GROUP_NAME} {GROUP_FULLNAME}
+./bin/admin.sh docker user list
 ```
 
-### List Groups
+Output shows userID, username, email, and status (enabled/disabled).
 
+#### Disable User
 ```bash
-sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/list-groups.sh
+./bin/admin.sh docker user disable <username>
 ```
 
-### Add User to Group
-
+#### Enable User
 ```bash
-sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/add-user-group.sh {USER_NAME} {GROUP_NAME}
+./bin/admin.sh docker user enable <username>
 ```
 
-### Remove User from Group
+### Group Management
+
+#### Create Group
+```bash
+./bin/admin.sh docker group create <owner_id> <name> <type>
+```
+
+Group types:
+- `PublicOpen` - Anyone can join, no file attachments
+- `PublicClosed` - Visible to all, requires approval to join
+- `Private` - Invitation-only, not publicly visible
+
+Example:
+```bash
+./bin/admin.sh docker group create 1 "Research Team" Private
+```
+
+#### List Groups
+```bash
+./bin/admin.sh docker group list
+```
+
+Shows all groups with ID, name, type, owner, and member count.
+
+#### Delete Group
+```bash
+./bin/admin.sh docker group delete <group_id>
+```
+
+#### Add User to Group
+```bash
+./bin/admin.sh docker group add-user <group_id> <user_id> [role]
+```
+
+Roles: `member` (default) or `admin`
+
+Example:
+```bash
+./bin/admin.sh docker group add-user 1 2 member
+./bin/admin.sh docker group add-user 1 3 admin
+```
+
+#### Remove User from Group
+```bash
+./bin/admin.sh docker group remove-user <group_id> <user_id>
+```
+
+#### List Group Members
+```bash
+./bin/admin.sh docker group members <group_id>
+```
+
+### Kubernetes Mode
+
+For Kubernetes deployments, replace `docker` with `k8s`:
 
 ```bash
-sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/remove-user-group.sh {USER_NAME} {GROUP_NAME}
+./bin/admin.sh k8s user create alice alice@example.com password123
+./bin/admin.sh k8s group list
 ```
 
 ---

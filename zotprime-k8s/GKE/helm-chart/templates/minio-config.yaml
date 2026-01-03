@@ -5,4 +5,4 @@ metadata:
   labels:
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 data:
-  minio-user: {{ .Values.minioConfig.minioUser | quote }}
+  minio-root-user: {{ .Values.minioConfig.minioRootUser | quote }}

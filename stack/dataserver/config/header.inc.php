@@ -79,6 +79,7 @@ spl_autoload_register('zotero_autoload');
 
 // Read in configuration variables
 require('config/config.inc.php');
+Z_CONFIG::init();
 
 if (Z_Core::isCommandLine()) {
 	$_SERVER['DOCUMENT_ROOT'] = realpath(dirname(dirname(__FILE__))) . '/';

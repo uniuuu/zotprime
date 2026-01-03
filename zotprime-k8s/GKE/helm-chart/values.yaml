@@ -23,10 +23,24 @@ zotprimeDataserver:
       requests:
         cpu: "1"
         memory: 512Mi
+authSecret:
+  # Base64 encoded values
+  # Generate: echo -n "your_value" | base64
+  authSalt: ""  # openssl rand -hex 16 | base64
+  apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
 minioSecret:
-  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"
+  minioRootPassword: "em90ZXJvZG9ja2VyCg=="  # base64 of "zoterodocker"
 dbSecret:
-  secretTxt: "TUFSSUFEQl9ST09UX1BBU1NXT1JEPXpvdGVybwpNQVJJQURCX1BBU1NXT1JEPXpvdGVyb3Rlc3QK"
+  mysqlRootPassword: "em90ZXJvCg=="  # base64 of "zotero"
+  mysqlPassword: "em90ZXJvdGVzdAo="  # base64 of "zoterotest"
+dbConfig:
+  mariadbDatabasename: zotprimeprod
+  mariadbUser: zotprimeprod
+  adminUsername: admin
+  adminPassword: admin
+  adminEmail: admin@zotero.org
+minioConfig:
+  minioRootUser: zotero
 dataserver:
   ports:
   - name: dataserver-api
@@ -77,9 +91,6 @@ dataserverConfig:
     aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero 2>/dev/null || echo "Topic zotero exists"
     
     echo "ZotPrime Init Complete!"
-dbConfig:
-  mariadbDatabasename: zoterotest
-  mariadbUser: zotero
 elasticsearch:
   ports:
   - name: elasticsearch
@@ -118,8 +129,6 @@ minio:
     port: 80
     targetPort: 9000
   type: ClusterIP
-minioConfig:
-  minioUser: zotero
 mysql:
   ports:
   - name: mariadb

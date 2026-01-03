@@ -1,0 +1,117 @@
+# ARM64 development overrides - builds ARM images with separate tags
+# Use with: docker compose -f docker-compose.yml -f docker-compose-localhost.yml -f docker-compose-dev-arm.yml up -d --build
+
+services:
+  zotprime-db:
+    platform: linux/arm64
+    image: "uniuu/zotprime-db:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/db
+      dockerfile: db.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-elasticsearch:
+    platform: linux/arm64
+    image: "uniuu/zotprime-elasticsearch:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/elasticsearch
+      dockerfile: es.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-redis:
+    platform: linux/arm64
+    image: "uniuu/zotprime-redis:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/redis
+      dockerfile: r.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-memcached:
+    platform: linux/arm64
+    image: "uniuu/zotprime-memcached:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/memcached
+      dockerfile: m.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-localstack:
+    platform: linux/arm64
+    image: "uniuu/zotprime-localstack:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/localstack
+      dockerfile: ls.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-minio:
+    platform: linux/arm64
+    image: "uniuu/zotprime-minio:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/minio
+      dockerfile: minio.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-miniomc:
+    platform: linux/arm64
+    image: "uniuu/zotprime-miniomc:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/minio
+      dockerfile: miniomc.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-dataserver:
+    platform: linux/arm64
+    image: "uniuu/zotprime-dataserver:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/dataserver
+      dockerfile: ds.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-tinymceclean:
+    platform: linux/arm64
+    image: "uniuu/zotprime-tinymceclean:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/tinymce-clean-server
+      dockerfile: tmcs.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-streamserver:
+    platform: linux/arm64
+    image: "uniuu/zotprime-streamserver:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/stream-server
+      dockerfile: sts.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-phpmyadmin:
+    platform: linux/arm64
+    image: "uniuu/zotprime-phpmyadmin:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/phpmyadmin
+      dockerfile: pa.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-init:
+    platform: linux/arm64
+    image: "uniuu/zotprime-dataserver:${VER}-arm64"

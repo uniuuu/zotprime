@@ -25,4 +25,21 @@ do
 done
 echo "MinIO is ready"
 
-exec mc admin trace -v -a minio;
+# Configure trace based on env var (default: none)
+case "${MINIO_TRACE_LEVEL:-none}" in
+    verbose)
+        exec mc admin trace -v -a minio
+        ;;
+    all)
+        exec mc admin trace -a minio
+        ;;
+    errors)
+        exec mc admin trace --errors minio
+        ;;
+    api)
+        exec mc admin trace minio
+        ;;
+    none|*)
+        exec tail -f /dev/null
+        ;;
+esac

@@ -9,21 +9,37 @@ class Z_CONFIG {
 
 	public static $TESTING_SITE = false;
 	public static $DEV_SITE = false;
-	
+
 	public static $DEBUG_LOG = false;
-	
+
 	public static $BASE_URI = 'http://localhost:8080/';
 	public static $API_BASE_URI = 'http://localhost:8080/';
 	public static $WWW_BASE_URI = 'http://localhost:8080/';
 //	public static $SYNC_DOMAIN = 'localhost';
-	
-	public static $AUTH_SALT = 'dhAyudsHU176dsqhUY';
-	public static $API_SUPER_USERNAME = 'admin';
-	public static $API_SUPER_PASSWORD = 'admin';
+
+	public static $AUTH_SALT;
+	public static $API_SUPER_TOKEN_HASH;
+
+	public static function init() {
+		self::$AUTH_SALT = getenv('AUTH_SALT');
+		self::$API_SUPER_TOKEN_HASH = getenv('API_SUPER_TOKEN_HASH');
+		self::$AWS_ACCESS_KEY = getenv('MINIOROOTUSER'); // leave credentials empty to use IAM role
+		self::$AWS_SECRET_KEY = getenv('MINIOROOTPASSWORD');
+		
+		if (!self::$AUTH_SALT) {
+			throw new Exception("AUTH_SALT environment variable must be set");
+		}
+		if (!self::$API_SUPER_TOKEN_HASH) {
+			throw new Exception("API_SUPER_TOKEN_HASH environment variable must be set");
+		}
+		if (!self::$AWS_ACCESS_KEY || !self::$AWS_SECRET_KEY) {
+			throw new Exception("MINIOROOTUSER and MINIOROOTPASSWORD environment variables must be set");
+		}
+	}
 	
 	public static $AWS_REGION = 'us-east-1';
-	public static $AWS_ACCESS_KEY = 'zotero'; // leave credentials empty to use IAM role
-	public static $AWS_SECRET_KEY = 'zoterodocker';
+	public static $AWS_ACCESS_KEY;
+	public static $AWS_SECRET_KEY;
 	public static $S3_ENDPOINT = '10.5.5.1:9000';
 	public static $S3_BUCKET = 'zotero';
 	public static $S3_BUCKET_CACHE = '';

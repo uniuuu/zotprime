@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zotprime-minio-config
+  namespace: zotprime
+data:
+  minio-root-user: "zotero"

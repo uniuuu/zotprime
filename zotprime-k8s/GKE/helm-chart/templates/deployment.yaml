@@ -23,6 +23,41 @@ spec:
           value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.serverIp }}
         - name: S3_ENDPOINT
           value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.s3Endpoint }}
+        - name: AUTH_SALT
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
+              key: auth-salt
+        - name: API_SUPER_TOKEN_HASH
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
+              key: api-super-token-hash
+        - name: MYSQLROOTPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-db-secret
+              key: mysql-root-password
+        - name: MYSQLUSER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-db-config
+              key: mariadb-user
+        - name: MYSQLPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-db-secret
+              key: mysql-password
+        - name: MINIOROOTUSER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-minio-config
+              key: minio-root-user
+        - name: MINIOROOTPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
+              key: minio-root-password
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.zotprimeDataserver.zotprimeDataserver.image.repository }}:{{
