@@ -29,10 +29,6 @@ else
    exit 1
 fi
 
-if ! test -f ./docker-compose.yml; then
-  cp docker-compose-prod.yml docker-compose.yml
-fi
-
-
+# Production deployment (default)
 sudo docker compose up -d
 
