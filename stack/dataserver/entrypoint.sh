@@ -59,8 +59,6 @@ chown apache -R /var/www/zotero
 find /var/www/zotero/ -type d -exec chmod 755 {} \;
 chmod 644 /var/www/zotero/htdocs/.htaccess 
 
-sed -i 's/AGPL-3.0"/AGPL-3.0-only"/g' /var/www/zotero/composer.json
-
 sed -i "s#http://localhost:8080/#$DSURI#g" /var/www/zotero/include/config/config.inc.php
 sed -i "s#10.5.5.1:9000#$S3POINTURI#g" /var/www/zotero/include/config/config.inc.php
 sed -i "s#10.5.5.1:9000#$S3POINTURI#g" /var/www/zotero/include/Zend/Service/Amazon/S3.php
@@ -70,7 +68,7 @@ sed -i "s#10.5.5.1:9000#$S3POINTURI#g" /var/www/zotero/include/Zend/Service/Amaz
 #cd /var/www/zotero/include/Elastica && composer -v install
 
 # Composer
-cd /var/www/zotero && composer update && composer -vv install
+#cd /var/www/zotero && composer update && composer -vv install
 #cd /var/www/zotero && composer -vv install
 
 # Start Apache2

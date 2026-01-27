@@ -66,6 +66,16 @@ services:
     build:
       context: ./stack/minio
       dockerfile: miniomc.Dockerfile
+    environment:
+      - MINIO_ROOT_USER=${MINIOROOTUSER}
+      - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
+    depends_on:
+      - zotprime-minio
+    links:
+      - zotprime-minio:minio
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.14
 #    entrypoint: >
 #         /bin/sh -c "
 #         /usr/bin/mc config host add minio http://zotprime-minio:9000 ${MINIOROOTUSER} ${MINIOROOTPASSWORD}; 
@@ -94,7 +104,7 @@ services:
       dockerfile: sts.Dockerfile
 #      - "./docker/stream-server/default.js:/usr/src/app/config/default.js:ro"
 
-  zotprime-phpmyadmin:
-    build:
-      context: ./stack/phpmyadmin
-      dockerfile: pa.Dockerfile
+  # zotprime-init:
+  #   build:
+  #     context: ./stack/init
+  #     dockerfile: Dockerfile

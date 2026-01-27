@@ -148,6 +148,9 @@ COPY dbconfig/init-mysql.sh /var/www/zotero/misc/
 COPY dbconfig/db_update.sh /var/www/zotero/misc/
 COPY dbconfig/www.sql /var/www/zotero/misc/
 
+# Install composer dependencies during build
+RUN cd /var/www/zotero && composer install --no-dev --optimize-autoloader
+
 ENV APACHE_RUN_USER=apache
 ENV APACHE_RUN_GROUP=apache
 ENV APACHE_LOCK_DIR=/var/lock/apache2

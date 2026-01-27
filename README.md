@@ -37,11 +37,7 @@ $ ./bin/install.sh
 *Configure*:
 **When prompted input the IP address of the server**  
 
-### Initialize databases
-*Initialize databases*:
-```bash
-$ ./bin/init.sh
-```
+The system will automatically initialize databases and services on first startup.
 ### Available endpoints:
 
 | Name          | URL                                           |

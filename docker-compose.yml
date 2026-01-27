@@ -152,6 +152,39 @@ services:
     networks:
       zotprime:
         ipv4_address: 10.5.5.11
+
+  zotprime-init:
+    image: "uniuu/zotprime-dataserver:${VER}"
+    entrypoint: ["/bin/bash"]
+    command: ["/auto-init.sh"]
+    restart: "no"
+    environment:
+      - MYSQLROOTPASSWORD=${MYSQLROOTPASSWORD}
+      - MYSQLDATABASE=${MYSQLDATABASE}
+      - MYSQLUSER=${MYSQLUSER}
+      - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - DSURI=${DSHOST}
+      - S3POINTURI=${S3HOST}
+    volumes:
+      - ./stack/init/auto-init.sh:/auto-init.sh:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - zotprime-db
+      - zotprime-elasticsearch
+      - zotprime-redis
+      - zotprime-memcached
+      - zotprime-localstack
+      - zotprime-minio
+      - zotprime-dataserver
+      - zotprime-tinymceclean
+      - zotprime-streamserver
+    links:
+      - zotprime-db:mysql
+      - zotprime-localstack:localstack
+      - zotprime-minio:minio
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.13
 volumes:
   dbdata:
    driver: local
