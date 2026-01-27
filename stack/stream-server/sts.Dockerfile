@@ -1,10 +1,10 @@
-FROM node:10-alpine
+FROM node:18-alpine
 ARG ZOTPRIME_VERSION=2
 
 RUN apk add --update --no-cache \
 libc6-compat
 
-RUN cp /lib64/ld-linux-x86-64.so.2 /lib
+# RUN cp /lib64/ld-linux-x86-64.so.2 /lib
 
 WORKDIR /usr/src/app
 COPY ./stream-server/ .

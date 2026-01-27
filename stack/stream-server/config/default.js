@@ -14,8 +14,7 @@ var config = {
 	retryTime: 10,
 	//shutdownDelay: 100,
 	redis: {
-		host: 'redis',
-		prefix: ''
+		url: 'redis://redis:6379'
 	},
 	apiURL: 'http://dataserver/',
 	apiVersion: 3,
