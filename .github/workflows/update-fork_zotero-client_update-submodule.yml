@@ -59,9 +59,9 @@ jobs:
         id: rebase
         run: |
           git remote add upstream https://github.com/zotero/zotero.git
-          git fetch upstream
-          git checkout upstream/main
-          git submodule update --init --recursive
+          git fetch upstream --no-recurse-submodules
+          # git checkout upstream/main
+          # git submodule update --init --recursive
           git checkout main
           git rebase upstream/main
           git push origin main  
