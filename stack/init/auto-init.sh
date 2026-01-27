@@ -25,8 +25,9 @@ done
 echo "LocalStack ready"
 
 # Check if already initialized (idempotent)
-if mysql -h zotprime-db -u root -p${MYSQLROOTPASSWORD} -e "USE ${MYSQLDATABASE}; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+if mysql -h zotprime-db -u root -p${MYSQLROOTPASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
     echo "Database already initialized, skipping..."
+    exit 0
 else
     echo "Initializing database..."
     cd /var/www/zotero/misc && MYSQL_HOST=zotprime-db ./init-mysql.sh
