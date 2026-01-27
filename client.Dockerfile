@@ -24,10 +24,10 @@ WORKDIR /usr/src/app/client/
 ARG HOST_DS=http://localhost:8080/
 ARG HOST_ST=ws://localhost:8081/
 RUN set -eux; \
-        sed -i "s#https://api.zotero.org/#$HOST_DS#g" zotero-client/resource/config.js; \
-        sed -i "s#wss://stream.zotero.org/#$HOST_ST#g" zotero-client/resource/config.js; \
-        sed -i "s#https://www.zotero.org/#$HOST_DS#g" zotero-client/resource/config.js; \
-        sed -i "s#https://zoteroproxycheck.s3.amazonaws.com/test##g" zotero-client/resource/config.js
+        sed -i "s#https://api.zotero.org/#$HOST_DS#g" zotero-client/resource/config.mjs; \
+        sed -i "s#wss://stream.zotero.org/#$HOST_ST#g" zotero-client/resource/config.mjs; \
+        sed -i "s#https://www.zotero.org/#$HOST_DS#g" zotero-client/resource/config.mjs; \
+        sed -i "s#https://zoteroproxycheck.s3.amazonaws.com/test##g" zotero-client/resource/config.mjs
 #    ./$CONFIG
 
 FROM node:20-alpine AS stage-2
@@ -70,6 +70,9 @@ RUN ls -lha
 ARG MLW=l
 
 RUN set -eux; \
+    npm config set fetch-retry-mintimeout 20000; \
+    npm config set fetch-retry-maxtimeout 120000; \
+    npm config set fetch-retries 5; \
     npm i
 
 RUN set -eux; \

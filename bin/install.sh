@@ -33,6 +33,5 @@ if ! test -f ./docker-compose.yml; then
   cp docker-compose-prod.yml docker-compose.yml
 fi
 
-
 sudo docker compose up -d
 

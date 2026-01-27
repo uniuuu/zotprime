@@ -37,11 +37,8 @@ $ ./bin/install.sh
 *Configure*:
 **When prompted input the IP address of the server**  
 
-### Initialize databases
-*Initialize databases*:
-```bash
-$ ./bin/init.sh
-```
+The system will automatically initialize databases and services on first startup.
+
 ### Available endpoints:
 
 | Name          | URL                                           |
@@ -211,6 +208,37 @@ $ kubectl get -A ing
 | S3 Web UI     | zotero                   | zoterodocker       |
 | PHPMyAdmin    | root                     | zotero             |
 
+## Manage Users and Groups
+
+*Create new users*:
+```bash
+$ sudo ./bin/create-user.sh {UID} {USERNAME} {PASSWORD} {EMAIL} {LIBRARY ID}
+```
+
+*List users*:
+```bash
+$ sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/list-users.sh
+```
+
+*Create shared group libraries*:
+```bash
+$ sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/create-group.sh {OWNER_USER_NAME} {GROUP_NAME} {GROUP_FULLNAME} 
+```
+
+*List groups*:
+```bash
+$ sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/list-groups.sh
+```
+
+*Add users to a group*:
+```bash
+$ sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/add-user-group.sh {USER_NAME} {GROUP_NAME}
+```
+
+*Remove users from a group*:
+```bash
+$ sudo docker compose exec zotprime-dataserver /var/www/zotero/admin/remove-user-group.sh {USER_NAME} {GROUP_NAME}
+```
 
 ## Client Build
 ### Client build from Linux
@@ -280,3 +308,4 @@ Credits
 6. https://github.com/foxsen/zotero-selfhost
 7. https://github.com/zehuanli/zotero-selfhost
 8. https://github.com/fversaci/zotero-prime
+9. https://github.com/victoradrianjimenez/dockerized-zotero
