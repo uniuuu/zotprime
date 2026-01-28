@@ -34,6 +34,9 @@ You may install ZotPrime server in:
 
 ### 2. Install Dependencies
 
+Install Prerequisites:
+- [Docker Engine](https://docs.docker.com/engine/install/)
+
 Install latest Docker Compose plugin:
 
 ```bash
@@ -218,8 +221,11 @@ git checkout production
 - [MicroK8s](https://microk8s.io/docs/getting-started)
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm](https://helm.sh/docs/intro/install/)
+- [Docker Engine](https://docs.docker.com/engine/install/) - Install Docker CE with BuildKit and Compose plugins from Docker's official repository
 
 ### 3. Enable MicroK8s Modules
+
+Enable required addons:
 
 ```bash
 microk8s enable hostpath-storage

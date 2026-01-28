@@ -34,56 +34,56 @@ cd ../../../stack/dataserver # go to the parent directory so that all the relati
 
 echo 'building image zotprime-dataserver'
 
-${CONTAINER_RUNTIME} build -f ds.Dockerfile -t zotprime-dataserver .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f ds.Dockerfile -t zotprime-dataserver .
 
 cd ../minio
 echo 'building image zotprime-minio'
 
-${CONTAINER_RUNTIME} build -f minio.Dockerfile -t zotprime-minio .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f minio.Dockerfile -t zotprime-minio .
 
 echo 'building image zotprime-miniomc'
 
-${CONTAINER_RUNTIME} build -f miniomc.Dockerfile -t zotprime-miniomc .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f miniomc.Dockerfile -t zotprime-miniomc .
 
 cd ../tinymce-clean-server
 echo 'building image zotprime-tinymceclean'
 
-${CONTAINER_RUNTIME} build -f tmcs.Dockerfile -t zotprime-tinymceclean .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f tmcs.Dockerfile -t zotprime-tinymceclean .
 
 cd ../stream-server
 echo 'building image zotprime-streamserver'
 
-${CONTAINER_RUNTIME} build -f sts.Dockerfile -t zotprime-streamserver .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f sts.Dockerfile -t zotprime-streamserver .
 
 cd ../db
 echo 'building image zotprime-db'
 
-${CONTAINER_RUNTIME} build -f db.Dockerfile -t zotprime-db .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f db.Dockerfile -t zotprime-db .
 
 cd ../redis
 echo 'building image zotprime-redis'
 
-${CONTAINER_RUNTIME} build -f r.Dockerfile -t zotprime-redis .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f r.Dockerfile -t zotprime-redis .
 
 cd ../localstack
 echo 'building image zotprime-localstack'
 
-${CONTAINER_RUNTIME} build -f ls.Dockerfile -t zotprime-localstack .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f ls.Dockerfile -t zotprime-localstack .
 
 cd ../memcached
 echo 'building image zotprime-memcached'
 
-${CONTAINER_RUNTIME} build -f m.Dockerfile -t zotprime-memcached .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f m.Dockerfile -t zotprime-memcached .
 
 cd ../phpmyadmin
 echo 'building image zotprime-phpmyadmin'
 
-${CONTAINER_RUNTIME} build -f pa.Dockerfile -t zotprime-phpmyadmin .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f pa.Dockerfile -t zotprime-phpmyadmin .
 
 cd ../elasticsearch
 echo 'building image zotprime-elasticsearch'
 
-${CONTAINER_RUNTIME} build -f es.Dockerfile -t zotprime-elasticsearch .
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f es.Dockerfile -t zotprime-elasticsearch .
 cd -
 
 echo 'done'

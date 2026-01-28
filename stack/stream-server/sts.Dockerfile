@@ -10,5 +10,5 @@ WORKDIR /usr/src/app
 COPY ./stream-server/ .
 COPY config/default.js /usr/src/app/config/
 RUN npm install
-EXPOSE 81/TCP
+EXPOSE 81/tcp
 CMD [ "npm", "start" ]

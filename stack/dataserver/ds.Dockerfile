@@ -149,6 +149,7 @@ COPY dbconfig/db_update.sh /var/www/zotero/misc/
 COPY dbconfig/www.sql /var/www/zotero/misc/
 
 # Install composer dependencies during build
+RUN sed -i '/"license":/a\	"version": "1.0.0",' /var/www/zotero/composer.json
 RUN cd /var/www/zotero && composer install --no-dev --optimize-autoloader
 
 ENV APACHE_RUN_USER=apache
