@@ -59,9 +59,9 @@ chown apache -R /var/www/zotero
 find /var/www/zotero/ -type d -exec chmod 755 {} \;
 chmod 644 /var/www/zotero/htdocs/.htaccess 
 
-sed -i "s#http://localhost:8080/#$DSURI#g" /var/www/zotero/include/config/config.inc.php
-sed -i "s#10.5.5.1:9000#$S3POINTURI#g" /var/www/zotero/include/config/config.inc.php
-sed -i "s#10.5.5.1:9000#$S3POINTURI#g" /var/www/zotero/include/Zend/Service/Amazon/S3.php
+sed -i "s#http://localhost:8080/#http://$SERVER_IP:8080/#g" /var/www/zotero/include/config/config.inc.php
+sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/config/config.inc.php
+sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/Zend/Service/Amazon/S3.php
 
 
 # Elastica Composer

@@ -78,13 +78,15 @@ services:
     image: "uniuu/zotprime-dataserver:${VER}"
     ports:
       - "8080:80"
+    extra_hosts:
+      - "${SERVER_IP}:10.5.5.7"     # Map SERVER_IP to MinIO's internal Docker IP for remote deployments
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       - RUN_USER=apache
       - RUN_GROUP=apache
-      - DSURI=${DSHOST}
-      - S3POINTURI=${S3HOST}
+      - SERVER_IP=${SERVER_IP}
+      - S3_ENDPOINT=${S3_ENDPOINT:-${SERVER_IP}:9000} # Default to SERVER_IP:9000, allow override for external S3
     depends_on:
       - zotprime-db
       - zotprime-elasticsearch
@@ -163,8 +165,6 @@ services:
       - MYSQLDATABASE=${MYSQLDATABASE}
       - MYSQLUSER=${MYSQLUSER}
       - MYSQLPASSWORD=${MYSQLPASSWORD}
-      - DSURI=${DSHOST}
-      - S3POINTURI=${S3HOST}
     volumes:
       - ./stack/init/auto-init.sh:/auto-init.sh:ro
       - /etc/localtime:/etc/localtime:ro

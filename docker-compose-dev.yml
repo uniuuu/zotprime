@@ -2,6 +2,7 @@
 services:
   zotprime-db:
 #    image: mysql:5.6
+    pull_policy: build
     build:
       context: ./stack/db
       dockerfile: db.Dockerfile
@@ -12,6 +13,7 @@ services:
 #         hard: 262144
 
   zotprime-elasticsearch:
+    pull_policy: build
     build:
       context: ./stack/elasticsearch
       dockerfile: es.Dockerfile
@@ -38,6 +40,7 @@ services:
 #       su elasticsearch -c bin/es-docker
 
   zotprime-redis:
+    pull_policy: build
     build:
       context: ./stack/redis
       dockerfile: r.Dockerfile
@@ -47,22 +50,26 @@ services:
  #      - sysctl vm.overcommit_memory=1
 
   zotprime-memcached:
+    pull_policy: build
     build:
       context: ./stack/memcached
       dockerfile: m.Dockerfile
 
   zotprime-localstack:
+    pull_policy: build
     build:
       context: ./stack/localstack
       dockerfile: ls.Dockerfile
 
   zotprime-minio:
+    pull_policy: build
     build:
       context: ./stack/minio
       dockerfile: minio.Dockerfile
 #      - "8082:9000"
 
   zotprime-miniomc:
+    pull_policy: build
     build:
       context: ./stack/minio
       dockerfile: miniomc.Dockerfile
@@ -84,6 +91,7 @@ services:
 #          exec sleep inf;
 
   zotprime-dataserver:
+    pull_policy: build
     build:
       context: ./stack/dataserver
       dockerfile: ds.Dockerfile
@@ -94,15 +102,23 @@ services:
 #      - "9000:9000"
 
   zotprime-tinymceclean:
+    pull_policy: build
     build:
       context: ./stack/tinymce-clean-server
       dockerfile: tmcs.Dockerfile
 
   zotprime-streamserver:
+    pull_policy: build
     build:
       context: ./stack/stream-server
       dockerfile: sts.Dockerfile
 #      - "./docker/stream-server/default.js:/usr/src/app/config/default.js:ro"
+
+  zotprime-phpmyadmin:
+    pull_policy: build
+    build:
+      context: ./stack/phpmyadmin
+      dockerfile: pa.Dockerfile
 
   # zotprime-init:
   #   build:

@@ -19,16 +19,29 @@ then
   esac
   echo "Server IP address is set to $SERVER"
   cp .env_example .env
-  sed -i "s#http://127.0.0.1:8080/#http://$SERVER:8080/#g" .env
+  
   if [[ $SERVER != 127.0.0.1 ]]
-  then 
-      sed -i "s#10.5.5.1:9000#$SERVER:9000#g" .env
+  then
+    sed -i "s#SERVER_IP=127.0.0.1#SERVER_IP=$SERVER#g" .env
+  fi
+  
+  # Docker deployment
+  if [[ $SERVER == 127.0.0.1 ]]
+  then
+    echo "Starting with localhost configuration..."
+    sudo docker compose -f docker-compose.yml -f docker-compose-localhost.yml up -d
+    echo ""
+    echo "To check container status: docker compose -f docker-compose.yml -f docker-compose-localhost.yml ps"
+    echo "To view logs: docker compose -f docker-compose.yml -f docker-compose-localhost.yml logs -f"
+  else
+    echo "Starting with remote server configuration..."
+    sudo docker compose up -d
+    echo ""
+    echo "To check container status: docker compose ps"
+    echo "To view logs: docker compose logs -f"
   fi
 else
    echo "Exiting"
    exit 1
 fi
-
-# Production deployment (default)
-sudo docker compose up -d
 
