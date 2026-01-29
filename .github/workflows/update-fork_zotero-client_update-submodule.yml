@@ -13,7 +13,7 @@ jobs:
     name: Check upstream latest commits
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         # ref: origin/6.0
         repository: uniuuu/zotero
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: uniuuu/zotero
           token: ${{ secrets.API_TOKEN_GITHUB }}
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: upstream-updates
       - uses: fregante/setup-git-user@v2
