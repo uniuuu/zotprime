@@ -72,11 +72,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: upstream-updates
       - uses: fregante/setup-git-user@v2
       - name: Checkout submodules
         run: |
           git submodule update --init --remote client/zotero-client
           git add -A
           git diff-index --quiet HEAD || git commit -m 'Github Actions Update Submodule client/zotero-client'
-          git push origin development
+          git push origin upstream-updates
     

@@ -48,7 +48,7 @@ sudo apt install docker-compose-plugin
 
 ```bash
 mkdir /path/to/your/app && cd /path/to/your/app
-git clone -b production --recursive --single-branch https://github.com/uniuuu/zotprime.git
+git clone --recursive https://github.com/uniuuu/zotprime.git
 cd zotprime
 ```
 
@@ -89,7 +89,6 @@ The system will automatically initialize databases and services on first startup
 ```bash
 mkdir /path/to/your/app && cd /path/to/your/app
 git clone https://github.com/uniuuu/zotprime.git
-git checkout production
 cd zotprime
 ```
 
@@ -213,7 +212,6 @@ Check the `ADDRESS` column and setup A records in your DNS hosting.
 ```bash
 mkdir /path/to/your/app && cd /path/to/your/app
 git clone https://github.com/uniuuu/zotprime.git
-git checkout production
 ```
 
 ### 2. Install Prerequisites
