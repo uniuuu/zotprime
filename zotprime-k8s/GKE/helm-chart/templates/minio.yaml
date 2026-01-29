@@ -9,7 +9,7 @@ metadata:
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: {{ .Values.minio.type }}
-  clusterIP: 10.30.11.11
+  clusterIP: {{ .Values.minio.clusterIP }}
   selector:
     apps: zotprime-minio
   ports:

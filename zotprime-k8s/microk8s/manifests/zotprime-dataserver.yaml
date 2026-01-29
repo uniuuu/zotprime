@@ -5,15 +5,48 @@ metadata:
   namespace: zotprime
 data:
   init.sh: |
-    #!/bin/sh
-
-    set -eux
-
-    cd /var/www/zotero/misc && ./init-mysql.sh
-    cd /var/www/zotero/misc && ./db_update.sh
-    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero
-    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext
-    aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero
+    #!/bin/bash
+    set -e
+    
+    echo "ZotPrime Init Starting..."
+    
+    echo "Waiting for MariaDB..."
+    until mysql -h mysql -u root -pzotero -e "SELECT 1" >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "MariaDB ready"
+    
+    echo "Waiting for MinIO..."
+    until aws --endpoint-url "http://minio:9000" s3 ls >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "MinIO ready"
+    
+    echo "Waiting for LocalStack..."
+    until aws --endpoint-url "http://localstack:4575" sns list-topics >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "LocalStack ready"
+    
+    if mysql -h mysql -u root -pzotero -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+        echo "Database already initialized, skipping..."
+    else
+        echo "Initializing database..."
+        cd /var/www/zotero/misc && ./init-mysql.sh
+        # cd /var/www/zotero/misc && ./db_update.sh  # Obsolete: master.sql already has hasData column
+    fi
+    
+    echo "Updating database schema..."
+    cd /var/www/zotero/admin && php schema_update
+    
+    echo "Setting up S3 buckets..."
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero 2>/dev/null || echo "Bucket zotero exists"
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext 2>/dev/null || echo "Bucket zotero-fulltext exists"
+    
+    echo "Setting up SNS topic..."
+    aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero 2>/dev/null || echo "Topic zotero exists"
+    
+    echo "ZotPrime Init Complete!"
 ---
 apiVersion: v1
 kind: Service
@@ -63,24 +96,24 @@ spec:
             - containerPort: 80
 #            - containerPort: 8082
           env:
-            - name: DSURI
-              value: http://api.projectdev.net/
-            - name: S3POINTURI
-              value: s3min.projectdev.net
+            - name: SERVER_IP
+              value: http://api.zotprime/
+            - name: S3_ENDPOINT
+              value: s3min.zotprime
           lifecycle:
             postStart:
               exec:
-                command: [ "/bin/sh", "-xc", 'sleep 120; bash /tmp/_conf/init.sh ; exit 0' ]
+                command: [ "/bin/sh", "-xc", 'mkdir -p /var/www/zotero/log && bash /tmp/_conf/init.sh > /var/www/zotero/log/init.log 2>&1 ; exit 0' ]
           livenessProbe:
             httpGet:
               path: /
               port: 80
-            initialDelaySeconds: 160
+            initialDelaySeconds: 60
             periodSeconds: 30
 #            timeoutSeconds: 5
           readinessProbe:
             failureThreshold: 3
-            initialDelaySeconds: 150
+            initialDelaySeconds: 30
             periodSeconds: 30
             successThreshold: 1
             timeoutSeconds: 1
@@ -101,9 +134,9 @@ spec:
       priorityClassName: low-priority
       restartPolicy: Always
       hostAliases:
-        - ip: "10.30.11.11"
+        - ip: "10.152.183.11"
           hostnames:
-          - "s3min.projectdev.net"
+          - "s3min.zotprime"
       securityContext: {}
       volumes:
         - name: dataserver-config

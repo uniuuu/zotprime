@@ -16,16 +16,13 @@ then
     source tmp/_key/secret-minio.txt
 fi  
 
-# host=minio
-# port=9000
-# echo -n "waiting for TCP connection to $host:$port..."
-# #while ! nc -w 1 $host $port 2>/dev/null
-# while ! curl -s $host:$port 1>/dev/null
-# do
-#   echo -n .
-#   sleep 1
-# done
-# echo 'ok'
+echo "Waiting for MinIO to be ready..."
+until /usr/bin/mc alias set minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} 2>/dev/null && \
+      /usr/bin/mc ready minio --insecure 2>/dev/null
+do
+  echo -n .
+  sleep 2
+done
+echo "MinIO is ready"
 
-/usr/bin/mc alias set minio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
 exec mc admin trace -v -a minio;

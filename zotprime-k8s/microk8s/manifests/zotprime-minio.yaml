@@ -55,7 +55,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: microk8s-hostpath
+  storageClassName: nfs
 
 ---
 # The `spec.containers[0].args` contains the command run on the pod

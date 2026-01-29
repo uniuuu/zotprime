@@ -19,11 +19,10 @@ spec:
     spec:
       containers:
       - env:
-        - name: DSURI
-          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.dsuri }}
-        - name: S3POINTURI
-          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.s3Pointuri
-            }}
+        - name: SERVER_IP
+          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.serverIp }}
+        - name: S3_ENDPOINT
+          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.s3Endpoint }}
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.zotprimeDataserver.zotprimeDataserver.image.repository }}:{{
@@ -37,12 +36,12 @@ spec:
               command:
               - /bin/sh
               - -xc
-              - sleep 180; bash /tmp/_conf/init.sh ; exit 0
+              - mkdir -p /var/www/zotero/log && bash /tmp/_conf/init.sh > /var/www/zotero/log/init.log 2>&1 ; exit 0
         livenessProbe:
           httpGet:
             path: /
             port: 80
-          initialDelaySeconds: 195
+          initialDelaySeconds: 60
           periodSeconds: 30
         name: zotprime-dataserver
         ports:
@@ -52,7 +51,7 @@ spec:
           httpGet:
             path: /
             port: 80
-          initialDelaySeconds: 190
+          initialDelaySeconds: 30
           periodSeconds: 30
           successThreshold: 1
           timeoutSeconds: 1
@@ -64,8 +63,8 @@ spec:
           readOnly: true
       hostAliases:
       - hostnames:
-        - s3min.projectdev.net
-        ip: 10.30.11.11
+        - {{ .Values.zotprimeDataserver.hostAliases.hostname }}
+        ip: {{ .Values.zotprimeDataserver.hostAliases.ip }}
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-low-priority
       restartPolicy: Always
       securityContext: {}

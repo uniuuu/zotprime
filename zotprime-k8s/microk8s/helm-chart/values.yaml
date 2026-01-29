@@ -6,10 +6,13 @@ ingressHostnames:
   minios3Web: min.zotprime
 zotprimeDataserver:
   replicas: 1
+  hostAliases:
+    hostname: s3min.zotprime
+    ip: 10.152.183.11
   zotprimeDataserver:
     env:
-      dsuri: http://api.zotprime/
-      s3Pointuri: s3min.zotprime
+      serverIp: http://api.zotprime/
+      s3Endpoint: s3min.zotprime
     image:
       repository: localhost:32000/zotprime-k8s/zotprime-dataserver
       tag: latest
@@ -32,13 +35,48 @@ dataserver:
   type: ClusterIP
 dataserverConfig:
   initSh: |-
-    #!/bin/sh
-    set -eux
-    cd /var/www/zotero/misc && ./init-mysql.sh
-    cd /var/www/zotero/misc && ./db_update.sh
-    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero
-    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext
-    aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero
+    #!/bin/bash
+    set -e
+    
+    echo "ZotPrime Init Starting..."
+    
+    echo "Waiting for MariaDB..."
+    until mysql -h mysql -u root -pzotero -e "SELECT 1" >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "MariaDB ready"
+    
+    echo "Waiting for MinIO..."
+    until aws --endpoint-url "http://minio:9000" s3 ls >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "MinIO ready"
+    
+    echo "Waiting for LocalStack..."
+    until aws --endpoint-url "http://localstack:4575" sns list-topics >/dev/null 2>&1; do
+        sleep 2
+    done
+    echo "LocalStack ready"
+    
+    if mysql -h mysql -u root -pzotero -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+        echo "Database already initialized, skipping..."
+    else
+        echo "Initializing database..."
+        cd /var/www/zotero/misc && ./init-mysql.sh
+        # cd /var/www/zotero/misc && ./db_update.sh  # Obsolete: master.sql already has hasData column
+    fi
+    
+    echo "Updating database schema..."
+    cd /var/www/zotero/admin && php schema_update
+    
+    echo "Setting up S3 buckets..."
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero 2>/dev/null || echo "Bucket zotero exists"
+    aws --endpoint-url "http://minio:9000" s3 mb s3://zotero-fulltext 2>/dev/null || echo "Bucket zotero-fulltext exists"
+    
+    echo "Setting up SNS topic..."
+    aws --endpoint-url "http://localstack:4575" sns create-topic --name zotero 2>/dev/null || echo "Topic zotero exists"
+    
+    echo "ZotPrime Init Complete!"
 dbConfig:
   mariadbDatabasename: zoterotest
   mariadbUser: zotero
@@ -68,6 +106,7 @@ memcached:
     targetPort: 11211
   type: ClusterIP
 minio:
+  clusterIP: 10.152.183.11
   ports:
   - name: minio-ui
     port: 9001
@@ -95,7 +134,7 @@ phpmyadmin:
   type: ClusterIP
 pvc:
   dataminio:
-    storageClass: microk8s-hostpath
+    storageClass: nfs
     storageRequest: 10Gi
 redis:
   ports:

@@ -7,7 +7,7 @@ metadata:
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.minio.type }}
-  clusterIP: 10.152.183.11
+  clusterIP: {{ .Values.minio.clusterIP }}
   selector:
     apps: zotprime-minio
   ports:

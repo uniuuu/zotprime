@@ -33,12 +33,18 @@ then
     echo ""
     echo "To check container status: docker compose -f docker-compose.yml -f docker-compose-localhost.yml ps"
     echo "To view logs: docker compose -f docker-compose.yml -f docker-compose-localhost.yml logs -f"
+    echo ""
+    echo "To shut down the server: docker compose -f docker-compose.yml -f docker-compose-localhost.yml down"
+    echo "To delete all data (IRREVERSIBLE): docker compose -f docker-compose.yml -f docker-compose-localhost.yml down -v"
   else
     echo "Starting with remote server configuration..."
     sudo docker compose up -d
     echo ""
     echo "To check container status: docker compose ps"
     echo "To view logs: docker compose logs -f"
+    echo ""
+    echo "To shut down the server: docker compose down"
+    echo "To delete all data (IRREVERSIBLE): docker compose down -v"
   fi
 else
    echo "Exiting"
