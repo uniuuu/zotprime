@@ -7,6 +7,7 @@ RUN set -eux; \
     curl \
     zip \
     7zip \
+    perl \
     && rm -rf /var/cache/apk/*
 WORKDIR /usr/app
 RUN mkdir /usr/app/build 
@@ -18,7 +19,7 @@ ARG HOST_ST
 RUN set -eux; \
         sed -i "s#https://api.zotero.org/#$HOST_DS#g" ./omni/resource/config.mjs; \
         sed -i "s#wss://stream.zotero.org/#$HOST_ST#g" ./omni/resource/config.mjs; \
-        sed -i "s#https://www.zotero.org/#$HOST_DS#g" ./omni/resource/config.mjs; \
+        perl -i -pe "s#https://www\.zotero\.org/(?!start)#$HOST_DS#g" ./omni/resource/config.mjs; \
         sed -i "s#https://zoteroproxycheck.s3.amazonaws.com/test##g" ./omni/resource/config.mjs
 RUN cd omni && 7z a -r ../omni.zip *
 RUN cp omni.zip ./build/Zotero_linux-x86_64/app/omni.ja
