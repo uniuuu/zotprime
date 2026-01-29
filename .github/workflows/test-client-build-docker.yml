@@ -6,10 +6,10 @@ on:
       - client/**
       - client/clientbuildtest.Dockerfile
       - .github/workflows/test-client-build-docker.yml
-    branches: [ "development" ]
+    branches: [ "main" ]
 
   pull_request:
-    branches: [ "development" ]
+    branches: [ "main" ]
     paths:
       - client/**
       - client/clientbuildtest.Dockerfile

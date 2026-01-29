@@ -1,5 +1,5 @@
 
-FROM node:20-alpine AS intermediate
+FROM node:22-alpine AS intermediate
 ARG ZOTPRIME_VERSION=2
 
 RUN set -eux; \ 
@@ -27,18 +27,16 @@ RUN cd client
 RUN git init
 RUN git remote add -f origin https://github.com/uniuuu/zotprime
 RUN echo "client/" >> .git/info/sparse-checkout
-RUN git pull origin development
+RUN git pull origin main
 RUN git submodule update --init --recursive
 WORKDIR /usr/src/app/client/zotero-client
 RUN git lfs pull 
 WORKDIR /usr/src/app/client/
 RUN set -eux; \
-    sed -i "s#'http://zotero.org/'#'http://localhost:8080/'#g" zotero-client/resource/config.js; \ 
-    sed -i "s#'zotero.org'#'localhost'#g" zotero-client/resource/config.js; \
-    sed -i "s#https://api.zotero.org/#http://localhost:8080/#g" zotero-client/resource/config.js; \
-    sed -i "s#wss://stream.zotero.org/#ws://localhost:8081/#g" zotero-client/resource/config.js; \
-    sed -i "s#https://www.zotero.org/#http://localhost:8080/#g" zotero-client/resource/config.js; \
-    sed -i "s#https://zoteroproxycheck.s3.amazonaws.com/test##g" zotero-client/resource/config.js
+    sed -i "s#https://api.zotero.org/#http://localhost:8080/#g" zotero-client/resource/config.mjs; \
+    sed -i "s#wss://stream.zotero.org/#ws://localhost:8081/#g" zotero-client/resource/config.mjs; \
+    perl -i -pe "s#https://www\.zotero\.org/(?!start)#http://localhost:8080/#g" zotero-client/resource/config.mjs; \
+    sed -i "s#https://zoteroproxycheck.s3.amazonaws.com/test##g" zotero-client/resource/config.mjs
 #    ./config.sh
 WORKDIR /usr/src/app/client/zotero-client
 RUN set -eux; \

@@ -6,10 +6,10 @@ on:
     paths:
       - stack/stream-server/**
       - .github/workflows/build-streamserver-image.yml
-    branches: [ "development" ]
+    branches: [ "main" ]
 
   pull_request:
-    branches: [ "development" ]
+    branches: [ "main" ]
     paths:
       - stack/stream-server/**
       - .github/workflows/build-streamserver-image.yml

@@ -7,10 +7,10 @@ on:
       - 'stack/**/*.Dockerfile'
       - 'stack/**/*.dockerignore'
       - 'docker-compose-dev.yml'
-    branches: [ "development" ]
+    branches: [ "main" ]
 
   pull_request:
-    branches: [ "development" ]
+    branches: [ "main" ]
     paths:
       - '.github/workflows/build-all-images.yml'
       - 'stack/**/*.Dockerfile'

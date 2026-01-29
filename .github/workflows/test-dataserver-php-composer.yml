@@ -2,12 +2,12 @@ name: Test Composer Install For Dataserver PHP
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "main" ]
     paths:
       - stack/dataserver/**
       - .github/workflows/test-dataserver-php-composer.yml
   pull_request:
-    branches: [ "development" ]
+    branches: [ "main" ]
     paths:
       - stack/dataserver/**
       - .github/workflows/test-dataserver-php-composer.yml
