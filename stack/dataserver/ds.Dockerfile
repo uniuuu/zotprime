@@ -24,6 +24,7 @@ RUN set -eux; \
         gettext-libs \
         git \
         gnutls-utils \
+        grep \
         icu-libs \
         libmemcached \
         libxslt \

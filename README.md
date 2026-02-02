@@ -79,11 +79,10 @@ The system will automatically initialize databases and services on first startup
 
 ### Default Credentials
 
-| Service | Login | Password |
-|---------|-------|----------|
-| Zotero API | `admin` | `admin` |
-| S3 Web UI | `zotero` | `zoterodocker` |
-| PHPMyAdmin | `root` | `zotero` |
+All credentials are configured in the `.env` file:
+- **Zotero API**: `ADMIN_USERNAME` / `ADMIN_PASSWORD`
+- **S3 Web UI**: `MINIOROOTUSER` / `MINIOROOTPASSWORD`
+- **PHPMyAdmin**: `root` / `MYSQLROOTPASSWORD`
 
 ---
 
@@ -202,11 +201,10 @@ Check the `ADDRESS` column and setup A records in your DNS hosting.
 
 ### Default Credentials
 
-| Service | Login | Password |
-|---------|-------|----------|
-| Zotero API | `admin` | `admin` |
-| S3 Web UI | `zotero` | `zoterodocker` |
-| PHPMyAdmin | `root` | `zotero` |
+Credentials are configured in the `.env` file:
+- **Zotero API**: `ADMIN_USERNAME` / `ADMIN_PASSWORD`
+- **S3 Web UI**: `MINIOROOTUSER` / `MINIOROOTPASSWORD`
+- **PHPMyAdmin**: `root` / `MYSQLROOTPASSWORD`
 
 ---
 
@@ -320,6 +318,16 @@ Example:
 ```
 
 Output shows userID, username, email, and status (enabled/disabled).
+
+#### Show User Quota
+```bash
+./bin/admin.sh docker user quota <user_id>
+```
+
+#### Set User Quota
+```bash
+./bin/admin.sh docker user set-quota <user_id> <quota_mb>
+```
 
 #### Disable User
 ```bash
@@ -473,11 +481,7 @@ app/scripts/dir_build -p m
 
 ### Connect to Zotero
 
-Use default credentials:
-
-| Service | Login | Password |
-|---------|-------|----------|
-| Zotero | `admin` | `admin` |
+Use credentials from `.env` file (`ADMIN_USERNAME` / `ADMIN_PASSWORD`).
 
 ![Sync](docs/images/sync.png)
 

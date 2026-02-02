@@ -39,6 +39,8 @@ Resources and Actions:
   user list                                   List all users
   user disable <username>                     Disable a user
   user enable <username>                      Enable a user
+  user quota <user_id>                        Show user storage quota
+  user set-quota <user_id> <quota_mb>         Set user storage quota (in MB)
 
   group create <owner_id> <name> <type>       Create a group (type: PublicOpen|PublicClosed|Private)
   group list                                  List all groups
@@ -140,6 +142,57 @@ user_enable() {
     local exec_cmd=$(get_exec_cmd "$mode")
     cd "$PROJECT_DIR"
     $exec_cmd /var/www/zotero/admin/enable-user.sh "$username"
+}
+
+user_quota() {
+    local mode=$1 user_id=$2
+
+    if [ -z "$user_id" ]; then
+        echo "Usage: $0 $mode user quota <user_id>" >&2
+        exit 1
+    fi
+
+    # API call from host
+    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        "${DSHOST}/users/${user_id}/storageadmin")
+    
+    if echo "$response" | grep -q "<quota>"; then
+        local quota=$(echo "$response" | grep -oP '(?<=<quota>)[^<]+')
+        local inst_quota=$(echo "$response" | grep -oP '(?<=<instQuota>)[^<]+')
+        local usage=$(echo "$response" | grep -oP '(?<=<usage>)[^<]+')
+        
+        echo "User ID: $user_id"
+        echo "  Quota: ${quota} MB"
+        echo "  Institutional Quota: ${inst_quota} MB"
+        echo "  Usage: ${usage} MB"
+    else
+        echo "ERROR: $response" >&2
+        exit 1
+    fi
+}
+
+user_set_quota() {
+    local mode=$1 user_id=$2 quota_mb=$3
+
+    if [ -z "$user_id" ] || [ -z "$quota_mb" ]; then
+        echo "Usage: $0 $mode user set-quota <user_id> <quota_mb>" >&2
+        exit 1
+    fi
+
+    # API call from host
+    local response=$(curl -s -X POST \
+        -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        -d "quota=${quota_mb}" \
+        -d "expiration=0" \
+        "${DSHOST}/users/${user_id}/storageadmin")
+    
+    if echo "$response" | grep -q "<quota>"; then
+        echo "Quota set successfully for user $user_id"
+        user_quota "$mode" "$user_id"
+    else
+        echo "ERROR: $response" >&2
+        exit 1
+    fi
 }
 
 # Group commands (via REST API)
@@ -302,11 +355,13 @@ check_env
 case "$RESOURCE" in
     user)
         case "$ACTION" in
-            create)  user_create "$MODE" "$@" ;;
-            list)    user_list "$MODE" ;;
-            disable) user_disable "$MODE" "$@" ;;
-            enable)  user_enable "$MODE" "$@" ;;
-            *)       echo "Unknown user action: $ACTION" >&2; usage ;;
+            create)     user_create "$MODE" "$@" ;;
+            list)       user_list "$MODE" ;;
+            disable)    user_disable "$MODE" "$@" ;;
+            enable)     user_enable "$MODE" ;;
+            quota)      user_quota "$MODE" "$@" ;;
+            set-quota)  user_set_quota "$MODE" "$@" ;;
+            *)          echo "Unknown user action: $ACTION" >&2; usage ;;
         esac
         ;;
     group)

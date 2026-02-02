@@ -849,7 +849,7 @@ class Zotero_Storage {
 				// '(school.edu|school.org)', but 'abcd.edu' won't match 'bcd.edu'.
 				. "AND SUBSTRING_INDEX(email, '@', -1) REGEXP CONCAT('^(.+\\\.)?', domain, '$')"
 				// Email doesn't match blacklist if one exists for domain
-				. "AND (domainBlacklist = '' "
+				. "AND (domainBlacklist IS NULL OR domainBlacklist = '' "
 					. "OR SUBSTRING_INDEX(email, '@', -1) NOT REGEXP domainBlacklist)"
 			. ") WHERE userID=?";
 		try {
@@ -886,7 +886,7 @@ class Zotero_Storage {
 		}
 		
 		$personalQuota = self::getUserValues($userID);
-		if ($personalQuota && $personalQuota['expiration'] < time()) {
+		if ($personalQuota && $personalQuota['expiration'] !== null && $personalQuota['expiration'] < time()) {
 			$personalQuota = false;
 		}
 		$personalQuota = $personalQuota ? $personalQuota['quota'] : 0;
