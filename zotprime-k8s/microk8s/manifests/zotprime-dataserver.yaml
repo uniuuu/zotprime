@@ -135,6 +135,18 @@ spec:
                 secretKeyRef:
                   name: zotprime-minio-secret
                   key: minio-root-password
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: zotprime-minio-config
+                  key: minio-root-user
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-minio-secret
+                  key: minio-root-password
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
           lifecycle:
             postStart:
               exec:

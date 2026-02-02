@@ -1,5 +1,18 @@
+# syntax=docker/dockerfile:1
 FROM alpine:3 AS stage1
 ARG ZOTPRIME_VERSION=2
+
+# Install custom CA certificate if provided
+RUN --mount=type=secret,id=custom_ca,target=/tmp/custom_ca.crt \
+    if [ -f /tmp/custom_ca.crt ]; then \
+        mkdir -p /usr/local/share/ca-certificates/ && \
+        cp /tmp/custom_ca.crt /usr/local/share/ca-certificates/custom_ca.crt && \
+        cat /usr/local/share/ca-certificates/custom_ca.crt >> /etc/ssl/certs/ca-certificates.crt && \
+        echo "Custom CA certificate installed"; \
+    else \
+        echo "No custom CA certificate provided, skipping"; \
+    fi
+
 RUN set -eux; \
         apk update && apk upgrade --available; \
         apk add --update --no-cache \
@@ -108,12 +121,6 @@ COPY config/zotero.conf /etc/apache2/conf.d/
 # Override gzip configuration
 COPY config/gzip.conf /etc/apache2/conf.d/
 
-# AWS local credentials
-RUN set -eux; \
-             mkdir ~/.aws  \
-             && /bin/sh -c 'echo -e "[default]\nregion = us-east-1" > ~/.aws/config' \
-             && /bin/sh -c 'echo -e "[default]\naws_access_key_id = zotero\naws_secret_access_key = zoterodocker" > ~/.aws/credentials'
-
 RUN set -eux; \
         rm -rvf /var/log/apache2; \
         mkdir -p /var/log/apache2; \
@@ -147,6 +154,14 @@ COPY dbconfig/www.sql /var/www/zotero/misc/
 RUN sed -i '/"license":/a\	"version": "1.0.0",' /var/www/zotero/composer.json
 RUN cd /var/www/zotero && composer install --no-dev --optimize-autoloader
 
+# Fix permissions for non-root user
+RUN chown -R apache:apache /var/www/zotero && \
+    chmod 777 /var/www/zotero/tmp && \
+    find /var/www/zotero/ -type d -exec chmod 755 {} \; && \
+    chmod 644 /var/www/zotero/htdocs/.htaccess && \
+    mkdir -p /var/run/apache2 /var/lock/apache2 && \
+    chown -R apache:apache /var/run/apache2 /var/lock/apache2
+
 ENV APACHE_RUN_USER=apache
 ENV APACHE_RUN_GROUP=apache
 ENV APACHE_LOCK_DIR=/var/lock/apache2
@@ -159,4 +174,8 @@ EXPOSE 80/tcp
 # Expose and entrypoint
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh
+
+# Switch to non-root user
+USER apache
+
 ENTRYPOINT ["/entrypoint.sh"]

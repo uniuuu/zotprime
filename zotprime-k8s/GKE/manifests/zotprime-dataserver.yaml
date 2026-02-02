@@ -106,6 +106,53 @@ spec:
               value: http://api.projectdev.net/
             - name: S3_ENDPOINT
               value: s3min.projectdev.net
+            - name: AUTH_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-auth-secret
+                  key: auth-salt
+            - name: API_SUPER_TOKEN_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-auth-secret
+                  key: api-super-token-hash
+            - name: MYSQLROOTPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-db-secret
+                  key: mysql-root-password
+            - name: MYSQLUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: zotprime-db-config
+                  key: mariadb-user
+            - name: MYSQLPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-db-secret
+                  key: mysql-password
+            - name: MINIOROOTUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: zotprime-minio-config
+                  key: minio-root-user
+            - name: MINIOROOTPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-minio-secret
+                  key: minio-root-password
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: zotprime-minio-config
+                  key: minio-root-user
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: zotprime-minio-secret
+                  key: minio-root-password
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
           lifecycle:
             postStart:
               exec:

@@ -53,11 +53,11 @@ set -eux
 #chown -R --no-dereference ${RUN_USER}:${RUN_GROUP} /var/log/apache2
 
 # Chmod
-chmod 777 /var/www/zotero/tmp
-chown apache -R /var/www/zotero
+#chmod 777 /var/www/zotero/tmp
+#chown apache -R /var/www/zotero
 #chmod 755 /var/www/zotero/htdocs/
-find /var/www/zotero/ -type d -exec chmod 755 {} \;
-chmod 644 /var/www/zotero/htdocs/.htaccess 
+#find /var/www/zotero/ -type d -exec chmod 755 {} \;
+#chmod 644 /var/www/zotero/htdocs/.htaccess 
 
 sed -i "s#http://localhost:8080/#http://$SERVER_IP:8080/#g" /var/www/zotero/include/config/config.inc.php
 sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/config/config.inc.php
