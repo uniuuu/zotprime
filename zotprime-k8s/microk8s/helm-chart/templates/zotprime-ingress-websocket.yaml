@@ -6,7 +6,7 @@ metadata:
     apps: zotprime-ingress-websocket
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
   annotations:
-#    cert-manager.io/issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/rewrite-target: /
@@ -22,10 +22,10 @@ metadata:
         proxy_cache_bypass $http_upgrade;
       }
 spec:
-#  tls:
-#   - secretName: web-ssl
-#     hosts:
-#      - {{ .Values.ingressHostnames.streamserver }}
+  tls:
+  - secretName: {{ include "zotprime-k8s.fullname" . }}-tls
+    hosts:
+    - {{ .Values.ingressHostnames.streamserver }}
   rules:
   - host: {{ .Values.ingressHostnames.streamserver }}
     http:

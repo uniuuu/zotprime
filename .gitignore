@@ -9,3 +9,8 @@ logs
 docker-compose-test.yml
 **/cred.json
 .vscode/
+
+# Helm chart values - DO NOT commit production credentials
+zotprime-k8s/microk8s/helm-chart/values.yaml
+zotprime-k8s/microk8s/helm-chart/values-*.yaml
+!zotprime-k8s/microk8s/helm-chart/values-example.yaml

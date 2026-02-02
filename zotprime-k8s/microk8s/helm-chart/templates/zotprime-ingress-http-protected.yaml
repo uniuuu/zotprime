@@ -1,25 +1,24 @@
+{{- if .Values.basicAuth.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-ingress-http
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-ingress-protected
   labels:
-    apps: zotprime-ingress-http
+    apps: zotprime-ingress-protected
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: {{ include "zotprime-k8s.fullname" . }}-basic-auth
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
 spec:
   tls:
   - secretName: {{ include "zotprime-k8s.fullname" . }}-tls
     hosts:
-    {{- if not .Values.basicAuth.enabled }}
     - {{ .Values.ingressHostnames.minios3Web }}
     - {{ .Values.ingressHostnames.phpmyadmin }}
-    {{- end }}
-    - {{ .Values.ingressHostnames.minios3Data }}
-    - {{ .Values.ingressHostnames.api }}
   rules:
-  {{- if not .Values.basicAuth.enabled }}
   - host: {{ .Values.ingressHostnames.minios3Web }}
     http:
       paths:
@@ -40,24 +39,4 @@ spec:
               number: 80
         path: /
         pathType: Prefix
-  {{- end }}
-  - host: {{ .Values.ingressHostnames.minios3Data }}
-    http:
-      paths:
-      - backend:
-          service:
-            name: minio
-            port:
-              name: minio-data
-        path: /
-        pathType: Prefix
-  - host: {{ .Values.ingressHostnames.api }}
-    http:
-      paths:
-      - backend:
-          service:
-            name: dataserver
-            port:
-              name: dataserver-api
-        path: /
-        pathType: Prefix
+{{- end }}

@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-tls
+spec:
+  secretName: {{ include "zotprime-k8s.fullname" . }}-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  dnsNames:
+  - {{ .Values.ingressHostnames.api }}
+  - {{ .Values.ingressHostnames.streamserver }}
+  - {{ .Values.ingressHostnames.minios3Data }}
+  - {{ .Values.ingressHostnames.phpmyadmin }}
+  - {{ .Values.ingressHostnames.minios3Web }}

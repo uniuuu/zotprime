@@ -189,11 +189,11 @@ Check the `ADDRESS` column and setup A records in your DNS hosting.
 
 | Service | URL |
 |---------|-----|
-| Zotero API | `http://api-any.yourhostname.io` |
-| S3 | `http://s3-any.yourhostname.io` |
-| PHPMyAdmin | `http://phpmyadmin-any.yourhostname.io` |
-| S3 Web UI | `http://minioweb-any.yourhostname.io` |
-| Stream Server | `ws://stream-any.yourhostname.io` |
+| Zotero API | `http://yoursub1.yourdomain.tld` |
+| S3 | `http://yoursub2.yourdomain.tld` |
+| PHPMyAdmin | `http://yoursub3.yourdomain.tld` |
+| S3 Web UI | `http://yoursub4.yourdomain.tld` |
+| Stream Server | `ws://yoursub5.yourdomain.tld` |
 
 ### Default Credentials
 
