@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:22-alpine
 ARG ZOTPRIME_VERSION=2
 
 RUN apk add --update --no-cache \

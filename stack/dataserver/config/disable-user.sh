@@ -4,7 +4,7 @@ if [ -z "$MYSQLROOTPASSWORD" ]; then
     echo "ERROR: MYSQLROOTPASSWORD not set" >&2
     exit 1
 fi
-MYSQL="mysql -h mysql -P 3306 -u root -p${MYSQLROOTPASSWORD}"
+MYSQL="mariadb -h mysql -P 3306 -u root -p${MYSQLROOTPASSWORD}"
 # ${1} username
 
 userID=$(echo "SELECT userID FROM users WHERE username='${1}';" | $MYSQL zotero_www -s -N)

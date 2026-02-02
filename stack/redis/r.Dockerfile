@@ -3,4 +3,4 @@
 # redis image
 ############################
 
-FROM redis:5.0
+FROM redis:7-alpine

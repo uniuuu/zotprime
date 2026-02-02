@@ -55,7 +55,7 @@ dataserverConfig:
     echo "ZotPrime Init Starting..."
     
     echo "Waiting for MariaDB..."
-    until mysql -h mysql -u root -pzotero -e "SELECT 1" >/dev/null 2>&1; do
+    until mariadb -h mysql -u root -pzotero -e "SELECT 1" >/dev/null 2>&1; do
         sleep 2
     done
     echo "MariaDB ready"
@@ -72,7 +72,7 @@ dataserverConfig:
     done
     echo "LocalStack ready"
     
-    if mysql -h mysql -u root -pzotero -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+    if mariadb -h mysql -u root -pzotero -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
         echo "Database already initialized, skipping..."
     else
         echo "Initializing database..."

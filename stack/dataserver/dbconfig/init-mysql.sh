@@ -3,7 +3,7 @@
 set -ux
 
 
-MYSQL="mysql -h mysql -P 3306 -u root -pzotero"
+MYSQL="mariadb -h mysql -P 3306 -u root -pzotero"
 
 echo "DROP DATABASE IF EXISTS zotero_master" | $MYSQL
 echo "DROP DATABASE IF EXISTS zotero_shard_1" | $MYSQL

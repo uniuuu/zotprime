@@ -3,4 +3,4 @@
 # mariadb image
 ############################
 
-FROM mariadb:10
+FROM mariadb:12
