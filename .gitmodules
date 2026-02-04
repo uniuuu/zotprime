@@ -18,3 +18,9 @@
 [submodule "stack/stream-server/stream-server"]
 	path = stack/stream-server/stream-server
 	url = https://github.com/uniuuu/stream-server.git
+[submodule "stack/webui/web-library"]
+	path = stack/webui/web-library
+	url = https://github.com/uniuuu/web-library
+[submodule "stack/webui/web-common"]
+	path = stack/webui/web-common
+	url = https://github.com/uniuuu/web-common

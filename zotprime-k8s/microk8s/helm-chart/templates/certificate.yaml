@@ -1,3 +1,4 @@
+{{- if .Values.tls.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -13,3 +14,4 @@ spec:
   - {{ .Values.ingressHostnames.minios3Data }}
   - {{ .Values.ingressHostnames.phpmyadmin }}
   - {{ .Values.ingressHostnames.minios3Web }}
+{{- end }}

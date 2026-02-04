@@ -7,6 +7,6 @@ metadata:
 data:
   mariadb-databasename: {{ .Values.dbConfig.mariadbDatabasename | quote }}
   mariadb-user: {{ .Values.dbConfig.mariadbUser | quote }}
-  admin-username: {{ .Values.dbConfig.adminUsername | quote }}
-  admin-password: {{ .Values.dbConfig.adminPassword | quote }}
-  admin-email: {{ .Values.dbConfig.adminEmail | quote }}
+  admin-username: {{ .Values.zoteroAdmin.adminUsername | quote }}
+  admin-password: {{ .Values.zoteroAdmin.adminPassword | quote }}
+  admin-email: {{ .Values.zoteroAdmin.adminEmail | quote }}

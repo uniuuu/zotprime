@@ -14,12 +14,8 @@ DSHOST="http://${SERVER_IP:-127.0.0.1}:8080"
 
 # Validate required env vars
 check_env() {
-    local missing=()
-    [ -z "$API_SUPER_TOKEN" ] && missing+=("API_SUPER_TOKEN")
-    [ -z "$MYSQLROOTPASSWORD" ] && missing+=("MYSQLROOTPASSWORD")
-
-    if [ ${#missing[@]} -gt 0 ]; then
-        echo "ERROR: Required environment variables not set: ${missing[*]}" >&2
+    if [ -z "$API_SUPER_TOKEN" ]; then
+        echo "ERROR: API_SUPER_TOKEN not set" >&2
         exit 1
     fi
 }
@@ -28,11 +24,7 @@ usage() {
     cat <<EOF
 ZotPrime Admin Tool
 
-Usage: $0 <mode> <resource> <action> [args...]
-
-Modes:
-  docker    Use Docker Compose
-  k8s       Use Kubernetes (kubectl)
+Usage: $0 <resource> <action> [args...]
 
 Resources and Actions:
   user create <username> <email> <password>   Create a new user
@@ -50,34 +42,16 @@ Resources and Actions:
   group members <group_id>                    List group members
 
 Examples:
-  $0 docker user create alice alice@example.com secret123
-  $0 docker user list
-  $0 docker group create 1 "My Group" PublicOpen
-  $0 k8s group add-user 123 456 admin
+  $0 user create alice alice@example.com secret123
+  $0 user list
+  $0 group create 1 "My Group" PublicOpen
+  $0 group add-user 123 456 admin
 
 Environment Variables (required):
-  DSHOST              Dataserver URL (e.g., http://127.0.0.1:8080/)
+  SERVER_IP           Server IP address (default: 127.0.0.1)
   API_SUPER_TOKEN     API super user token
-  MYSQLROOTPASSWORD   MySQL root password
 EOF
     exit 1
-}
-
-# Get container exec command based on mode
-get_exec_cmd() {
-    local mode=$1
-    case $mode in
-        docker)
-            echo "docker compose exec -e MYSQLROOTPASSWORD=$MYSQLROOTPASSWORD zotprime-dataserver"
-            ;;
-        k8s)
-            echo "kubectl exec -n zotprime deployment/zotprime-dataserver --"
-            ;;
-        *)
-            echo "ERROR: Invalid mode '$mode'. Use 'docker' or 'k8s'" >&2
-            exit 1
-            ;;
-    esac
 }
 
 # API call helper
@@ -97,51 +71,97 @@ api_call() {
     curl "${args[@]}" "$url"
 }
 
-# User commands (via container exec)
+# User commands (via API)
 user_create() {
-    local mode=$1 username=$2 email=$3 password=$4
+    local username=$1 email=$2 password=$3
 
     if [ -z "$username" ] || [ -z "$email" ] || [ -z "$password" ]; then
-        echo "Usage: $0 $mode user create <username> <email> <password>" >&2
+        echo "Usage: $0 user create <username> <email> <password>" >&2
         exit 1
     fi
 
-    local exec_cmd=$(get_exec_cmd "$mode")
-    cd "$PROJECT_DIR"
-    $exec_cmd /var/www/zotero/admin/create-user.sh "$username" "$email" "$password"
+    local json="{\"username\":\"$username\",\"email\":\"$email\",\"password\":\"$password\"}"
+    local response=$(curl -s -X POST \
+        -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "$json" \
+        "${DSHOST}/admin/users")
+    
+    if echo "$response" | jq -e '.userID' >/dev/null 2>&1; then
+        echo "User created successfully!"
+        echo "$response" | jq -r '"  UserID: \(.userID)\n  Username: \(.username)\n  Email: \(.email)\n  LibraryID: \(.libraryID)"'
+    else
+        echo "ERROR: $response" >&2
+        exit 1
+    fi
 }
 
 user_list() {
-    local mode=$1
-    local exec_cmd=$(get_exec_cmd "$mode")
-    cd "$PROJECT_DIR"
-    $exec_cmd /var/www/zotero/admin/list-users.sh
+    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        "${DSHOST}/admin/users")
+    
+    echo "UserID  Username            Email                       Status"
+    echo "------  ------------------  --------------------------  --------"
+    echo "$response" | jq -r '.[] | "\(.userID)|\(.username)|\(.email)|\(if .enabled then "enabled" else "disabled" end)"' | \
+        while IFS='|' read -r uid uname email status; do
+            printf "%-6s  %-18s  %-26s  %s\n" "$uid" "$uname" "$email" "$status"
+        done
 }
 
 user_disable() {
-    local mode=$1 username=$2
+    local username=$1
 
     if [ -z "$username" ]; then
-        echo "Usage: $0 $mode user disable <username>" >&2
+        echo "Usage: $0 user disable <username>" >&2
         exit 1
     fi
 
-    local exec_cmd=$(get_exec_cmd "$mode")
-    cd "$PROJECT_DIR"
-    $exec_cmd /var/www/zotero/admin/disable-user.sh "$username"
+    # Get user ID from username
+    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        "${DSHOST}/admin/users")
+    
+    local user_id=$(echo "$response" | jq -r ".[] | select(.username==\"$username\") | .userID")
+    
+    if [ -z "$user_id" ]; then
+        echo "ERROR: User '$username' not found" >&2
+        exit 1
+    fi
+
+    curl -s -X PUT \
+        -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d '{"enabled":false}' \
+        "${DSHOST}/admin/users/${user_id}/status"
+    
+    echo "User '$username' (ID: $user_id) disabled"
 }
 
 user_enable() {
-    local mode=$1 username=$2
+    local username=$1
 
     if [ -z "$username" ]; then
-        echo "Usage: $0 $mode user enable <username>" >&2
+        echo "Usage: $0 user enable <username>" >&2
         exit 1
     fi
 
-    local exec_cmd=$(get_exec_cmd "$mode")
-    cd "$PROJECT_DIR"
-    $exec_cmd /var/www/zotero/admin/enable-user.sh "$username"
+    # Get user ID from username
+    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        "${DSHOST}/admin/users")
+    
+    local user_id=$(echo "$response" | jq -r ".[] | select(.username==\"$username\") | .userID")
+    
+    if [ -z "$user_id" ]; then
+        echo "ERROR: User '$username' not found" >&2
+        exit 1
+    fi
+
+    curl -s -X PUT \
+        -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d '{"enabled":true}' \
+        "${DSHOST}/admin/users/${user_id}/status"
+    
+    echo "User '$username' (ID: $user_id) enabled"
 }
 
 user_quota() {
@@ -172,10 +192,10 @@ user_quota() {
 }
 
 user_set_quota() {
-    local mode=$1 user_id=$2 quota_mb=$3
+    local user_id=$1 quota_mb=$2
 
     if [ -z "$user_id" ] || [ -z "$quota_mb" ]; then
-        echo "Usage: $0 $mode user set-quota <user_id> <quota_mb>" >&2
+        echo "Usage: $0 user set-quota <user_id> <quota_mb>" >&2
         exit 1
     fi
 
@@ -188,7 +208,7 @@ user_set_quota() {
     
     if echo "$response" | grep -q "<quota>"; then
         echo "Quota set successfully for user $user_id"
-        user_quota "$mode" "$user_id"
+        user_quota "$user_id"
     else
         echo "ERROR: $response" >&2
         exit 1
@@ -240,35 +260,15 @@ group_create() {
 }
 
 group_list() {
-    local user_id=$1  # Optional parameter
-
-    if [ -n "$user_id" ]; then
-        # List groups for specific user
-        local response=$(api_call GET "users/$user_id/groups?format=json")
-        echo "$response" | jq -r '.[] | "ID: \(.data.id) | Name: \(.data.name) | Type: \(.data.type) | Owner: \(.data.owner)"' 2>/dev/null
-    else
-        # List all groups (deduplicated)
-        local exec_cmd=$(get_exec_cmd "$MODE")
-        local user_ids=$($exec_cmd sh -c "mysql -h mysql -P 3306 -u root -p\$MYSQLROOTPASSWORD zotero_www -sN -e 'SELECT userID FROM users'")
-
-        echo "ID  Name                Type          Owner  Members"
-        echo "--- ------------------- ------------- ------ -------"
-        
-        local temp_file=$(mktemp)
-        for uid in $user_ids; do
-            local user_groups=$(api_call GET "users/$uid/groups?format=json" 2>/dev/null)
-            
-            if [ -n "$user_groups" ] && echo "$user_groups" | jq -e 'type == "array" and length > 0' >/dev/null 2>&1; then
-                echo "$user_groups" | jq -r '.[] | "\(.data.id)|\(.data.name)|\(.data.type)|\(.data.owner)|\((.data.members // [] | length) + ((.data.admins // []) | length))"' 2>/dev/null >> "$temp_file"
-            fi
+    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        "${DSHOST}/admin/groups")
+    
+    echo "ID   Name                Type          Owner  LibraryID"
+    echo "---- ------------------- ------------- ------ ---------"
+    echo "$response" | jq -r '.[] | "\(.id)|\(.name)|\(.type)|\(.owner)|\(.libraryID)"' | \
+        while IFS='|' read -r gid gname gtype gowner libid; do
+            printf "%-4s %-19s %-13s %-6s %s\n" "$gid" "$gname" "$gtype" "$gowner" "$libid"
         done
-        
-        sort -t'|' -k1 -n -u "$temp_file" | while IFS='|' read -r gid gname gtype gowner gmembers; do
-            [ -n "$gid" ] && printf "%-3s %-19s %-13s %-6s %s\n" "$gid" "$gname" "$gtype" "$gowner" "$gmembers"
-        done
-        
-        rm -f "$temp_file"
-    fi
 }
 
 group_delete() {
@@ -343,24 +343,23 @@ group_members() {
 }
 
 # Main
-[ $# -lt 3 ] && usage
+[ $# -lt 2 ] && usage
 
-MODE=$1
-RESOURCE=$2
-ACTION=$3
-shift 3
+RESOURCE=$1
+ACTION=$2
+shift 2
 
 check_env
 
 case "$RESOURCE" in
     user)
         case "$ACTION" in
-            create)     user_create "$MODE" "$@" ;;
-            list)       user_list "$MODE" ;;
-            disable)    user_disable "$MODE" "$@" ;;
-            enable)     user_enable "$MODE" ;;
-            quota)      user_quota "$MODE" "$@" ;;
-            set-quota)  user_set_quota "$MODE" "$@" ;;
+            create)     user_create "$@" ;;
+            list)       user_list ;;
+            disable)    user_disable "$@" ;;
+            enable)     user_enable "$@" ;;
+            quota)      user_quota "$@" ;;
+            set-quota)  user_set_quota "$@" ;;
             *)          echo "Unknown user action: $ACTION" >&2; usage ;;
         esac
         ;;

@@ -98,7 +98,8 @@ FROM stage2 AS build
 RUN set -eux; \
         sed -i "s/#LoadModule\ rewrite_module/LoadModule\ rewrite_module/" /etc/apache2/httpd.conf; \
         sed -i "s/#LoadModule\ headers_module/LoadModule\ headers_module/" /etc/apache2/httpd.conf; \
-        sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf;
+        sed -i "s/#LoadModule\ deflate_module/LoadModule\ deflate_module/" /etc/apache2/httpd.conf; \
+        sed -i "s/^Listen 80$/Listen 8080/" /etc/apache2/httpd.conf;
 #        sed -i "s/#LoadModule\ session_module/LoadModule\ session_module/" /etc/apache2/httpd.conf; \
 #        sed -i "s/#LoadModule\ session_cookie_module/LoadModule\ session_cookie_module/" /etc/apache2/httpd.conf; \
 #        sed -i "s/#LoadModule\ session_crypto_module/LoadModule\ session_crypto_module/" /etc/apache2/httpd.conf; \
@@ -137,16 +138,14 @@ RUN set -eux; \
 COPY dataserver/. /var/www/zotero/
 RUN rm -rf /var/www/zotero/include/Zend
 COPY Zend /var/www/zotero/include/Zend
-COPY config/create-user.sh /var/www/zotero/admin/
-COPY config/list-users.sh /var/www/zotero/admin/
-COPY config/disable-user.sh /var/www/zotero/admin/
-COPY config/enable-user.sh /var/www/zotero/admin/
 COPY config/config.inc.php /var/www/zotero/include/config/
 COPY config/dbconnect.inc.php /var/www/zotero/include/config/
 COPY config/header.inc.php /var/www/zotero/include/
 COPY config/Storage.inc.php /var/www/zotero/model/
 COPY config/FullText.inc.php /var/www/zotero/model/
 COPY config/ApiController.php /var/www/zotero/controllers/
+COPY config/AdminController.php /var/www/zotero/controllers/
+COPY config/routes.inc.php /var/www/zotero/include/config/
 COPY dbconfig/init-mysql.sh /var/www/zotero/misc/
 COPY dbconfig/db_update.sh /var/www/zotero/misc/
 COPY dbconfig/www.sql /var/www/zotero/misc/

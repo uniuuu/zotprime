@@ -5,7 +5,7 @@ var config = {
 	dev: false,
 	logLevel: 'info',
 	hostname: os.hostname().split('.')[0],
-	httpPort: 81,
+	httpPort: 8081,
 	proxyProtocol: false,
 	https: false,
 	trustedProxies: [],
@@ -16,7 +16,7 @@ var config = {
 	redis: {
 		url: 'redis://redis:6379'
 	},
-	apiURL: 'http://dataserver/',
+	apiURL: 'http://dataserver:8080/',
 	apiVersion: 3,
 	apiRequestHeaders: {},
 	longStackTraces: false,

@@ -17,11 +17,7 @@ spec:
         apps: zotprime-db
     spec:
       containers:
-      - args: {{- toYaml .Values.zotprimeDb.mariadb.args | nindent 8 }}
-        command:
-        - /bin/bash
-        - -c
-        env:
+      - env:
         - name: MARIADB_USER
           valueFrom:
             configMapKeyRef:
@@ -32,6 +28,16 @@ spec:
             configMapKeyRef:
               key: mariadb-databasename
               name: {{ include "zotprime-k8s.fullname" . }}-db-config
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mysql-root-password
+              name: {{ include "zotprime-k8s.fullname" . }}-db-secret
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mysql-password
+              name: {{ include "zotprime-k8s.fullname" . }}-db-secret
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.zotprimeDb.mariadb.image.repository }}:{{ .Values.zotprimeDb.mariadb.image.tag
@@ -46,8 +52,6 @@ spec:
         volumeMounts:
         - mountPath: /var/lib/mysql/
           name: datadb
-        - mountPath: tmp/_key/
-          name: {{ include "zotprime-k8s.fullname" . }}-db-secret
       initContainers:
       - command:
         - chown
@@ -65,10 +69,7 @@ spec:
         - mountPath: /var/lib/mysql
           name: datadb
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
-      volumes:
-      - name: {{ include "zotprime-k8s.fullname" . }}-db-secret
-        secret:
-          secretName: {{ include "zotprime-k8s.fullname" . }}-db-secret
+      volumes: []
   updateStrategy: {}
   volumeClaimTemplates:
   - metadata:

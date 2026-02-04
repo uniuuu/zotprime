@@ -2,20 +2,21 @@
 
 ## Prerequisites
 
-### 1. Configure cert-manager ClusterIssuer
+### 1. Configure TLS (Optional)
 
-Edit `zotprime-k8s/microk8s/clusterissuer.yaml`:
+For HTTPS:
 
-```yaml
-spec:
-  acme:
-    email: your-email@example.com  # Replace with your email
+```bash
+cd zotprime-k8s/microk8s
+cp clusterissuer-example.yaml clusterissuer.yaml
 ```
+
+Edit `clusterissuer.yaml` - replace `your-email@example.com`.
 
 Apply:
 
 ```bash
-kubectl apply -f zotprime-k8s/microk8s/clusterissuer.yaml
+kubectl apply -f clusterissuer.yaml
 ```
 
 ## Setup
@@ -25,7 +26,26 @@ cd zotprime-k8s/microk8s/helm-chart
 cp values-example.yaml values.yaml
 ```
 
-### 2. Configure Credentials
+### 2. Configure TLS
+
+Edit `values.yaml`:
+
+```yaml
+tls:
+  enabled: false  # Set true for HTTPS
+```
+
+### 3. Configure Credentials
+
+Generate auth secrets:
+
+```bash
+# Auth salt
+openssl rand -hex 16 | base64
+
+# API super token hash
+php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
+```
 
 Generate base64-encoded secrets:
 
@@ -44,21 +64,28 @@ printf "MARIADB_ROOT_PASSWORD=root_pass\nMARIADB_PASSWORD=user_pass" | base64
 Edit `values.yaml`:
 
 ```yaml
-minioConfig:
-  minioUser: your_minio_user
+authSecret:
+  authSalt: "<base64_output>"
+  apiSuperTokenHash: "<base64_output>"
 
 minioSecret:
-  secretTxt: "<base64_output_from_minio_command>"
+  minioRootPassword: "<base64_password>"
+
+dbSecret:
+  mysqlRootPassword: "<base64_password>"
+  mysqlPassword: "<base64_password>"
 
 dbConfig:
   mariadbUser: your_db_user
   mariadbDatabasename: your_db_name
 
-dbSecret:
-  secretTxt: "<base64_output_from_mariadb_command>"
+zoteroAdmin:
+  adminUsername: admin
+  adminPassword: admin
+  adminEmail: admin@example.com
 ```
 
-### 2a. Configure Basic Auth
+### 3a. Configure Basic Auth
 
 Protect PHPMyAdmin and MinIO web console with HTTP Basic Authentication. This adds a second layer of security at the ingress level before reaching the application's own authentication.
 
@@ -102,9 +129,9 @@ basicAuth:
 
 Users will authenticate twice: first at ingress (basic auth), then at application login (PHPMyAdmin/MinIO credentials).
 
-### 3. Configure Domains
+### 4. Configure Domains
 
-Edit `values.yaml`:
+Edit `values.yaml` - replace all `yoursub*.yourdomain.tld`:
 
 ```yaml
 ingressHostnames:
@@ -113,18 +140,6 @@ ingressHostnames:
   minios3Data: yoursub2.yourdomain.tld
   phpmyadmin: yoursub3.yourdomain.tld
   minios3Web: yoursub4.yourdomain.tld
-
-zotprimeDataserver:
-  hostAliases:
-    hostname: yoursub2.yourdomain.tld  # Match minios3Data
-    ip: 10.152.183.11                   # Choose available cluster IP
-  zotprimeDataserver:
-    env:
-      serverIp: http://yoursub1.yourdomain.tld/
-      s3Endpoint: yoursub2.yourdomain.tld
-
-minio:
-  clusterIP: 10.152.183.11  # Same IP as hostAliases
 ```
 
 ## DNS

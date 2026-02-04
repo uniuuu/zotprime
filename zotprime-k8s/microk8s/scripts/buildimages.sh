@@ -80,6 +80,11 @@ echo 'building image zotprime-phpmyadmin'
 
 DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f pa.Dockerfile -t zotprime-phpmyadmin .
 
+cd ../admin
+echo 'building image zotprime-admin'
+
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f admin.Dockerfile -t zotprime-admin .
+
 cd ../elasticsearch
 echo 'building image zotprime-elasticsearch'
 

@@ -20,9 +20,11 @@ spec:
       containers:
       - env:
         - name: SERVER_IP
-          value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.serverIp }}
+          value: {{ quote .Values.ingressHostnames.api }}
         - name: S3_ENDPOINT
           value: {{ quote .Values.zotprimeDataserver.zotprimeDataserver.env.s3Endpoint }}
+        - name: S3_PUBLIC_ENDPOINT
+          value: {{ if .Values.tls.enabled }}https{{ else }}http{{ end }}://{{ .Values.ingressHostnames.minios3Data }}
         - name: AUTH_SALT
           valueFrom:
             secretKeyRef:
@@ -48,16 +50,11 @@ spec:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-db-secret
               key: mysql-password
-        - name: MINIOROOTUSER
+        - name: MINIO_ROOT_USER
           valueFrom:
             configMapKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-minio-config
               key: minio-root-user
-        - name: MINIOROOTPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
-              key: minio-root-password
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
             configMapKeyRef:
@@ -66,8 +63,8 @@ spec:
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
-              key: minio-root-password
+              name: {{ include "zotprime-k8s.fullname" . }}-blob-secret
+              key: aws-secret-access-key
         - name: AWS_DEFAULT_REGION
           value: us-east-1
         - name: KUBERNETES_CLUSTER_DOMAIN
@@ -83,21 +80,21 @@ spec:
               command:
               - /bin/sh
               - -xc
-              - mkdir -p /var/www/zotero/log && bash /tmp/_conf/init.sh > /var/www/zotero/log/init.log 2>&1 ; exit 0
+              - . /secrets/secret-minio.txt && export MINIO_ROOT_PASSWORD && mkdir -p /var/www/zotero/log && bash /tmp/_conf/init.sh > /var/www/zotero/log/init.log 2>&1 ; exit 0
         livenessProbe:
           httpGet:
             path: /
-            port: 80
+            port: 8080
           initialDelaySeconds: 60
           periodSeconds: 30
         name: zotprime-dataserver
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         readinessProbe:
           failureThreshold: 3
           httpGet:
             path: /
-            port: 80
+            port: 8080
           initialDelaySeconds: 30
           periodSeconds: 30
           successThreshold: 1
@@ -108,10 +105,9 @@ spec:
         - mountPath: /tmp/_conf
           name: dataserver-config
           readOnly: true
-      hostAliases:
-      - hostnames:
-        - {{ .Values.zotprimeDataserver.hostAliases.hostname }}
-        ip: {{ .Values.zotprimeDataserver.hostAliases.ip }}
+        - mountPath: /secrets/
+          name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
+          readOnly: true
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-low-priority
       restartPolicy: Always
       securityContext: {}
@@ -119,6 +115,9 @@ spec:
       - configMap:
           name: {{ include "zotprime-k8s.fullname" . }}-dataserver-config
         name: dataserver-config
+      - name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
+        secret:
+          secretName: {{ include "zotprime-k8s.fullname" . }}-minio-secret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -389,7 +388,7 @@ spec:
         - name: MINIO_ROOT_USER
           valueFrom:
             configMapKeyRef:
-              key: minio-user
+              key: minio-root-user
               name: {{ include "zotprime-k8s.fullname" . }}-minio-config
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
@@ -423,14 +422,14 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: s3data
-        - mountPath: /tmp/_key
+        - mountPath: /secrets/
           name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
           readOnly: true
       - env:
         - name: MINIO_ROOT_USER
           valueFrom:
             configMapKeyRef:
-              key: minio-user
+              key: minio-root-user
               name: {{ include "zotprime-k8s.fullname" . }}-minio-config
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
@@ -442,7 +441,7 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: s3data
-        - mountPath: /tmp/_key
+        - mountPath: /secrets/
           name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
           readOnly: true
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
@@ -519,18 +518,18 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 81
+            port: 8081
           initialDelaySeconds: 10
           periodSeconds: 30
           timeoutSeconds: 20
         name: zotprime-streamserver
         ports:
-        - containerPort: 81
+        - containerPort: 8081
         readinessProbe:
           failureThreshold: 3
           httpGet:
             path: /health
-            port: 81
+            port: 8081
           periodSeconds: 20
           successThreshold: 1
           timeoutSeconds: 1

@@ -115,6 +115,13 @@ services:
       context: ./stack/phpmyadmin
       dockerfile: pa.Dockerfile
 
+  zotprime-admin:
+    profiles: ["admin"]
+    pull_policy: build
+    build:
+      context: ./stack/admin
+      dockerfile: admin.Dockerfile
+
   # zotprime-init:
   #   build:
   #     context: ./stack/init

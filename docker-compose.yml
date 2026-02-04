@@ -105,7 +105,7 @@ services:
   zotprime-dataserver:
     image: "uniuu/zotprime-dataserver:${VER}"
     ports:
-      - "8080:80"
+      - "8080:8080"
     extra_hosts:
       - "${SERVER_IP}:10.5.5.7"     # Map SERVER_IP to MinIO's internal Docker IP for remote deployments
     volumes:
@@ -115,13 +115,14 @@ services:
       - RUN_GROUP=apache
       - SERVER_IP=${SERVER_IP}
       - S3_ENDPOINT=${S3_ENDPOINT:-${SERVER_IP}:9000} # Default to SERVER_IP:9000, allow override for external S3
+      - S3_PUBLIC_ENDPOINT=http://${SERVER_IP}:9000
       - AUTH_SALT=${AUTH_SALT}
       - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
       - MYSQLROOTPASSWORD=${MYSQLROOTPASSWORD}
       - MYSQLUSER=${MYSQLUSER}
       - MYSQLPASSWORD=${MYSQLPASSWORD}
-      - MINIOROOTUSER=${MINIOROOTUSER}
-      - MINIOROOTPASSWORD=${MINIOROOTPASSWORD}
+      - MINIO_ROOT_USER=${MINIOROOTUSER}
+      - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
     depends_on:
       zotprime-db:
         condition: service_healthy
@@ -170,7 +171,7 @@ services:
   zotprime-streamserver:
     image: "uniuu/zotprime-streamserver:${VER}"
     ports:
-      - "8081:81"
+      - "8081:8081"
     volumes:
       - /etc/localtime:/etc/localtime:ro
     restart: always
@@ -210,8 +211,8 @@ services:
       - MYSQLPASSWORD=${MYSQLPASSWORD}
       - AUTH_SALT=${AUTH_SALT}
       - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
-      - MINIOROOTUSER=${MINIOROOTUSER}
-      - MINIOROOTPASSWORD=${MINIOROOTPASSWORD}
+      - MINIO_ROOT_USER=${MINIOROOTUSER}
+      - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
       - AWS_ACCESS_KEY_ID=${MINIOROOTUSER}
       - AWS_SECRET_ACCESS_KEY=${MINIOROOTPASSWORD}
       - AWS_DEFAULT_REGION=us-east-1
@@ -247,6 +248,26 @@ services:
     networks:
       zotprime:
         ipv4_address: 10.5.5.13
+  zotprime-admin:
+    profiles: ["admin"]
+    image: "uniuu/zotprime-admin:${VER}"
+    ports:
+      - "8082:8080"
+    environment:
+      - WEBADMIN_USERNAME=${WEBADMIN_USERNAME}
+      - WEBADMIN_PASSWORD=${WEBADMIN_PASSWORD}
+      - API_SUPER_TOKEN=${API_SUPER_TOKEN}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      zotprime-dataserver:
+        condition: service_started
+    links:
+      - zotprime-dataserver:dataserver
+    restart: always
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.12
 volumes:
   dbdata:
    driver: local

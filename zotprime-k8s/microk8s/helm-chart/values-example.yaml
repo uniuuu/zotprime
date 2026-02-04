@@ -1,21 +1,65 @@
+tls:
+  enabled: false  # Set to true for HTTPS with cert-manager
 ingressHostnames:
   api: yoursub1.yourdomain.tld
   streamserver: yoursub5.yourdomain.tld
   minios3Data: yoursub2.yourdomain.tld
   phpmyadmin: yoursub3.yourdomain.tld
   minios3Web: yoursub4.yourdomain.tld
+  admin: yoursub6.yourdomain.tld
 basicAuth:
   enabled: true
   htpasswd: ""
+authSecret:
+  # Base64 encoded values
+  # Generate: echo -n "your_value" | base64
+  authSalt: ""  # openssl rand -hex 16 | base64
+  apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64  -w 0
+minioSecret:
+  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
+blobSecret:
+  awsSecretAccessKey: "em90ZXJvZG9ja2Vy"  # base64 of "zoterodocker"
+dbSecret:
+  mysqlRootPassword: "em90ZXJv"  # base64 of "zotero" (no newline)
+  mysqlPassword: "em90ZXJvdGVzdA=="  # base64 of "zoterotest" (no newline)
+dbConfig:
+  mariadbDatabasename: zoterotest
+  mariadbUser: zotprimeprod
+zoteroAdmin:
+  adminUsername: admin
+  adminPassword: admin
+  adminEmail: admin@zotero.org
+dataserver:
+  ports:
+  - name: dataserver-api
+    port: 80
+    targetPort: 80
+  type: ClusterIP
+webAdmin:
+  enabled: true
+  replicas: 1
+  image:
+    repository: localhost:32000/zotprime-k8s/zotprime-admin
+    tag: latest
+  imagePullPolicy: Always
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: "0.5"
+      memory: 256Mi
+  # Generate: echo -n "your_username" | base64
+  username: ""
+  # Generate: php -r "echo password_hash('your_password', PASSWORD_BCRYPT, ['cost' => 12]);" | base64 -w 0
+  password: ""
+  service:
+    port: 80
+    targetPort: 8080
 zotprimeDataserver:
   replicas: 1
-  hostAliases:
-    hostname: yoursub2.yourdomain.tld
-    ip: 10.0.0.1
   zotprimeDataserver:
     env:
-      serverIp: http://yoursub1.yourdomain.tld/
-      s3Endpoint: yoursub2.yourdomain.tld
+      s3Endpoint: minio:9000
     image:
       repository: localhost:32000/zotprime-k8s/zotprime-dataserver
       tag: latest
@@ -26,28 +70,6 @@ zotprimeDataserver:
       requests:
         cpu: "1"
         memory: 512Mi
-authSecret:
-  # Base64 encoded values
-  # Generate: echo -n "your_value" | base64
-  authSalt: ""  # openssl rand -hex 16 | base64
-  apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
-minioSecret:
-  minioRootPassword: "em90ZXJvZG9ja2VyCg=="  # base64 of "zoterodocker"
-dbSecret:
-  mysqlRootPassword: "em90ZXJvCg=="  # base64 of "zotero"
-  mysqlPassword: "em90ZXJvdGVzdAo="  # base64 of "zoterotest"
-dbConfig:
-  mariadbDatabasename: zoterotest
-  mariadbUser: zotprimeprod
-  adminUsername: admin
-  adminPassword: admin
-  adminEmail: admin@zotero.org
-dataserver:
-  ports:
-  - name: dataserver-api
-    port: 80
-    targetPort: 80
-  type: ClusterIP
 dataserverConfig:
   initSh: |-
     #!/bin/bash
@@ -56,7 +78,7 @@ dataserverConfig:
     echo "ZotPrime Init Starting..."
     
     echo "Waiting for MariaDB..."
-    until mariadb -h mysql -u root -pzotero -e "SELECT 1" >/dev/null 2>&1; do
+    until mariadb -h mysql -u root -p${MYSQLROOTPASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
         sleep 2
     done
     echo "MariaDB ready"
@@ -73,7 +95,7 @@ dataserverConfig:
     done
     echo "LocalStack ready"
     
-    if mariadb -h mysql -u root -pzotero -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+    if mariadb -h mysql -u root -p${MYSQLROOTPASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
         echo "Database already initialized, skipping..."
     else
         echo "Initializing database..."
@@ -118,7 +140,7 @@ memcached:
     targetPort: 11211
   type: ClusterIP
 minio:
-  clusterIP: 10.0.0.1
+  # clusterIP: 10.152.183.11
   ports:
   - name: minio-ui
     port: 9001
@@ -198,9 +220,6 @@ tinymceclean:
   type: ClusterIP
 zotprimeDb:
   mariadb:
-    args:
-    - set -o allexport && source tmp/_key/secret-db.txt && set +o allexport && /usr/local/bin/docker-entrypoint.sh
-      mysqld
     containerSecurityContext:
       runAsGroup: 999
       runAsUser: 999
@@ -286,7 +305,7 @@ zotprimeMinio:
   replicas: 1
   zotprimeMinio:
     args:
-    - set -o allexport && source tmp/_key/secret-minio.txt && set +o allexport && minio
+    - set -o allexport && source /secrets/secret-minio.txt && set +o allexport && minio
       server /data --console-address :9001
     image:
       repository: localhost:32000/zotprime-k8s/zotprime-minio

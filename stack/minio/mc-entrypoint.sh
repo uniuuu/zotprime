@@ -11,9 +11,9 @@ set -eux
 
 #exec httpd -e debug -DFOREGROUND -k start
 
-if [ -e tmp/_key/secret-minio.txt ]
+if [ -e /secrets/secret-minio.txt ]
 then
-    source tmp/_key/secret-minio.txt
+    source /secrets/secret-minio.txt
 fi  
 
 echo "Waiting for MinIO to be ready..."

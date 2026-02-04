@@ -1,0 +1,101 @@
+{{- if .Values.webAdmin.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: webadmin-secret
+  labels:
+    app: zotprime-admin
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+type: Opaque
+data:
+  username: {{ .Values.webAdmin.username }}
+  password: {{ .Values.webAdmin.password }}
+  apiSuperTokenHash: {{ .Values.authSecret.apiSuperTokenHash }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zotprime-admin
+  labels:
+    app: zotprime-admin
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.webAdmin.replicas }}
+  selector:
+    matchLabels:
+      app: zotprime-admin
+  template:
+    metadata:
+      labels:
+        app: zotprime-admin
+    spec:
+      containers:
+      - name: admin
+        image: "{{ .Values.webAdmin.image.repository }}:{{ .Values.webAdmin.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.webAdmin.imagePullPolicy }}
+        ports:
+        - containerPort: {{ .Values.webAdmin.service.targetPort }}
+        env:
+        - name: WEBADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: webadmin-secret
+              key: username
+        - name: WEBADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: webadmin-secret
+              key: password
+        - name: API_SUPER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: webadmin-secret
+              key: apiSuperTokenHash
+        resources:
+          {{- toYaml .Values.webAdmin.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+  labels:
+    app: zotprime-admin
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app: zotprime-admin
+  ports:
+  - port: {{ .Values.webAdmin.service.port }}
+    targetPort: {{ .Values.webAdmin.service.targetPort }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: admin-ingress
+  labels:
+    app: zotprime-admin
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.tls.enabled }}
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    {{- end }}
+spec:
+  {{- if .Values.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.ingressHostnames.admin }}
+    secretName: admin-tls
+  {{- end }}
+  rules:
+  - host: {{ .Values.ingressHostnames.admin }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: admin
+            port:
+              number: {{ .Values.webAdmin.service.port }}
+{{- end }}

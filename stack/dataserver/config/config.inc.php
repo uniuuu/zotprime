@@ -23,8 +23,8 @@ class Z_CONFIG {
 	public static function init() {
 		self::$AUTH_SALT = getenv('AUTH_SALT');
 		self::$API_SUPER_TOKEN_HASH = getenv('API_SUPER_TOKEN_HASH');
-		self::$AWS_ACCESS_KEY = getenv('MINIOROOTUSER'); // leave credentials empty to use IAM role
-		self::$AWS_SECRET_KEY = getenv('MINIOROOTPASSWORD');
+		self::$AWS_ACCESS_KEY = getenv('MINIO_ROOT_USER');
+		self::$AWS_SECRET_KEY = getenv('MINIO_ROOT_PASSWORD');
 		
 		if (!self::$AUTH_SALT) {
 			throw new Exception("AUTH_SALT environment variable must be set");
@@ -33,7 +33,7 @@ class Z_CONFIG {
 			throw new Exception("API_SUPER_TOKEN_HASH environment variable must be set");
 		}
 		if (!self::$AWS_ACCESS_KEY || !self::$AWS_SECRET_KEY) {
-			throw new Exception("MINIOROOTUSER and MINIOROOTPASSWORD environment variables must be set");
+			throw new Exception("MINIO_ROOT_USER and MINIO_ROOT_PASSWORD environment variables must be set");
 		}
 	}
 	
@@ -41,6 +41,7 @@ class Z_CONFIG {
 	public static $AWS_ACCESS_KEY;
 	public static $AWS_SECRET_KEY;
 	public static $S3_ENDPOINT = '10.5.5.1:9000';
+	public static $S3_PUBLIC_ENDPOINT = '';
 	public static $S3_BUCKET = 'zotero';
 	public static $S3_BUCKET_CACHE = '';
 	public static $S3_BUCKET_FULLTEXT = 'zotero-fulltext';

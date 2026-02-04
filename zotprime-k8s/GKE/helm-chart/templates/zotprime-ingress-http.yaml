@@ -8,16 +8,20 @@ metadata:
   annotations:
     cloud.google.com/load-balancer-type: External
     kubernetes.io/ingress.class: gce
-#    cert-manager.io/issuer: letsencrypt-staging
+    {{- if .Values.tls.enabled }}
+    networking.gke.io/managed-certificates: {{ include "zotprime-k8s.fullname" . }}-cert
+    {{- end }}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-#  tls:
-#   - secretName: web-ssl
-#     hosts:
-#      - {{ .Values.ingressHostnames.minios3Web }}
-#      - {{ .Values.ingressHostnames.minios3Data }}
-#      - {{ .Values.ingressHostnames.phpmyadmin }}
-#      - {{ .Values.ingressHostnames.api }}
+  {{- if .Values.tls.enabled }}
+  tls:
+  - secretName: {{ include "zotprime-k8s.fullname" . }}-tls
+    hosts:
+    - {{ .Values.ingressHostnames.minios3Web }}
+    - {{ .Values.ingressHostnames.minios3Data }}
+    - {{ .Values.ingressHostnames.phpmyadmin }}
+    - {{ .Values.ingressHostnames.api }}
+  {{- end }}
   rules:
   - host: {{ .Values.ingressHostnames.minios3Web }}
     http:

@@ -61,5 +61,8 @@ echo 'building and pushing image zotprime-streamserver'
 
 docker buildx build --platform ${PLATFORMS} -f Dockerfile  --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-streamserver .
 
+echo 'building and pushing image zotprime-admin'
+
+docker buildx build --platform ${PLATFORMS} -f admin.Dockerfile  --push --tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-admin .
 
 echo 'done'

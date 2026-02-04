@@ -1,0 +1,13 @@
+{{- if .Values.tls.enabled }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-cert
+spec:
+  domains:
+  - {{ .Values.ingressHostnames.api }}
+  - {{ .Values.ingressHostnames.streamserver }}
+  - {{ .Values.ingressHostnames.minios3Data }}
+  - {{ .Values.ingressHostnames.phpmyadmin }}
+  - {{ .Values.ingressHostnames.minios3Web }}
+{{- end }}

@@ -7,17 +7,21 @@ metadata:
     apps: zotprime-ingress-protected
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
   annotations:
+    {{- if .Values.tls.enabled }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- end }}
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/auth-secret: {{ include "zotprime-k8s.fullname" . }}-basic-auth
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
 spec:
+  {{- if .Values.tls.enabled }}
   tls:
   - secretName: {{ include "zotprime-k8s.fullname" . }}-tls
     hosts:
     - {{ .Values.ingressHostnames.minios3Web }}
     - {{ .Values.ingressHostnames.phpmyadmin }}
+  {{- end }}
   rules:
   - host: {{ .Values.ingressHostnames.minios3Web }}
     http:

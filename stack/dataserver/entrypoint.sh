@@ -59,10 +59,14 @@ set -eux
 #find /var/www/zotero/ -type d -exec chmod 755 {} \;
 #chmod 644 /var/www/zotero/htdocs/.htaccess 
 
-sed -i "s#http://localhost:8080/#http://$SERVER_IP:8080/#g" /var/www/zotero/include/config/config.inc.php
+sed -i "s#http://localhost:8080/#http://$SERVER_IP/#g" /var/www/zotero/include/config/config.inc.php
 sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/config/config.inc.php
 sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/Zend/Service/Amazon/S3.php
 
+# Set public S3 endpoint for client uploads if provided
+if [ -n "$S3_PUBLIC_ENDPOINT" ]; then
+  sed -i "s#public static \\\$S3_PUBLIC_ENDPOINT = '';#public static \\\$S3_PUBLIC_ENDPOINT = '$S3_PUBLIC_ENDPOINT';#g" /var/www/zotero/include/config/config.inc.php
+fi
 
 # Elastica Composer
 #cd /var/www/zotero/include/Elastica && composer -v install
@@ -70,6 +74,12 @@ sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/Zend/Service/Ama
 # Composer
 #cd /var/www/zotero && composer update && composer -vv install
 #cd /var/www/zotero && composer -vv install
+
+# Load MinIO credentials from secret
+if [ -e /secrets/secret-minio.txt ]; then
+    . /secrets/secret-minio.txt
+    export MINIO_ROOT_PASSWORD
+fi
 
 # Start Apache2
 #exec httpd -e debug -DNO_DETACH -k start

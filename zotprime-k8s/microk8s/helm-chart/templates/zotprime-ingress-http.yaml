@@ -6,9 +6,12 @@ metadata:
     apps: zotprime-ingress-http
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
   annotations:
+    {{- if .Values.tls.enabled }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- end }}
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  {{- if .Values.tls.enabled }}
   tls:
   - secretName: {{ include "zotprime-k8s.fullname" . }}-tls
     hosts:
@@ -18,6 +21,7 @@ spec:
     {{- end }}
     - {{ .Values.ingressHostnames.minios3Data }}
     - {{ .Values.ingressHostnames.api }}
+  {{- end }}
   rules:
   {{- if not .Values.basicAuth.enabled }}
   - host: {{ .Values.ingressHostnames.minios3Web }}

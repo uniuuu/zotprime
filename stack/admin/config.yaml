@@ -1,0 +1,38 @@
+# ZotPrime Admin Configuration
+# Static settings baked into the image
+
+app:
+  name: "ZotPrime Admin"
+  env: production
+  debug: false
+
+# Dataserver API (internal Docker/K8s network - never changes)
+dataserver:
+  url: http://dataserver:8080
+  timeout: 30
+
+# Redis configuration (same container)
+redis:
+  host: 127.0.0.1
+  port: 6379
+
+# Session configuration
+session:
+  driver: redis
+  lifetime: 30  # minutes
+  secure: false  # K8s Ingress handles HTTPS
+  same_site: strict
+
+# Security settings
+security:
+  rate_limit:
+    attempts: 5
+    decay_minutes: 15
+  2fa:
+    issuer: "ZotPrime"
+    window: 2  # ±30 seconds tolerance
+
+# Logging
+logging:
+  channel: stderr
+  level: error

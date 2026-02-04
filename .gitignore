@@ -10,10 +10,11 @@ docker-compose-test.yml
 **/cred.json
 .vscode/
 
-# Helm chart values - DO NOT commit production credentials
 zotprime-k8s/microk8s/helm-chart/values.yaml
 zotprime-k8s/microk8s/helm-chart/values-*.yaml
 !zotprime-k8s/microk8s/helm-chart/values-example.yaml
-
-# Cluster issuer - DO NOT commit production config
 zotprime-k8s/microk8s/clusterissuer.yaml
+zotprime-k8s/GKE/helm-chart/values.yaml
+zotprime-k8s/GKE/helm-chart/values-*.yaml
+!zotprime-k8s/GKE/helm-chart/values-example.yaml
+zotprime-k8s/GKE/issuer-lets-encrypt-staging.yaml
