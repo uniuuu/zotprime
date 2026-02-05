@@ -1,5 +1,7 @@
 <?php
 
+$config = yaml_parse_file(base_path('../config.yaml'));
+
 return [
 
     /*
@@ -13,7 +15,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => yaml_parse_file(base_path('../config.yaml'))['app']['name'],
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +28,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => yaml_parse_file(base_path('../config.yaml'))['app']['env'],
 
     /*
     |--------------------------------------------------------------------------
@@ -39,7 +41,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool) yaml_parse_file(base_path('../config.yaml'))['app']['debug'],
 
     /*
     |--------------------------------------------------------------------------

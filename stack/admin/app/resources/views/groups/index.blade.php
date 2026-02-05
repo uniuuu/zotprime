@@ -6,6 +6,7 @@
 <div class="px-4 sm:px-0">
     <div class="flex justify-between items-center">
         <div>
+            <a href="/" class="text-primary-600 hover:text-primary-800 text-sm mb-2 inline-block">← Back to Dashboard</a>
             <h3 class="text-2xl font-bold text-primary-600 italic">Groups</h3>
             <p class="mt-1 text-sm text-gray-600">Manage groups and members</p>
         </div>
@@ -30,18 +31,20 @@
         <tbody class="bg-white divide-y divide-gray-200">
             @forelse($groups as $group)
             <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $group['id'] ?? $group['groupID'] }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $group['id'] }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $group['name'] }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $group['type'] }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $group['owner'] ?? 'N/A' }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button onclick="openMemberModal({{ $group['id'] ?? $group['groupID'] }})"
-                            class="text-primary-600 hover:text-primary-900">Add Member</button>
-                    <form method="POST" action="{{ route('groups.delete', $group['id'] ?? $group['groupID']) }}" class="inline">
+                    <button onclick="window.location.href='{{ route('groups.members', $group['id']) }}'"
+                            class="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-xs">View Members</button>
+                    <button onclick="openMemberModal({{ $group['id'] }})"
+                            class="px-3 py-1 bg-primary-600 text-white rounded hover:bg-primary-700 text-xs">Add Member</button>
+                    <form method="POST" action="{{ route('groups.delete', $group['id']) }}" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:text-red-900"
-                                onclick="return confirm('Delete this group?')">Delete</button>
+                        <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+                                onclick="return confirm('PERMANENTLY DELETE this group? This cannot be undone!')">Delete</button>
                     </form>
                 </td>
             </tr>
@@ -76,8 +79,13 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Owner ID</label>
-                <input type="number" name="owner_id" required min="1" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                <label class="block text-sm font-medium text-gray-700">Owner</label>
+                <select name="owner_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">Select owner...</option>
+                    @foreach($users as $user)
+                    <option value="{{ $user['userID'] }}">{{ $user['username'] }} ({{ $user['email'] }})</option>
+                    @endforeach
+                </select>
             </div>
             <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">Create</button>
         </form>
@@ -94,8 +102,13 @@
         <form id="memberForm" method="POST" class="space-y-4">
             @csrf
             <div>
-                <label class="block text-sm font-medium text-gray-700">User ID</label>
-                <input type="number" name="user_id" required min="1" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                <label class="block text-sm font-medium text-gray-700">User</label>
+                <select name="user_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    <option value="">Select a user...</option>
+                    @foreach($users as $user)
+                    <option value="{{ $user['userID'] }}">{{ $user['username'] }} ({{ $user['email'] }})</option>
+                    @endforeach
+                </select>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Role</label>

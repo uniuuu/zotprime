@@ -9,7 +9,7 @@ if [ -f "$PROJECT_DIR/.env" ]; then
     export $(grep -v '^#' "$PROJECT_DIR/.env" | xargs)
 fi
 
-# Derive DSHOST from SERVER_IP
+# Default DSHOST from SERVER_IP
 DSHOST="http://${SERVER_IP:-127.0.0.1}:8080"
 
 # Validate required env vars
@@ -24,7 +24,10 @@ usage() {
     cat <<EOF
 ZotPrime Admin Tool
 
-Usage: $0 <resource> <action> [args...]
+Usage: $0 [--host <url>] <resource> <action> [args...]
+
+Options:
+  --host <url>    Dataserver URL (default: http://127.0.0.1:8080)
 
 Resources and Actions:
   user create <username> <email> <password>   Create a new user
@@ -165,10 +168,10 @@ user_enable() {
 }
 
 user_quota() {
-    local mode=$1 user_id=$2
+    local user_id=$1
 
     if [ -z "$user_id" ]; then
-        echo "Usage: $0 $mode user quota <user_id>" >&2
+        echo "Usage: $0 user quota <user_id>" >&2
         exit 1
     fi
 
@@ -328,22 +331,33 @@ group_members() {
     local group_id=$1
 
     if [ -z "$group_id" ]; then
-        echo "Usage: $0 <mode> group members <group_id>" >&2
+        echo "Usage: $0 group members <group_id>" >&2
         exit 1
     fi
 
     local response=$(api_call GET "groups/$group_id/users")
     
-    echo "UserID  Role"
-    echo "------  ------"
+    # Get all users to map ID to username
+    local users_response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
+        "${DSHOST}/admin/users")
+    
+    echo "UserID  Username            Role"
+    echo "------  ------------------  ------"
     echo "$response" | grep -oP '<xfer:user id="\K[^"]+' | while read uid; do
         local role=$(echo "$response" | grep "id=\"$uid\"" | grep -oP 'role="\K[^"]+')
-        printf "%-6s  %s\n" "$uid" "$role"
+        local username=$(echo "$users_response" | jq -r ".[] | select(.userID==$uid) | .username")
+        printf "%-6s  %-18s  %s\n" "$uid" "$username" "$role"
     done
 }
 
 # Main
 [ $# -lt 2 ] && usage
+
+# Parse --host flag
+if [ "$1" = "--host" ]; then
+    DSHOST="$2"
+    shift 2
+fi
 
 RESOURCE=$1
 ACTION=$2

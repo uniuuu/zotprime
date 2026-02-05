@@ -7,11 +7,17 @@ ingressHostnames:
   phpmyadmin: pm.projectdev.net
   minios3Web: min.projectdev.net
   admin: admin.projectdev.net
+  portal: portal.projectdev.net
 authSecret:
   # Base64 encoded values
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
   apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
+adminUser:
+  # Base64 encoded values
+  username: "YWRtaW4="  # base64 of "admin"
+  password: "YWRtaW4="  # base64 of "admin"
+  email: "YWRtaW5AZXhhbXBsZS50bGQ="  # base64 of "admin@example.tld"
 minioSecret:
   secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
 blobSecret:
@@ -53,6 +59,23 @@ webAdmin:
   service:
     port: 80
     targetPort: 8080
+webPortal:
+  enabled: false
+  replicas: 1
+  image:
+    repository: uniuu/zotprime-portal
+    # tag: v2.8.0
+  imagePullPolicy: Always
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: "0.5"
+      memory: 256Mi
+  sessionSecret: ""
+  service:
+    port: 80
+    targetPort: 3000
 zotprimeDataserver:
   replicas: 1
   hostAliases:

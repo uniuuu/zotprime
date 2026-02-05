@@ -163,3 +163,23 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-tinymceclean:${{ env.VERSION }}
+
+      -
+        name: Build and push admin
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/admin
+          file: stack/admin/admin.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: uniuu/zotprime-admin:${{ env.VERSION }}
+
+      -
+        name: Build and push portal
+        uses: docker/build-push-action@v5
+        with:
+          context: ./stack/webui/portal
+          file: stack/webui/portal/webui.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: uniuu/zotprime-portal:${{ env.VERSION }}

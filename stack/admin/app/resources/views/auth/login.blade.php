@@ -15,6 +15,7 @@
         </div>
         <form class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow" method="POST" action="{{ route('login') }}">
             @csrf
+            <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
             <div class="space-y-4">
                 <div>
                     <label for="username" class="block text-sm font-medium text-gray-700">

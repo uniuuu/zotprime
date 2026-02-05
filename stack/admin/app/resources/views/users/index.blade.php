@@ -6,6 +6,7 @@
 <div class="px-4 sm:px-0">
     <div class="flex justify-between items-center">
         <div>
+            <a href="/" class="text-primary-600 hover:text-primary-800 text-sm mb-2 inline-block">← Back to Dashboard</a>
             <h3 class="text-2xl font-bold text-primary-600 italic">Users</h3>
             <p class="mt-1 text-sm text-gray-600">Manage user accounts and quotas</p>
         </div>
@@ -40,11 +41,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                     <button onclick="openQuotaModal({{ $user['id'] ?? $user['userID'] }})"
-                            class="text-primary-600 hover:text-primary-900">Set Quota</button>
-                    @if(($user['status'] ?? 'enabled') === 'enabled')
+                            class="text-primary-600 hover:text-primary-900">Manage Quota</button>
+                    @if($user['enabled'] ?? true)
                     <form method="POST" action="{{ route('users.disable', $user['id'] ?? $user['userID']) }}" class="inline">
                         @csrf
-                        <button type="submit" class="text-red-600 hover:text-red-900"
+                        <button type="submit" class="text-yellow-600 hover:text-yellow-900"
                                 onclick="return confirm('Disable this user?')">Disable</button>
                     </form>
                     @else
@@ -53,6 +54,12 @@
                         <button type="submit" class="text-green-600 hover:text-green-900">Enable</button>
                     </form>
                     @endif
+                    <form method="POST" action="{{ route('users.destroy', $user['id'] ?? $user['userID']) }}" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 hover:text-red-900"
+                                onclick="return confirm('PERMANENTLY DELETE this user? This cannot be undone!')">Delete</button>
+                    </form>
                 </td>
             </tr>
             @empty
@@ -97,25 +104,52 @@
             <h3 class="text-lg font-medium text-primary-600 italic">Set Quota</h3>
             <button onclick="document.getElementById('quotaModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">✕</button>
         </div>
+        <div id="quotaInfo" class="mb-4 p-3 bg-gray-50 rounded text-sm">
+            <div class="flex justify-center">
+                <span class="text-gray-500">Loading quota...</span>
+            </div>
+        </div>
         <form id="quotaForm" method="POST" class="space-y-4">
             @csrf
             <div>
                 <label class="block text-sm font-medium text-gray-700">Quota (MB)</label>
-                <input type="number" name="quota" required min="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                <input type="number" name="quota" id="quotaInput" required min="0" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Expiration (optional)</label>
                 <input type="date" name="expiration" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
             </div>
-            <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">Set Quota</button>
+            <button type="submit" class="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700">Update Quota</button>
         </form>
     </div>
 </div>
 
 <script>
-function openQuotaModal(userId) {
+async function openQuotaModal(userId) {
     document.getElementById('quotaForm').action = `/users/${userId}/quota`;
     document.getElementById('quotaModal').classList.remove('hidden');
+    
+    // Fetch current quota
+    const quotaInfo = document.getElementById('quotaInfo');
+    quotaInfo.innerHTML = '<div class="flex justify-center"><span class="text-gray-500">Loading quota...</span></div>';
+    
+    try {
+        const response = await fetch(`/users/${userId}/quota-info`);
+        const data = await response.json();
+        
+        if (data.success) {
+            let expirationText = (data.expiration && data.expiration > 0) ? `Expires: ${new Date(data.expiration * 1000).toLocaleDateString()}` : 'Never expires';
+            quotaInfo.innerHTML = `<div class="text-gray-700">
+                <div><strong>Current:</strong> ${data.usage} MB used / ${data.quota} MB total</div>
+                <div class="text-sm text-gray-600 mt-1">${expirationText}</div>
+            </div>`;
+            document.getElementById('quotaInput').value = data.quota;
+        } else {
+            quotaInfo.innerHTML = '<div class="text-red-600">Failed to load quota</div>';
+        }
+    } catch (e) {
+        quotaInfo.innerHTML = '<div class="text-red-600">Failed to load quota</div>';
+    }
 }
 </script>
 @endsection

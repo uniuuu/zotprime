@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', '2FA Setup - ZotPrime Admin')
+@section('title', '2FA Verification - ZotPrime Admin')
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center">
@@ -9,11 +9,18 @@
             <h2 class="text-center text-3xl font-bold text-primary-600 italic">
                 Two-Factor Authentication
             </h2>
+            @if($isFirstTime)
             <p class="mt-2 text-center text-sm text-gray-600">
                 Scan the QR code with Google Authenticator
             </p>
+            @else
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Enter the code from your authenticator app
+            </p>
+            @endif
         </div>
         <div class="bg-white p-8 rounded-lg shadow space-y-6">
+            @if($isFirstTime)
             <div class="flex justify-center">
                 <img src="{{ $qrCodeUrl }}" alt="QR Code" class="border-4 border-primary-100 rounded-lg">
             </div>
@@ -22,6 +29,7 @@
                 <p class="text-sm text-gray-600 italic">Or enter this secret manually:</p>
                 <code class="block mt-2 p-2 bg-gray-100 rounded text-sm font-mono">{{ $secret }}</code>
             </div>
+            @endif
 
             <form method="POST" action="{{ route('2fa') }}" class="space-y-4">
                 @csrf

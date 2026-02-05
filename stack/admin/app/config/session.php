@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Str;
 
+$config = yaml_parse_file(base_path('../config.yaml'));
+
 return [
 
     /*
@@ -18,7 +20,9 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    'default' => yaml_parse_file(base_path('../config.yaml'))['session']['driver'],
+
+    'default' => $config['session']['driver'],
 
     /*
     |--------------------------------------------------------------------------
@@ -32,9 +36,9 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    'lifetime' => $config['session']['lifetime'],
 
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
+    'expire_on_close' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +51,7 @@ return [
     |
     */
 
-    'encrypt' => env('SESSION_ENCRYPT', false),
+    'encrypt' => $config['session']['encrypt'],
 
     /*
     |--------------------------------------------------------------------------
@@ -143,7 +147,7 @@ return [
     |
     */
 
-    'path' => env('SESSION_PATH', '/'),
+    'path' => $config['session']['path'],
 
     /*
     |--------------------------------------------------------------------------
@@ -156,7 +160,7 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    'domain' => $config['session']['domain'],
 
     /*
     |--------------------------------------------------------------------------
@@ -169,7 +173,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => $config['session']['secure'],
 
     /*
     |--------------------------------------------------------------------------
@@ -199,7 +203,7 @@ return [
     |
     */
 
-    'same_site' => env('SESSION_SAME_SITE', 'lax'),
+    'same_site' => $config['session']['same_site'],
 
     /*
     |--------------------------------------------------------------------------

@@ -67,6 +67,21 @@ spec:
               key: aws-secret-access-key
         - name: AWS_DEFAULT_REGION
           value: us-east-1
+        - name: ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-admin-secret
+              key: admin-username
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-admin-secret
+              key: admin-password
+        - name: ADMIN_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-admin-secret
+              key: admin-email
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.zotprimeDataserver.zotprimeDataserver.image.repository }}:{{

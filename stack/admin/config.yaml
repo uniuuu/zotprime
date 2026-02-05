@@ -4,17 +4,24 @@
 app:
   name: "ZotPrime Admin"
   env: production
-  debug: false
+  debug: true
 
 # Dataserver API (internal Docker/K8s network - never changes)
 dataserver:
   url: http://dataserver:8080
   timeout: 30
 
+# ZotPrime settings
+zotprime:
+  published_group_id: null  # Set this to the group ID for published items
+
 # Redis configuration (same container)
 redis:
   host: 127.0.0.1
   port: 6379
+  client: phpredis
+  username: null
+  password: null
 
 # Session configuration
 session:
@@ -22,6 +29,9 @@ session:
   lifetime: 30  # minutes
   secure: false  # K8s Ingress handles HTTPS
   same_site: strict
+  encrypt: false
+  path: /
+  domain: null
 
 # Security settings
 security:
@@ -35,4 +45,6 @@ security:
 # Logging
 logging:
   channel: stderr
-  level: error
+  level: debug #error
+  stack: single
+  deprecations_channel: null

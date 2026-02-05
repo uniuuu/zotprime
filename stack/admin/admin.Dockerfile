@@ -2,7 +2,10 @@
 FROM php:8-fpm AS builder
 
 # Install build dependencies
-RUN apt-get update && apt-get install -y curl unzip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl unzip libyaml-dev && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions for build
+RUN pecl install yaml && docker-php-ext-enable yaml
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -15,9 +18,13 @@ RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/downlo
 # Copy application
 WORKDIR /var/www/html
 COPY app/ .
+COPY config.yaml ../config.yaml
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# # Generate APP_KEY
+# RUN php artisan key:generate --force
 
 # Build Tailwind CSS
 RUN tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --minify
@@ -32,16 +39,19 @@ RUN useradd -m -u 1000 appuser
 RUN apt-get update && apt-get install -y \
     nginx \
     redis-server \
+    libyaml-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql \
-    && pecl install redis \
-    && docker-php-ext-enable redis
+    && pecl install redis yaml \
+    && docker-php-ext-enable redis yaml
 
 # Copy application from builder
 WORKDIR /var/www/html
 COPY --from=builder --chown=appuser:appuser /var/www/html .
+COPY --chown=appuser:appuser config.yaml ../config.yaml
+COPY --chown=appuser:appuser entrypoint.sh /entrypoint.sh
 
 # Copy configs
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
@@ -51,10 +61,12 @@ COPY redis/redis.conf /etc/redis/redis.conf
 RUN chown -R appuser:appuser /var/www/html \
     && chown -R appuser:appuser /var/log/nginx \
     && chown -R appuser:appuser /var/lib/nginx \
-    && mkdir -p /run/php /var/run/redis \
-    && chown -R appuser:appuser /run/php /var/run/redis \
+    && chown -R appuser:appuser /etc/redis \
+    && mkdir -p /run/php /var/run/redis /var/lib/admin-data/redis /var/lib/admin-data/sqlite \
+    && chown -R appuser:appuser /run/php /var/run/redis /var/lib/admin-data \
     && touch /run/nginx.pid \
-    && chown appuser:appuser /run/nginx.pid
+    && chown appuser:appuser /run/nginx.pid \
+    && chmod +x /entrypoint.sh
 
 # Switch to non-root user
 USER appuser
@@ -63,4 +75,4 @@ USER appuser
 EXPOSE 8080
 
 # Start services
-CMD ["/bin/sh", "-c", "redis-server /etc/redis/redis.conf --daemonize yes && php-fpm & nginx -g 'daemon off;'"]
+CMD ["/entrypoint.sh"]

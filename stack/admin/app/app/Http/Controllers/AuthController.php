@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use PragmaRX\Google2FA\Google2FA;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 
 class AuthController extends Controller
 {
@@ -27,12 +31,18 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         
+        // Honeypot check
+        if ($request->filled('website')) {
+            return back()->withErrors(['error' => 'Invalid submission.']);
+        }
+        
         // Rate limiting
+        $config = yaml_parse_file(base_path('../config.yaml'));
         $ip = $request->ip();
         $attempts = Redis::get("rate_limit:$ip") ?? 0;
         
-        if ($attempts >= 5) {
-            return back()->withErrors(['error' => 'Too many login attempts. Try again in 15 minutes.']);
+        if ($attempts >= $config['security']['rate_limit']['attempts']) {
+            return back()->withErrors(['error' => 'Too many login attempts. Try again in ' . $config['security']['rate_limit']['decay_minutes'] . ' minutes.']);
         }
         
         // Verify credentials
@@ -41,7 +51,7 @@ class AuthController extends Controller
         
         if ($request->username !== $username || !password_verify($request->password, $hashedPassword)) {
             Redis::incr("rate_limit:$ip");
-            Redis::expire("rate_limit:$ip", 900); // 15 minutes
+            Redis::expire("rate_limit:$ip", $config['security']['rate_limit']['decay_minutes'] * 60);
             
             return back()->withErrors(['error' => 'Invalid credentials.']);
         }
@@ -62,23 +72,44 @@ class AuthController extends Controller
             return redirect()->route('login');
         }
         
-        // Check if 2FA secret exists
-        $secret = Redis::get('2fa:secret');
+        // Check if 2FA secret exists in database
+        $secret = \DB::table('admin_settings')->where('key', '2fa_secret')->value('value');
         
+        $isFirstTime = false;
         if (!$secret) {
-            // Generate new secret
+            // Generate new secret (first time setup)
             $secret = $this->google2fa->generateSecretKey();
-            Redis::set('2fa:secret', $secret);
+            \DB::table('admin_settings')->insert([
+                'key' => '2fa_secret',
+                'value' => $secret,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            $isFirstTime = true;
         }
         
-        // Generate QR code URL
-        $qrCodeUrl = $this->google2fa->getQRCodeUrl(
-            config('app.name'),
-            $request->session()->get('username'),
-            $secret
-        );
+        $qrCodeUrl = null;
+        if ($isFirstTime) {
+            // Generate QR code URL only for first time
+            $config = yaml_parse_file(base_path('../config.yaml'));
+            $qrCodeUrl = $this->google2fa->getQRCodeUrl(
+                $config['security']['2fa']['issuer'],
+                $request->session()->get('username'),
+                $secret
+            );
+            
+            // Generate QR code image as base64 SVG
+            $writer = new Writer(
+                new ImageRenderer(
+                    new RendererStyle(200),
+                    new SvgImageBackEnd()
+                )
+            );
+            $qrCodeSvg = $writer->writeString($qrCodeUrl);
+            $qrCodeUrl = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
+        }
         
-        return view('auth.2fa', compact('qrCodeUrl', 'secret'));
+        return view('auth.2fa', compact('qrCodeUrl', 'secret', 'isFirstTime'));
     }
     
     public function verify2fa(Request $request)
@@ -91,8 +122,9 @@ class AuthController extends Controller
             return redirect()->route('login');
         }
         
-        $secret = Redis::get('2fa:secret');
-        $valid = $this->google2fa->verifyKey($secret, $request->code, 2); // 2 = ±30 seconds tolerance
+        $config = yaml_parse_file(base_path('../config.yaml'));
+        $secret = \DB::table('admin_settings')->where('key', '2fa_secret')->value('value');
+        $valid = $this->google2fa->verifyKey($secret, $request->code, $config['security']['2fa']['window']);
         
         if (!$valid) {
             return back()->withErrors(['error' => 'Invalid 2FA code.']);

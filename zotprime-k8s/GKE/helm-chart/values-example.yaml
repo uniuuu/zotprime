@@ -5,11 +5,17 @@ ingressHostnames:
   phpmyadmin: yoursub3.yourdomain.tld
   minios3Web: yoursub4.yourdomain.tld
   admin: yoursub6.yourdomain.tld
+  portal: yoursub7.yourdomain.tld
 authSecret:
   # Base64 encoded values
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
   apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
+adminUser:
+  # Base64 encoded values
+  username: ""  # echo -n "admin" | base64
+  password: ""  # echo -n "admin" | base64
+  email: ""  # echo -n "admin@example.tld" | base64
 minioSecret:
   secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
 blobSecret:
@@ -33,7 +39,7 @@ dataserver:
     targetPort: 80
   type: ClusterIP
 webAdmin:
-  enabled: true
+  enabled: false
   replicas: 1
   image:
     repository: uniuu/zotprime-admin
@@ -52,6 +58,24 @@ webAdmin:
   service:
     port: 80
     targetPort: 8080
+webPortal:
+  enabled: false
+  replicas: 1
+  image:
+    repository: uniuu/zotprime-portal
+    # tag: v2.8.0  # Image tag is taken from Chart.yaml appVersion. Uncomment to override.
+  imagePullPolicy: Always
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: "0.5"
+      memory: 256Mi
+  # Generate: openssl rand -hex 32 | base64 -w 0
+  sessionSecret: ""
+  service:
+    port: 80
+    targetPort: 3000
 zotprimeDataserver:
   replicas: 1
   zotprimeDataserver:

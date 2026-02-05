@@ -5,6 +5,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
+$config = yaml_parse_file(base_path('../config.yaml'));
+
 return [
 
     /*
@@ -18,7 +20,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => yaml_parse_file(base_path('../config.yaml'))['logging']['channel'],
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +34,7 @@ return [
     */
 
     'deprecations' => [
-        'channel' => env('LOG_DEPRECATIONS_CHANNEL', 'null'),
+        'channel' => $config['logging']['deprecations_channel'],
         'trace' => env('LOG_DEPRECATIONS_TRACE', false),
     ],
 
@@ -54,14 +56,14 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', $config['logging']['stack']),
             'ignore_exceptions' => false,
         ],
 
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => $config['logging']['level'],
             'replace_placeholders' => true,
         ],
 

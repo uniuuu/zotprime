@@ -23,6 +23,9 @@
                         <a href="{{ route('groups.index') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium {{ request()->routeIs('groups.*') ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-primary-600' }}">
                             Groups
                         </a>
+                        <a href="{{ route('items.index') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium {{ request()->routeIs('items.*') ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-primary-600' }}">
+                            Items
+                        </a>
                     </div>
                 </div>
                 <div class="flex items-center">

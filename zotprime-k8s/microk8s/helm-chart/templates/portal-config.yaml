@@ -1,0 +1,20 @@
+{{- if .Values.webPortal.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-portal-config
+  labels:
+    {{- include "zotprime-k8s.labels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+data:
+  config.yaml: |
+    dataserver:
+      url: http://{{ include "zotprime-k8s.fullname" . }}-dataserver
+      api_super_token: ${API_SUPER_TOKEN}
+    session:
+      max_age: 1800
+    security:
+      rate_limit:
+        auth_requests_per_minute: 5
+        browse_requests_per_minute: 50
+{{- end }}

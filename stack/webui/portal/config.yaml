@@ -1,0 +1,16 @@
+# ZotPrime Portal Configuration
+
+# Dataserver Configuration
+dataserver:
+  url: http://dataserver:8080
+  api_super_token: your_super_token_here
+
+# Session Configuration
+session:
+  max_age: 1800  # 30 minutes in seconds
+
+# Security Configuration
+security:
+  rate_limit:
+    auth_requests_per_minute: 5
+    browse_requests_per_minute: 50

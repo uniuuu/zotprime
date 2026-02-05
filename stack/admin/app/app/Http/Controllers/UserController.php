@@ -13,7 +13,7 @@ class UserController extends Controller
         $url = $config['dataserver']['url'] . $endpoint;
         $token = env('API_SUPER_TOKEN');
         
-        $response = Http::withToken($token)->$method($url, $data);
+        $response = Http::timeout($config['dataserver']['timeout'])->withToken($token)->$method($url, $data);
         
         return $response;
     }
@@ -34,7 +34,10 @@ class UserController extends Controller
             session()->flash('error', 'Failed to fetch users: ' . $response->body());
         }
         
-        return view('users.index', compact('users'));
+        $config = yaml_parse_file(base_path('../config.yaml'));
+        $dataserverUrl = $config['dataserver']['url'];
+        
+        return view('users.index', compact('users', 'dataserverUrl'));
     }
     
     public function create(Request $request)
@@ -56,7 +59,7 @@ class UserController extends Controller
     
     public function disable(Request $request, $id)
     {
-        $response = $this->apiCall('put', "/admin/users/$id/status", ['status' => 'disabled']);
+        $response = $this->apiCall('put', "/admin/users/$id/status", ['enabled' => false]);
         
         if ($response->successful()) {
             return back()->with('success', 'User disabled successfully!');
@@ -67,12 +70,29 @@ class UserController extends Controller
     
     public function enable(Request $request, $id)
     {
-        $response = $this->apiCall('put', "/admin/users/$id/status", ['status' => 'enabled']);
+        $response = $this->apiCall('put', "/admin/users/$id/status", ['enabled' => true]);
         
         if ($response->successful()) {
             return back()->with('success', 'User enabled successfully!');
         } else {
             return back()->with('error', 'Failed to enable user: ' . $response->body());
+        }
+    }
+    
+    public function getQuota($id)
+    {
+        $response = $this->apiCall('get', "/users/$id/storageadmin");
+        
+        if ($response->successful()) {
+            $xml = simplexml_load_string($response->body());
+            return response()->json([
+                'success' => true,
+                'quota' => (string)$xml->quota ?? 'N/A',
+                'usage' => (string)$xml->usage ?? 'N/A',
+                'expiration' => (string)$xml->expiration ?? null
+            ]);
+        } else {
+            return response()->json(['success' => false], 500);
         }
     }
     
@@ -83,15 +103,33 @@ class UserController extends Controller
             'expiration' => 'nullable|date',
         ]);
         
-        $response = $this->apiCall('post', "/users/$id/storageadmin", [
-            'quota' => $validated['quota'],
-            'expiration' => $validated['expiration'] ?? null,
-        ]);
+        $config = yaml_parse_file(base_path('../config.yaml'));
+        $url = $config['dataserver']['url'] . "/users/$id/storageadmin";
+        $token = env('API_SUPER_TOKEN');
+        
+        $response = Http::timeout($config['dataserver']['timeout'])
+            ->withToken($token)
+            ->asForm()
+            ->post($url, [
+                'quota' => $validated['quota'],
+                'expiration' => $validated['expiration'] ? strtotime($validated['expiration']) : 0,
+            ]);
         
         if ($response->successful()) {
             return back()->with('success', 'Quota updated successfully!');
         } else {
             return back()->with('error', 'Failed to update quota: ' . $response->body());
+        }
+    }
+    
+    public function destroy($id)
+    {
+        $response = $this->apiCall('delete', "/admin/users/$id");
+        
+        if ($response->successful()) {
+            return redirect()->route('users.index')->with('success', 'User deleted successfully!');
+        } else {
+            return back()->with('error', 'Failed to delete user: ' . $response->body());
         }
     }
 }

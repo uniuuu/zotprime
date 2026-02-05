@@ -259,6 +259,7 @@ services:
       - API_SUPER_TOKEN=${API_SUPER_TOKEN}
     volumes:
       - /etc/localtime:/etc/localtime:ro
+      - admin-data:/var/lib/admin-data
     depends_on:
       zotprime-dataserver:
         condition: service_started
@@ -268,10 +269,33 @@ services:
     networks:
       zotprime:
         ipv4_address: 10.5.5.12
+  zotprime-portal:
+    profiles: ["portal"]
+    image: "uniuu/zotprime-portal:${VER}"
+    ports:
+      - "3045:3000"
+    environment:
+      - PORTAL_SESSION_SECRET=${PORTAL_SESSION_SECRET}
+      - API_SUPER_TOKEN=${API_SUPER_TOKEN}
+      - NODE_ENV=production
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./stack/webui/portal/config.yaml:/app/config.yaml:ro
+    depends_on:
+      zotprime-dataserver:
+        condition: service_started
+    links:
+      - zotprime-dataserver:dataserver
+    restart: always
+    networks:
+      zotprime:
+        ipv4_address: 10.5.5.13
 volumes:
   dbdata:
    driver: local
   miniodata:
+   driver: local
+  admin-data:
    driver: local
    
 networks:

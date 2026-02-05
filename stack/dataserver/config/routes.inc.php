@@ -8,8 +8,10 @@ $router->map('/', ['controller' => 'Api', 'action' => 'noop']);
 
 // Admin endpoints (must be before other routes)
 $router->map('/admin/users', ['controller' => 'Admin', 'action' => 'users']);
+$router->map('/admin/users/i:objectUserID', ['controller' => 'Admin', 'action' => 'users']);
 $router->map('/admin/users/i:objectUserID/status', ['controller' => 'Admin', 'action' => 'userStatus']);
 $router->map('/admin/groups', ['controller' => 'Admin', 'action' => 'groups']);
+$router->map('/admin/items', ['controller' => 'Admin', 'action' => 'items']);
 
 // Global items
 $router->map('/globalitems', ['controller' => 'GlobalItems', 'extra' => ['globalItems' => true]]);
@@ -82,33 +84,37 @@ $router->map('/groups/i:objectGroupID/collections/:scopeObjectKey/items/top/tags
 $router->map('/users/i:objectUserID/publications/items/tags', ['controller' => 'Tags', 'extra' => ['scopeObject' => 'items', 'publications' => true]]);
 
 // Tags within something else
-//$router->map('/users/i:objectUserID/publications/items/:scopeObjectKey/tags/:objectKey/:subset', ['controller' => 'Tags', 'extra' => ['publications' => true]]);
-$router->map('/users/i:objectUserID/:scopeObject/:scopeObjectKey/tags/:objectName/:subset', array('controller' => 'Tags'));
-$router->map('/groups/i:objectGroupID/:scopeObject/:scopeObjectKey/tags/:objectName/:subset', array('controller' => 'Tags'));
+//$router->map('/users/i:objectUserID/publications/items/:scopeObjectKey/tags/:objectKey/:subset', ['controller' => 'Tags', 'extra' => ['publications']]);
+$router->map('/users/i:objectUserID/:scopeObject/:scopeObjectKey/tags/:objectKey/:subset', array('controller' => 'Tags'));
+$router->map('/groups/i:objectGroupID/:scopeObject/:scopeObjectKey/tags/:objectKey/:subset', array('controller' => 'Tags'));
 
 // Searches
 $router->map('/users/i:objectUserID/publications/searches/:objectKey', ['controller' => 'Searches', 'extra' => ['publications' => true]]);
+
+// Top-level items within something else
+$router->map('/users/i:objectUserID/:scopeObject/:scopeObjectKey/items/top', array('controller' => 'Items', 'extra' => array('subset' => 'top')));
+$router->map('/groups/i:objectGroupID/:scopeObject/:scopeObjectKey/items/top', array('controller' => 'Items', 'extra' => array('subset' => 'top')));
 
 // Items within something else
 $router->map('/users/i:objectUserID/publications/items/:scopeObjectKey/items/:objectKey/:subset', ['controller' => 'Items', 'extra' => ['publications' => true]]);
 $router->map('/users/i:objectUserID/:scopeObject/:scopeObjectKey/items/:objectKey/:subset', array('controller' => 'Items'));
 $router->map('/groups/i:objectGroupID/:scopeObject/:scopeObjectKey/items/:objectKey/:subset', array('controller' => 'Items'));
 
-// Collections within something else
-$router->map('/users/i:objectUserID/:scopeObject/:scopeObjectKey/collections/:objectKey/:subset', array('controller' => 'Collections'));
-$router->map('/groups/i:objectGroupID/:scopeObject/:scopeObjectKey/collections/:objectKey/:subset', array('controller' => 'Collections'));
+// User API keys
+$router->map('/keys/:objectName', array('controller' => 'Keys'));
+$router->map('/users/i:objectUserID/keys/:objectName', array('controller' => 'Keys'));
 
-// Searches within something else
-$router->map('/users/i:objectUserID/:scopeObject/:scopeObjectKey/searches/:objectKey/:subset', array('controller' => 'Searches'));
-$router->map('/groups/i:objectGroupID/:scopeObject/:scopeObjectKey/searches/:objectKey/:subset', array('controller' => 'Searches'));
+// User/library settings
+$router->map('/users/i:objectUserID/settings/:objectKey', array('controller' => 'settings'));
+$router->map('/groups/i:objectGroupID/settings/:objectKey', array('controller' => 'settings'));
 
-// Items within a collection
-$router->map('/users/i:objectUserID/collections/:scopeObjectKey/items/top', ['controller' => 'Items', 'extra' => ['scopeObject' => 'collections', 'subset' => 'top']]);
-$router->map('/groups/i:objectGroupID/collections/:scopeObjectKey/items/top', ['controller' => 'Items', 'extra' => ['scopeObject' => 'collections', 'subset' => 'top']]);
-$router->map('/users/i:objectUserID/collections/:scopeObjectKey/items', ['controller' => 'Items', 'extra' => ['scopeObject' => 'collections']]);
-$router->map('/groups/i:objectGroupID/collections/:scopeObjectKey/items', ['controller' => 'Items', 'extra' => ['scopeObject' => 'collections']]);
+// Clear (for testing)
+$router->map('/users/i:objectUserID/clear', array('controller' => 'Api', 'action' => 'clear'));
+$router->map('/groups/i:objectGroupID/clear', array('controller' => 'Api', 'action' => 'clear'));
 
-// Publications
+// My Publications items
+$router->map('/users/i:objectUserID/publications/settings', ['controller' => 'settings', 'extra' => ['publications' => true]]); // TEMP
+$router->map('/users/i:objectUserID/publications/deleted', ['controller' => 'deleted', 'extra' => ['publications' => true]]); // TEMP
 $router->map('/users/i:objectUserID/publications/items/:objectKey/children', ['controller' => 'Items', 'extra' => ['publications' => true, 'subset' => 'children']]);
 $router->map('/users/i:objectUserID/publications/items/:objectKey', ['controller' => 'Items', 'extra' => ['publications' => true]]);
 

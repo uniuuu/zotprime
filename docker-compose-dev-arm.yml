@@ -112,6 +112,28 @@ services:
       platforms:
         - linux/arm64
 
+  zotprime-admin:
+    profiles: ["admin"]
+    platform: linux/arm64
+    image: "uniuu/zotprime-admin:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/admin
+      dockerfile: admin.Dockerfile
+      platforms:
+        - linux/arm64
+
+  zotprime-portal:
+    profiles: ["portal"]
+    platform: linux/arm64
+    image: "uniuu/zotprime-portal:${VER}-arm64"
+    pull_policy: build
+    build:
+      context: ./stack/webui/portal
+      dockerfile: webui.Dockerfile
+      platforms:
+        - linux/arm64
+
   zotprime-init:
     platform: linux/arm64
     image: "uniuu/zotprime-dataserver:${VER}-arm64"

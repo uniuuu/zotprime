@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: webadmin-secret
+  name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
   labels:
-    app: zotprime-admin
+    app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 type: Opaque
 data:
@@ -15,19 +15,19 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: zotprime-admin
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
   labels:
-    app: zotprime-admin
+    app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.webAdmin.replicas }}
   selector:
     matchLabels:
-      app: zotprime-admin
+      app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
   template:
     metadata:
       labels:
-        app: zotprime-admin
+        app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
     spec:
       containers:
       - name: admin
@@ -39,17 +39,17 @@ spec:
         - name: WEBADMIN_USERNAME
           valueFrom:
             secretKeyRef:
-              name: webadmin-secret
+              name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
               key: username
         - name: WEBADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: webadmin-secret
+              name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
               key: password
         - name: API_SUPER_TOKEN
           valueFrom:
             secretKeyRef:
-              name: webadmin-secret
+              name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
               key: apiSuperTokenHash
         resources:
           {{- toYaml .Values.webAdmin.resources | nindent 10 }}
@@ -57,14 +57,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: admin
+  name: {{ include "zotprime-k8s.fullname" . }}-admin
   labels:
-    app: zotprime-admin
+    app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   selector:
-    app: zotprime-admin
+    app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
   ports:
   - port: {{ .Values.webAdmin.service.port }}
     targetPort: {{ .Values.webAdmin.service.targetPort }}
@@ -72,7 +72,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: admin-ingress
+  name: {{ include "zotprime-k8s.fullname" . }}-admin-ingress
   labels:
     app: zotprime-admin
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
@@ -95,7 +95,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: admin
+            name: {{ include "zotprime-k8s.fullname" . }}-admin
             port:
               number: {{ .Values.webAdmin.service.port }}
 {{- end }}

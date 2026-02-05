@@ -10,6 +10,14 @@ docker-compose-test.yml
 **/cred.json
 .vscode/
 
+# Next.js / TypeScript
+node_modules
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+
 zotprime-k8s/microk8s/helm-chart/values.yaml
 zotprime-k8s/microk8s/helm-chart/values-*.yaml
 !zotprime-k8s/microk8s/helm-chart/values-example.yaml

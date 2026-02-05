@@ -13,31 +13,34 @@ class GroupController extends Controller
         $url = $config['dataserver']['url'] . $endpoint;
         $token = env('API_SUPER_TOKEN');
         
-        $request = Http::withToken($token);
+        $request = Http::timeout($config['dataserver']['timeout'])->withToken($token);
         
         if ($isXml) {
-            $request = $request->withHeaders(['Content-Type' => 'application/xml']);
+            $request = $request->withHeaders(['Content-Type' => 'application/xml'])->withBody($data, 'application/xml');
+            $response = $request->send($method, $url);
+        } else {
+            $response = $request->$method($url, $data);
         }
-        
-        $response = $request->$method($url, $data);
         
         return $response;
     }
     
     public function index()
     {
-        $response = $this->apiCall('get', '/groups');
+        $response = $this->apiCall('get', '/admin/groups');
         
         if ($response->successful()) {
-            // Parse XML response
-            $xml = simplexml_load_string($response->body());
-            $groups = json_decode(json_encode($xml), true);
+            $groups = $response->json();
         } else {
             $groups = [];
             session()->flash('error', 'Failed to fetch groups: ' . $response->body());
         }
         
-        return view('groups.index', compact('groups'));
+        // Fetch users for dropdown
+        $usersResponse = $this->apiCall('get', '/admin/users');
+        $users = $usersResponse->successful() ? $usersResponse->json() : [];
+        
+        return view('groups.index', compact('groups', 'users'));
     }
     
     public function create(Request $request)
@@ -48,13 +51,13 @@ class GroupController extends Controller
             'owner_id' => 'required|integer',
         ]);
         
-        // Build XML payload
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<group>';
-        $xml .= '<name>' . htmlspecialchars($validated['name']) . '</name>';
-        $xml .= '<type>' . $validated['type'] . '</type>';
-        $xml .= '<owner>' . $validated['owner_id'] . '</owner>';
-        $xml .= '</group>';
+        // Build XML payload with default permissions (from test suite defaults)
+        $xml = '<group name="' . htmlspecialchars($validated['name']) . '" '
+             . 'type="' . $validated['type'] . '" '
+             . 'owner="' . $validated['owner_id'] . '" '
+             . 'libraryEditing="members" '
+             . 'libraryReading="members" '
+             . 'fileEditing="none"/>';
         
         $response = $this->apiCall('post', '/groups', $xml, true);
         
@@ -83,12 +86,7 @@ class GroupController extends Controller
             'role' => 'required|in:member,admin',
         ]);
         
-        // Build XML payload
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $xml .= '<member>';
-        $xml .= '<userID>' . $validated['user_id'] . '</userID>';
-        $xml .= '<role>' . $validated['role'] . '</role>';
-        $xml .= '</member>';
+        $xml = '<user id="' . $validated['user_id'] . '" role="' . $validated['role'] . '"/>';
         
         $response = $this->apiCall('put', "/groups/$id/users/{$validated['user_id']}", $xml, true);
         
@@ -97,6 +95,50 @@ class GroupController extends Controller
         } else {
             return back()->with('error', 'Failed to add member: ' . $response->body());
         }
+    }
+    
+    public function members($id)
+    {
+        $response = $this->apiCall('get', "/groups/$id/users");
+        
+        if ($response->successful()) {
+            $xml = simplexml_load_string($response->body());
+            $xml->registerXPathNamespace('atom', 'http://www.w3.org/2005/Atom');
+            $xml->registerXPathNamespace('xfer', 'http://zotero.org/ns/transfer');
+            
+            $members = [];
+            $users_xml = $xml->xpath('//xfer:user');
+            
+            foreach ($users_xml as $user) {
+                $userId = (string)$user['id'];
+                $role = (string)$user['role'];
+                $members[] = [
+                    'userID' => $userId,
+                    'role' => $role,
+                    'username' => 'User ' . $userId
+                ];
+            }
+            
+            // Fetch usernames
+            $usersResponse = $this->apiCall('get', '/admin/users');
+            if ($usersResponse->successful()) {
+                $users = $usersResponse->json();
+                foreach ($members as &$member) {
+                    foreach ($users as $user) {
+                        if ($user['userID'] == $member['userID']) {
+                            $member['username'] = $user['username'];
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            $members = [];
+            session()->flash('error', 'Failed to fetch members: ' . $response->body());
+        }
+        
+        $groupId = $id;
+        return view('groups.members', compact('members', 'groupId'));
     }
     
     public function removeMember($id, $userId)

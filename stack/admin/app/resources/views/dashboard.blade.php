@@ -18,5 +18,10 @@
         <h4 class="text-lg font-semibold text-primary-600">Group Management</h4>
         <p class="mt-2 text-sm text-gray-600">Create, delete, and manage groups and members</p>
     </a>
+
+    <a href="{{ route('items.index') }}" class="block p-6 bg-white rounded-lg shadow hover:shadow-md transition">
+        <h4 class="text-lg font-semibold text-primary-600">Item Management</h4>
+        <p class="mt-2 text-sm text-gray-600">Browse and publish items to groups</p>
+    </a>
 </div>
 @endsection

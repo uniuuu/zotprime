@@ -122,6 +122,13 @@ services:
       context: ./stack/admin
       dockerfile: admin.Dockerfile
 
+  zotprime-portal:
+    profiles: ["portal"]
+    pull_policy: build
+    build:
+      context: ./stack/webui
+      dockerfile: webui.Dockerfile
+
   # zotprime-init:
   #   build:
   #     context: ./stack/init

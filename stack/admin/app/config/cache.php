@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Str;
 
+$config = yaml_parse_file(base_path('../config.yaml'));
+
 return [
 
     /*
@@ -15,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    'default' => yaml_parse_file(base_path('../config.yaml'))['session']['driver'],
 
     /*
     |--------------------------------------------------------------------------

@@ -28,6 +28,7 @@ class AdminController extends ApiController {
 	
 	// POST /admin/users - Create user
 	// GET /admin/users - List all users
+	// DELETE /admin/users/{id} - Delete user
 	// PUT /admin/users/{id}/status - Enable/disable user
 	public function users() {
 		if (!$this->permissions->isSuper()) {
@@ -39,6 +40,9 @@ class AdminController extends ApiController {
 		}
 		else if ($this->method == 'GET') {
 			$this->listUsers();
+		}
+		else if ($this->method == 'DELETE') {
+			$this->deleteUser();
 		}
 		else {
 			$this->e405();
@@ -66,10 +70,10 @@ class AdminController extends ApiController {
 				$this->e400("enabled field required (true/false)");
 			}
 			
-			$enabled = $data['enabled'] ? 1 : 0;
+			$role = $data['enabled'] ? 'normal' : 'deleted';
 			
-			$sql = "UPDATE users SET enabled = ? WHERE userID = ?";
-			Zotero_DB_Query($sql, [$enabled, $userID], 0);
+			$sql = "UPDATE users SET role = ? WHERE userID = ?";
+			Zotero_WWW_DB_1::query($sql, [$role, $userID]);
 			
 			$this->e204();
 		}
@@ -90,7 +94,7 @@ class AdminController extends ApiController {
 		
 		try {
 			$sql = "SELECT groupID, libraryID FROM groups";
-			$rows = Zotero_DB_Query($sql, false, Zotero_Shards::getNextShard());
+			$rows = Zotero_DB::query($sql);
 			
 			$groups = [];
 			foreach ($rows as $row) {
@@ -115,6 +119,65 @@ class AdminController extends ApiController {
 		}
 	}
 	
+	// GET /admin/items - List all items across all users/groups
+	public function items() {
+		if (!$this->permissions->isSuper()) {
+			$this->e403("Super user access required");
+		}
+		
+		if ($this->method != 'GET') {
+			$this->e405();
+		}
+		
+		try {
+			$limit = isset($this->queryParams['limit']) ? intval($this->queryParams['limit']) : 50;
+			$limit = min($limit, 100);
+			
+			// Get all libraries from master database
+			$sql = "SELECT libraryID FROM libraries WHERE libraryType IN ('user', 'group') LIMIT ?";
+			$libraries = Zotero_DB::query($sql, [$limit]);
+			
+			$items = [];
+			foreach ($libraries as $lib) {
+				try {
+					$libraryID = $lib['libraryID'];
+					
+					// Get items for this library with proper params
+					$params = [
+						'limit' => 10,
+						'start' => 0,
+						'format' => null,
+						'includeTrashed' => false,
+						'itemKey' => []
+					];
+					$itemRows = Zotero_Items::search($libraryID, false, $params);
+					
+					foreach ($itemRows['results'] as $item) {
+						if ($item) {
+							$items[] = [
+								'key' => $item->key,
+								'title' => $item->getDisplayTitle(),
+								'itemType' => Zotero_ItemTypes::getName($item->itemTypeID),
+								'createdByUserID' => $item->createdByUserID ?? null,
+								'libraryID' => $libraryID
+							];
+						}
+					}
+				} catch (Exception $e) {
+					error_log("Items fetch error for library $libraryID: " . $e->getMessage());
+					continue;
+				}
+			}
+			
+			header('Content-Type: application/json');
+			echo json_encode($items);
+			exit;
+		}
+		catch (Exception $e) {
+			$this->handleException($e);
+		}
+	}
+	
 	private function createUser() {
 		try {
 			$data = json_decode($this->body, true);
@@ -129,53 +192,54 @@ class AdminController extends ApiController {
 			
 			// Check username exists
 			$sql = "SELECT COUNT(*) FROM users WHERE username = ?";
-			$exists = Zotero_DB_ValueQuery($sql, $username, 0);
+			$exists = Zotero_WWW_DB_1::valueQuery($sql, [$username]);
 			if ($exists) {
 				$this->e400("Username already exists");
 			}
 			
 			// Check email exists
 			$sql = "SELECT COUNT(*) FROM users_email WHERE email = ?";
-			$exists = Zotero_DB_ValueQuery($sql, $email, 0);
+			$exists = Zotero_WWW_DB_1::valueQuery($sql, [$email]);
 			if ($exists) {
 				$this->e400("Email already exists");
 			}
 			
 			// Create user in www database
-			Zotero_DB_Query("BEGIN", false, 0);
+			Zotero_WWW_DB_1::beginTransaction();
 			
 			$sql = "INSERT INTO users (username, password) VALUES (?, MD5(?))";
-			Zotero_DB_Query($sql, [$username, $password], 0);
+			Zotero_WWW_DB_1::query($sql, [$username, $password]);
 			
-			$userID = Zotero_DB_ValueQuery("SELECT LAST_INSERT_ID()", false, 0);
+			$userID = Zotero_WWW_DB_1::valueQuery("SELECT LAST_INSERT_ID()");
 			
 			if ($userID == 1) {
-				Zotero_DB_Query("ROLLBACK", false, 0);
+				Zotero_WWW_DB_1::rollback();
 				$this->e500("UserID 1 is reserved");
 			}
 			
 			$sql = "INSERT INTO users_email (userID, email) VALUES (?, ?)";
-			Zotero_DB_Query($sql, [$userID, $email], 0);
+			Zotero_WWW_DB_1::query($sql, [$userID, $email]);
 			
-			Zotero_DB_Query("COMMIT", false, 0);
+			Zotero_WWW_DB_1::commit();
 			
-			// Create library in master
+			// Create library in master shard
 			$shardID = 1;
-			Zotero_DB_Query("BEGIN", false, Zotero_Shards::getByUserID(0));
+			Zotero_DB::beginTransaction();
 			
 			$sql = "INSERT INTO libraries (libraryType, shardID) VALUES ('user', ?)";
-			Zotero_DB_Query($sql, $shardID, Zotero_Shards::getByUserID(0));
+			Zotero_DB::query($sql, [$shardID]);
 			
-			$libraryID = Zotero_DB_ValueQuery("SELECT LAST_INSERT_ID()", false, Zotero_Shards::getByUserID(0));
+			$libraryID = Zotero_DB::valueQuery("SELECT LAST_INSERT_ID()");
 			
-			$sql = "INSERT INTO users (userID, libraryID, username) VALUES (?, ?, ?)";
-			Zotero_DB_Query($sql, [$userID, $libraryID, $username], Zotero_Shards::getByUserID(0));
-			
-			Zotero_DB_Query("COMMIT", false, Zotero_Shards::getByUserID(0));
-			
-			// Create shard entry
+			// Insert into shardLibraries in the SHARD database
 			$sql = "INSERT INTO shardLibraries (libraryID, libraryType) VALUES (?, 'user')";
-			Zotero_DB_Query($sql, $libraryID, $shardID);
+			Zotero_DB::query($sql, [$libraryID], $shardID);
+			
+			// Insert into users table in MASTER database (not shard)
+			$sql = "INSERT INTO users (userID, libraryID, username) VALUES (?, ?, ?)";
+			Zotero_DB::query($sql, [$userID, $libraryID, $username]);
+			
+			Zotero_DB::commit();
 			
 			// Return created user
 			header('Content-Type: application/json');
@@ -189,19 +253,19 @@ class AdminController extends ApiController {
 			exit;
 		}
 		catch (Exception $e) {
-			Zotero_DB_Query("ROLLBACK", false, 0);
-			Zotero_DB_Query("ROLLBACK", false, Zotero_Shards::getByUserID(0));
+			Zotero_WWW_DB_1::rollback();
+			Zotero_DB::rollback();
 			$this->handleException($e);
 		}
 	}
 	
 	private function listUsers() {
 		try {
-			$sql = "SELECT u.userID, u.username, e.email, u.enabled 
+			$sql = "SELECT u.userID, u.username, e.email, u.role 
 					FROM users u 
 					LEFT JOIN users_email e ON u.userID = e.userID 
 					ORDER BY u.userID";
-			$rows = Zotero_DB_Query($sql, false, 0);
+			$rows = Zotero_WWW_DB_1::query($sql);
 			
 			$users = [];
 			foreach ($rows as $row) {
@@ -209,13 +273,39 @@ class AdminController extends ApiController {
 					'userID' => $row['userID'],
 					'username' => $row['username'],
 					'email' => $row['email'],
-					'enabled' => $row['enabled'] == 1
+					'enabled' => $row['role'] != 'deleted'
 				];
 			}
 			
 			header('Content-Type: application/json');
 			echo json_encode($users);
 			exit;
+		}
+		catch (Exception $e) {
+			$this->handleException($e);
+		}
+	}
+	
+	private function deleteUser() {
+		try {
+			$userID = (int) $this->objectUserID;
+			
+			if (!$userID) {
+				$this->e400("User ID required");
+			}
+			
+			// Mark user as deleted first
+			$sql = "UPDATE users SET role='deleted' WHERE userID=?";
+			Zotero_WWW_DB_1::query($sql, [$userID]);
+			
+			// Delete user data
+			$deleted = Zotero_Users::deleteUser($userID);
+			
+			if ($deleted) {
+				$this->e204();
+			} else {
+				$this->e500("Failed to delete user");
+			}
 		}
 		catch (Exception $e) {
 			$this->handleException($e);

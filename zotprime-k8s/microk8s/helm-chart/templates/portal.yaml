@@ -1,0 +1,101 @@
+{{- if .Values.webPortal.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-portal
+  labels:
+    {{- include "zotprime-k8s.labels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+spec:
+  replicas: {{ .Values.webPortal.replicas }}
+  selector:
+    matchLabels:
+      {{- include "zotprime-k8s.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: portal
+  template:
+    metadata:
+      labels:
+        {{- include "zotprime-k8s.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: portal
+    spec:
+      containers:
+      - name: portal
+        image: "{{ .Values.webPortal.image.repository }}:{{ .Values.webPortal.image.tag }}"
+        imagePullPolicy: {{ .Values.webPortal.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        env:
+        - name: PORTAL_SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-portal-secret
+              key: sessionSecret
+        - name: API_SUPER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
+              key: apiSuperToken
+        - name: NODE_ENV
+          value: "production"
+        volumeMounts:
+        - name: config
+          mountPath: /app/config.yaml
+          subPath: config.yaml
+          readOnly: true
+        resources:
+          {{- toYaml .Values.webPortal.resources | nindent 10 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "zotprime-k8s.fullname" . }}-portal-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-portal
+  labels:
+    {{- include "zotprime-k8s.labels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+spec:
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.webPortal.service.port }}
+    targetPort: {{ .Values.webPortal.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "zotprime-k8s.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-portal
+  labels:
+    {{- include "zotprime-k8s.labels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+  annotations:
+    {{- if .Values.tls.enabled }}
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    {{- end }}
+spec:
+  {{- if .Values.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.ingressHostnames.portal }}
+    secretName: {{ include "zotprime-k8s.fullname" . }}-portal-tls
+  {{- end }}
+  rules:
+  - host: {{ .Values.ingressHostnames.portal }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "zotprime-k8s.fullname" . }}-portal
+            port:
+              number: {{ .Values.webPortal.service.port }}
+{{- end }}
