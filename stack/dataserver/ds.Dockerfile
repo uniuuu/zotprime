@@ -31,52 +31,51 @@ RUN set -eux; \
         mariadb-client \
         memcached \
         net-tools \
-        php83 \
-        php83-apache2 \
-        php83-bcmath \
-        php83-calendar \
-        php83-cli \
-        php83-common \
-        php83-ctype \
-        php83-curl \
-        php83-dev \
-        php83-dom \
-        php83-exif \
-        php83-ffi \
-        php83-ftp \
-        php83-gettext \
-        php83-iconv \
-        php83-intl \
-        php83-mbstring \
-        php83-mysqli \
-        php83-opcache \
-        php83-pcntl \
-        php83-pdo_mysql \
-        php83-pdo_pgsql \
-        php83-pear \
-        php83-pecl-igbinary \
-        php83-pecl-memcached \
-        php83-pecl-msgpack \
-        php83-pecl-redis \
-        php83-pecl-xdebug \
-        php83-pgsql \
-        php83-phar \
-        php83-posix \
-        php83-session \
-        php83-sodium \
-        php83-shmop \
-        php83-simplexml \
-        php83-sockets \
-        php83-sysvmsg \
-        php83-sysvsem \
-        php83-sysvshm \
-        php83-tidy \
-        php83-tokenizer \
-        php83-xml \
-        php83-xmlreader \
-        php83-xmlwriter \
-        php83-xsl \
-        php83-zip \
+        php85 \
+        php85-apache2 \
+        php85-bcmath \
+        php85-calendar \
+        php85-cli \
+        php85-common \
+        php85-ctype \
+        php85-curl \
+        php85-dev \
+        php85-dom \
+        php85-exif \
+        php85-ffi \
+        php85-ftp \
+        php85-gettext \
+        php85-iconv \
+        php85-intl \
+        php85-mbstring \
+        php85-mysqli \
+        php85-pcntl \
+        php85-pdo_mysql \
+        php85-pdo_pgsql \
+        php85-pear \
+        php85-pecl-igbinary \
+        php85-pecl-memcached \
+        php85-pecl-msgpack \
+        php85-pecl-redis \
+        php85-pecl-xdebug \
+        php85-pgsql \
+        php85-phar \
+        php85-posix \
+        php85-session \
+        php85-sodium \
+        php85-shmop \
+        php85-simplexml \
+        php85-sockets \
+        php85-sysvmsg \
+        php85-sysvsem \
+        php85-sysvshm \
+        php85-tidy \
+        php85-tokenizer \
+        php85-xml \
+        php85-xmlreader \
+        php85-xmlwriter \
+        php85-xsl \
+        php85-zip \
         runit \
         sudo \
         unzip \
@@ -88,7 +87,7 @@ FROM stage1 AS stage2
 RUN set -eux; \
         apk update && apk upgrade --available \
         && apk add --update --no-cache \
-        && ln -sf /usr/bin/php83 /usr/bin/php \
+        && ln -sf /usr/bin/php85 /usr/bin/php \
         && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
         && composer require --no-plugins --no-scripts pear/http_request2 \
         && rm -rf /tmp/pear \
@@ -108,14 +107,14 @@ RUN set -eux; \
 #        printf "\n<Directory \"/var/www/zotero/htdocs\">\n\tAllowOverride All\n</Directory>\n" >> /etc/apache2/httpd.conf
 
 RUN set -eux; \
-        sed -i 's/memory_limit = 128M/memory_limit = 1G/g' /etc/php83/php.ini; \
-        sed -i 's/max_execution_time = 30/max_execution_time = 300/g' /etc/php83/php.ini; \
-        sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php83/php.ini; \
-        sed -i 's/display_errors = On/display_errors = Off/g' /etc/php83/php.ini; \
-        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \& ~E_NOTICE \& ~E_STRICT \& ~E_DEPRECATED/g' /etc/php83/php.ini
-#        sed -i 's/display_errors = Off/display_errors = On/g' /etc/php83/php.ini; \    
-#        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \& ~E_NOTICE/g' /etc/php83/php.ini
-#        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \| E_NOTICE \| E_WARNING/g' /etc/php83/php.ini
+        sed -i 's/memory_limit = 128M/memory_limit = 1G/g' /etc/php85/php.ini; \
+        sed -i 's/max_execution_time = 30/max_execution_time = 300/g' /etc/php85/php.ini; \
+        sed -i 's/short_open_tag = Off/short_open_tag = On/g' /etc/php85/php.ini; \
+        sed -i 's/display_errors = On/display_errors = Off/g' /etc/php85/php.ini; \
+        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \& ~E_NOTICE \& ~E_STRICT \& ~E_DEPRECATED/g' /etc/php85/php.ini
+#        sed -i 's/display_errors = Off/display_errors = On/g' /etc/php85/php.ini; \    
+#        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \& ~E_NOTICE/g' /etc/php85/php.ini
+#        sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_reporting = E_ALL \| E_NOTICE \| E_WARNING/g' /etc/php85/php.ini
 
 # Enable the new virtualhost
 COPY config/zotero.conf /etc/apache2/conf.d/
