@@ -10,10 +10,16 @@ RUN pecl install yaml && docker-php-ext-enable yaml
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Tailwind standalone CLI
-RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 \
-    && chmod +x tailwindcss-linux-x64 \
-    && mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
+# Install Tailwind standalone CLI (architecture-aware)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64 && \
+        mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-arm64 && \
+        mv tailwindcss-linux-arm64 /usr/local/bin/tailwindcss; \
+    fi && \
+    chmod +x /usr/local/bin/tailwindcss
 
 # Copy application
 WORKDIR /var/www/html
