@@ -178,8 +178,8 @@ jobs:
         name: Build and push portal
         uses: docker/build-push-action@v5
         with:
-          context: ./stack/webui/portal
-          file: stack/webui/portal/webui.Dockerfile
+          context: ./stack/webui
+          file: ./stack/webui/webui.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: uniuu/zotprime-portal:${{ env.VERSION }}

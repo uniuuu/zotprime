@@ -26,7 +26,13 @@ jobs:
            git submodule update --init stack/dataserver/dataserver
            git submodule update --init stack/stream-server/stream-server
            git submodule update --init stack/tinymce-clean-server/tinymce-clean-server
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Bootstrap config
         run: cp .env_example .env
       - name: Build the stack
         run: BUILDKIT_PROGRESS=plain docker compose -f docker-compose.yml -f docker-compose-dev.yml build
+        env:
+          DOCKER_DEFAULT_PLATFORM: linux/amd64,linux/arm64
