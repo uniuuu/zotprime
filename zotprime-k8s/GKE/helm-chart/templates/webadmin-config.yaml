@@ -5,4 +5,4 @@ metadata:
   labels:
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 data:
-  webadmin-username: {{ .Values.webAdmin.username | quote }}
+  webadmin-username: {{ .Values.webAdminConfig.username | quote }}

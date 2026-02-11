@@ -85,7 +85,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.ingressHostnames.portal }}
-    secretName: {{ include "zotprime-k8s.fullname" . }}-portal-tls
+    secretName: {{ include "zotprime-k8s.fullname" . }}-tls
   {{- end }}
   rules:
   - host: {{ .Values.ingressHostnames.portal }}

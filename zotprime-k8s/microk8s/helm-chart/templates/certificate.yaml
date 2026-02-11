@@ -14,4 +14,6 @@ spec:
   - {{ .Values.ingressHostnames.minios3Data }}
   - {{ .Values.ingressHostnames.phpmyadmin }}
   - {{ .Values.ingressHostnames.minios3Web }}
+  - {{ .Values.ingressHostnames.admin }}
+  - {{ .Values.ingressHostnames.portal }}
 {{- end }}

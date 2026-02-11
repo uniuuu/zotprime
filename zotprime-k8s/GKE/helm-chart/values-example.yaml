@@ -11,7 +11,8 @@ authSecret:
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
   apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
-webAdmin:
+  appKey: ""  # echo -n "base64:YOUR_KEY" | base64
+webAdminConfig:
   # Web Admin UI credentials (matches WEBADMIN_* in .env)
   username: ""  # plain text
   password: ""  # base64: echo -n "admin" | base64
@@ -36,12 +37,12 @@ zoteroConfig:
   adminUsername: admin
   adminEmail: admin@zotero.org
 zoteroSecret:
-  adminPassword: ""  # base64: echo -n "admin" | base64
+  adminPassword: "YWRtaW4="  # base64 of "admin"
 dataserver:
   ports:
   - name: dataserver-api
-    port: 80
-    targetPort: 80
+    port: 8080
+    targetPort: 8080
   type: ClusterIP
 webAdmin:
   enabled: false
@@ -233,8 +234,8 @@ redisProbes:
 streamserver:
   ports:
   - name: streamserver
-    port: 81
-    targetPort: 81
+    port: 8081
+    targetPort: 8081
   type: ClusterIP
 tinymceclean:
   ports:

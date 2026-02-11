@@ -19,14 +19,15 @@ authSecret:
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
   apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64  -w 0
-webAdmin:
+  appKey: ""  # php -r "echo 'base64:' . base64_encode(random_bytes(32)) . PHP_EOL;" # echo -n "base64:YOUR_KEY" | base64
+webAdminConfig:
   # Web Admin UI credentials (matches WEBADMIN_* in .env)
   username: ""  # plain text
   password: ""  # base64: echo -n "admin" | base64
 minioConfig:
   minioRootUser: zotero # MINIOROOTUSER
 minioSecret:
-  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
+  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"  # echo -n "MINIO_ROOT_PASSWORD=zoterodocker" | base64
 blobSecret:
   # Blob storage credentials (for dataserver to connect to object storage)
   # When using MinIO: awsAccessKeyId=MINIOROOTUSER, awsSecretAccessKey=MINIOROOTPASSWORD
@@ -39,15 +40,17 @@ dbConfig:
 dbSecret:
   mysqlRootPassword: "em90ZXJv"  # base64 of "zotero" (no newline)
   mysqlPassword: "em90ZXJvdGVzdA=="  # base64 of "zoterotest" (no newline)
-zoteroAdmin:
+zoteroConfig:
+  # Zotero API admin credentials (matches ADMIN_* in .env)
   adminUsername: admin
-  adminPassword: admin
   adminEmail: admin@zotero.org
+zoteroSecret:
+  adminPassword: "YWRtaW4="  # base64 of "admin"
 dataserver:
   ports:
   - name: dataserver-api
-    port: 80
-    targetPort: 80
+    port: 8080
+    targetPort: 8080
   type: ClusterIP
 webAdmin:
   enabled: false
@@ -239,8 +242,8 @@ redisProbes:
 streamserver:
   ports:
   - name: streamserver
-    port: 81
-    targetPort: 81
+    port: 8081
+    targetPort: 8081
   type: ClusterIP
 tinymceclean:
   ports:

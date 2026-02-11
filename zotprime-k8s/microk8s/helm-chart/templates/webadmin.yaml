@@ -23,6 +23,11 @@ spec:
         ports:
         - containerPort: {{ .Values.webAdmin.service.targetPort }}
         env:
+        - name: APP_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
+              key: app-key
         - name: WEBADMIN_USERNAME
           valueFrom:
             configMapKeyRef:
@@ -72,7 +77,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.ingressHostnames.admin }}
-    secretName: admin-tls
+    secretName: {{ include "zotprime-k8s.fullname" . }}-tls
   {{- end }}
   rules:
   - host: {{ .Values.ingressHostnames.admin }}

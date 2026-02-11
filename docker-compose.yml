@@ -253,6 +253,7 @@ services:
     ports:
       - "8082:8080"
     environment:
+      - APP_KEY=${APP_KEY}
       - WEBADMIN_USERNAME=${WEBADMIN_USERNAME}
       - WEBADMIN_PASSWORD=${WEBADMIN_PASSWORD}
       - API_SUPER_TOKEN=${API_SUPER_TOKEN}

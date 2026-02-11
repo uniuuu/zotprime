@@ -1,6 +1,5 @@
 .git
 .gitignore
-.env
 *.log
 node_modules
 vendor
