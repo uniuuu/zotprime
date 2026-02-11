@@ -8,31 +8,43 @@ ingressHostnames:
   minios3Web: min.projectdev.net
   admin: admin.projectdev.net
   portal: portal.projectdev.net
+basicAuth:
+  # HTTP Basic Authentication at ingress level (network edge protection)
+  # Generate: htpasswd -nb username password | base64
+  # Format: username:$hashed_password (both in one base64-encoded string)
+  enabled: true
+  htpasswd: ""
 authSecret:
   # Base64 encoded values
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
   apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
-adminUser:
-  # Base64 encoded values
-  username: "YWRtaW4="  # base64 of "admin"
+webAdmin:
+  # Web Admin UI credentials (matches WEBADMIN_* in .env)
+  username: "admin"  # plain text
   password: "YWRtaW4="  # base64 of "admin"
-  email: "YWRtaW5AZXhhbXBsZS50bGQ="  # base64 of "admin@example.tld"
+minioConfig:
+  minioRootUser: zotero
 minioSecret:
   secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
 blobSecret:
+  # Blob storage credentials (for dataserver to connect to object storage)
+  # When using MinIO: awsAccessKeyId=MINIOROOTUSER, awsSecretAccessKey=MINIOROOTPASSWORD
+  # When using cloud blob storage: use your cloud provider's access key and secret
+  awsAccessKeyId: "em90ZXJv"  # base64 of "zotero"
   awsSecretAccessKey: "em90ZXJvZG9ja2Vy"  # base64 of "zoterodocker"
+dbConfig:
+  mariadbDatabasename: zoterotest
+  mariadbUser: zotprimeprod
 dbSecret:
   mysqlRootPassword: "em90ZXJv"  # base64 of "zotero" (no newline)
   mysqlPassword: "em90ZXJvdGVzdA=="  # base64 of "zoterotest" (no newline)
-dbConfig:
-  mariadbDatabasename: zotprimeprod
-  mariadbUser: zotprimeprod
+zoteroConfig:
+  # Zotero API admin credentials (matches ADMIN_* in .env)
   adminUsername: admin
-  adminPassword: admin
   adminEmail: admin@zotero.org
-minioConfig:
-  minioRootUser: zotero
+zoteroSecret:
+  adminPassword: "YWRtaW4="  # base64 of "admin"
 dataserver:
   ports:
   - name: dataserver-api

@@ -9,6 +9,9 @@ ingressHostnames:
   admin: yoursub6.yourdomain.tld
   portal: yoursub7.yourdomain.tld
 basicAuth:
+  # HTTP Basic Authentication at ingress level (network edge protection)
+  # Generate: htpasswd -nb username password | base64
+  # Format: username:$hashed_password (both in one base64-encoded string)
   enabled: true
   htpasswd: ""
 authSecret:
@@ -16,21 +19,26 @@ authSecret:
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
   apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64  -w 0
-adminUser:
-  # Base64 encoded values
-  username: ""  # echo -n "admin" | base64
-  password: ""  # echo -n "admin" | base64
-  email: ""  # echo -n "admin@example.tld" | base64
+webAdmin:
+  # Web Admin UI credentials (matches WEBADMIN_* in .env)
+  username: ""  # plain text
+  password: ""  # base64: echo -n "admin" | base64
+minioConfig:
+  minioRootUser: zotero # MINIOROOTUSER
 minioSecret:
   secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
 blobSecret:
+  # Blob storage credentials (for dataserver to connect to object storage)
+  # When using MinIO: awsAccessKeyId=MINIOROOTUSER, awsSecretAccessKey=MINIOROOTPASSWORD
+  # When using cloud blob storage: use your cloud provider's access key and secret
+  awsAccessKeyId: "em90ZXJv"  # base64 of "zotero"
   awsSecretAccessKey: "em90ZXJvZG9ja2Vy"  # base64 of "zoterodocker"
-dbSecret:
-  mysqlRootPassword: "em90ZXJv"  # base64 of "zotero" (no newline)
-  mysqlPassword: "em90ZXJvdGVzdA=="  # base64 of "zoterotest" (no newline)
 dbConfig:
   mariadbDatabasename: zoterotest
   mariadbUser: zotprimeprod
+dbSecret:
+  mysqlRootPassword: "em90ZXJv"  # base64 of "zotero" (no newline)
+  mysqlPassword: "em90ZXJvdGVzdA=="  # base64 of "zoterotest" (no newline)
 zoteroAdmin:
   adminUsername: admin
   adminPassword: admin
@@ -176,8 +184,6 @@ minio:
     port: 80
     targetPort: 9000
   type: ClusterIP
-minioConfig:
-  minioRootUser: zotero
 mysql:
   ports:
   - name: mariadb

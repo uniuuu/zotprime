@@ -57,9 +57,9 @@ spec:
               key: minio-root-user
         - name: AWS_ACCESS_KEY_ID
           valueFrom:
-            configMapKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-minio-config
-              key: minio-root-user
+            secretKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-blob-secret
+              key: aws-access-key-id
         - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
@@ -69,19 +69,19 @@ spec:
           value: us-east-1
         - name: ADMIN_USERNAME
           valueFrom:
-            secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-admin-secret
-              key: admin-username
+            configMapKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-zotero-admin-config
+              key: zotero-admin-username
         - name: ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-admin-secret
-              key: admin-password
+              name: {{ include "zotprime-k8s.fullname" . }}-zotero-admin-secret
+              key: zotero-admin-password
         - name: ADMIN_EMAIL
           valueFrom:
-            secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-admin-secret
-              key: admin-email
+            configMapKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-zotero-admin-config
+              key: zotero-admin-email
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}
         image: {{ .Values.zotprimeDataserver.zotprimeDataserver.image.repository }}:{{

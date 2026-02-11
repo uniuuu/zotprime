@@ -1,17 +1,4 @@
 {{- if .Values.webAdmin.enabled }}
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
-  labels:
-    app: {{ include "zotprime-k8s.fullname" . }}-zotprime-admin
-  {{- include "zotprime-k8s.labels" . | nindent 4 }}
-type: Opaque
-data:
-  username: {{ .Values.webAdmin.username }}
-  password: {{ .Values.webAdmin.password }}
-  apiSuperTokenHash: {{ .Values.authSecret.apiSuperTokenHash }}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,19 +25,19 @@ spec:
         env:
         - name: WEBADMIN_USERNAME
           valueFrom:
-            secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
-              key: username
+            configMapKeyRef:
+              name: {{ include "zotprime-k8s.fullname" . }}-webadmin-config
+              key: webadmin-username
         - name: WEBADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
-              key: password
+              key: webadmin-password
         - name: API_SUPER_TOKEN
           valueFrom:
             secretKeyRef:
-              name: {{ include "zotprime-k8s.fullname" . }}-webadmin-secret
-              key: apiSuperTokenHash
+              name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
+              key: api-super-token-hash
         resources:
           {{- toYaml .Values.webAdmin.resources | nindent 10 }}
 ---
