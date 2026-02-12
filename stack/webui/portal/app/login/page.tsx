@@ -45,7 +45,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
-        <h1 className="text-2xl font-bold mb-6">Login</h1>
+        <h1 className="text-2xl font-bold mb-6 text-gray-900">Login</h1>
 
         {error && (
           <div className="bg-red-50 text-red-600 p-3 rounded mb-4">
@@ -55,10 +55,10 @@ export default function LoginPage() {
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1 text-gray-900">Username</label>
             <input
               {...register('username', { required: 'Username is required' })}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border rounded px-3 py-2 text-gray-900"
             />
             {errors.username && (
               <p className="text-red-600 text-sm mt-1">{errors.username.message}</p>
@@ -66,11 +66,11 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-sm font-medium mb-1 text-gray-900">Password</label>
             <input
               type="password"
               {...register('password', { required: 'Password is required' })}
-              className="w-full border rounded px-3 py-2"
+              className="w-full border rounded px-3 py-2 text-gray-900"
             />
             {errors.password && (
               <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>

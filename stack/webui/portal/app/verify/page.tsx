@@ -56,7 +56,7 @@ export default function VerifyPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
-        <h1 className="text-2xl font-bold mb-2">Setup Authenticator</h1>
+        <h1 className="text-2xl font-bold mb-2 text-gray-900">Setup Authenticator</h1>
         <p className="text-gray-800 mb-6">
           Scan QR code with Google Authenticator or similar app
         </p>
@@ -76,13 +76,13 @@ export default function VerifyPage() {
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Enter 6-digit code</label>
+            <label className="block text-sm font-medium mb-1 text-gray-900">Enter 6-digit code</label>
             <input
               {...register('code', {
                 required: 'Code is required',
                 pattern: { value: /^\d{6}$/, message: 'Must be 6 digits' },
               })}
-              className="w-full border rounded px-3 py-2 text-center text-2xl tracking-widest font-mono"
+              className="w-full border rounded px-3 py-2 text-center text-2xl tracking-widest font-mono text-gray-900"
               maxLength={6}
               placeholder="000000"
             />

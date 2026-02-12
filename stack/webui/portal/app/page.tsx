@@ -19,7 +19,7 @@ export default function Home() {
 
       <main className="flex-1 flex items-center justify-center bg-gray-50">
         <div className="text-center max-w-2xl px-4">
-          <h2 className="text-4xl font-bold mb-4">Research Library Portal</h2>
+          <h2 className="text-4xl font-bold mb-4 text-gray-900">Research Library Portal</h2>
           <p className="text-xl text-gray-700 mb-8">
             Browse and access published research materials from our institutional repository.
           </p>

@@ -10,7 +10,7 @@ export async function getSession(): Promise<IronSession<SessionData>> {
     password: getSessionSecret(),
     cookieName: 'zotprime_session',
     cookieOptions: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.SECURE_COOKIES !== 'false',
       httpOnly: true,
       sameSite: 'lax',
       maxAge: config.session.max_age,

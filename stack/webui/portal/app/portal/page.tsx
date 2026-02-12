@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/session';
+import { getUserGroups, getGroupItems } from '@/lib/api';
 import Link from 'next/link';
 
 async function getGroupsWithItems() {
@@ -9,12 +10,34 @@ async function getGroupsWithItems() {
     redirect('/login');
   }
 
-  const response = await fetch(`http://localhost:3000/api/items`, {
-    cache: 'no-store',
-  });
-
-  if (!response.ok) return [];
-  return response.json();
+  const groups = await getUserGroups(session.userId, session.apiKey);
+  
+  const groupsWithItems = await Promise.all(
+    groups.map(async (group: any) => {
+      try {
+        const items = await getGroupItems(group.id, session.apiKey);
+        return {
+          group: {
+            id: group.id,
+            name: group.data.name,
+            type: group.data.type,
+          },
+          items,
+        };
+      } catch (error) {
+        return {
+          group: {
+            id: group.id,
+            name: group.data.name,
+            type: group.data.type,
+          },
+          items: [],
+        };
+      }
+    })
+  );
+  
+  return groupsWithItems;
 }
 
 export default async function PortalPage() {
@@ -37,7 +60,7 @@ export default async function PortalPage() {
     <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">ZotPrime Portal</h1>
+          <h1 className="text-2xl font-bold text-gray-900">ZotPrime Portal</h1>
           <div className="flex items-center gap-4">
             <span className="text-gray-800">Welcome, {session.username}</span>
             <form action={handleLogout}>
@@ -51,7 +74,7 @@ export default async function PortalPage() {
 
       <main className="flex-1 bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-6">Your Groups</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-900">Your Groups</h2>
 
           {groupsWithItems.length === 0 ? (
             <div className="bg-white rounded-lg shadow p-8 text-center text-gray-800">
@@ -63,7 +86,7 @@ export default async function PortalPage() {
               {groupsWithItems.map((groupData: any) => (
                 <div key={groupData.group.id} className="bg-white rounded-lg shadow p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-2xl font-bold">{groupData.group.name}</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">{groupData.group.name}</h3>
                     <span className="text-sm text-gray-700 bg-gray-100 px-3 py-1 rounded">
                       {groupData.group.type}
                     </span>

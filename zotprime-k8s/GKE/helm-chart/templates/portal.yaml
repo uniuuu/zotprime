@@ -39,6 +39,13 @@ spec:
               key: apiSuperToken
         - name: NODE_ENV
           value: "production"
+        {{- if .Values.tls.enabled }}
+        - name: SECURE_COOKIES
+          value: "true"
+        {{- else }}
+        - name: SECURE_COOKIES
+          value: "false"
+        {{- end }}
         volumeMounts:
         - name: config
           mountPath: /app/config.yaml

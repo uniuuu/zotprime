@@ -21,13 +21,22 @@ interface Config {
 let config: Config | null = null;
 
 export function getConfig(): Config {
-  if (config) return config;
-
-  const configPath = path.join(process.cwd(), 'config.yaml');
-  const fileContents = fs.readFileSync(configPath, 'utf8');
-  config = yaml.load(fileContents) as Config;
+  if (!config) {
+    const configPath = path.join(process.cwd(), 'config.yaml');
+    const fileContents = fs.readFileSync(configPath, 'utf8');
+    config = yaml.load(fileContents) as Config;
+  }
   
-  return config;
+  // Always override with environment variables (don't cache env overrides)
+  const finalConfig = { ...config };
+  if (process.env.API_SUPER_TOKEN) {
+    finalConfig.dataserver = {
+      ...finalConfig.dataserver,
+      api_super_token: process.env.API_SUPER_TOKEN
+    };
+  }
+  
+  return finalConfig;
 }
 
 export function getSessionSecret(): string {

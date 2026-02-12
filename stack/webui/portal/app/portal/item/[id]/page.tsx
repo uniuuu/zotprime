@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/session';
+import { getItem } from '@/lib/api';
 import Link from 'next/link';
 
 async function getItemData(itemId: string) {
@@ -9,12 +10,18 @@ async function getItemData(itemId: string) {
     redirect('/login');
   }
 
-  const response = await fetch(`http://localhost:3000/api/items/${itemId}`, {
-    cache: 'no-store',
-  });
-
-  if (!response.ok) return null;
-  return response.json();
+  const [groupId, itemKey] = itemId.split(':');
+  
+  if (!groupId || !itemKey) {
+    return null;
+  }
+  
+  try {
+    const item = await getItem(parseInt(groupId), itemKey, session.apiKey);
+    return item;
+  } catch (error) {
+    return null;
+  }
 }
 
 export default async function ItemDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -25,7 +32,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Item Not Found</h1>
+          <h1 className="text-2xl font-bold mb-4 text-gray-900">Item Not Found</h1>
           <Link href="/portal" className="text-blue-600 hover:underline">
             Back to Portal
           </Link>
@@ -47,7 +54,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
       <main className="max-w-4xl mx-auto px-4 py-8">
         <article className="bg-white rounded-lg shadow p-8">
           <div className="mb-4 flex items-center gap-2">
-            <span className="bg-gray-100 px-3 py-1 rounded text-sm">
+            <span className="bg-gray-100 px-3 py-1 rounded text-sm text-gray-900">
               {item.data.itemType}
             </span>
             {item.library && (
@@ -57,7 +64,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
             )}
           </div>
 
-          <h1 className="text-3xl font-bold mb-4">
+          <h1 className="text-3xl font-bold mb-4 text-gray-900">
             {item.data.title || 'Untitled'}
           </h1>
 

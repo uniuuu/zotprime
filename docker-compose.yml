@@ -276,6 +276,7 @@ services:
     environment:
       - PORTAL_SESSION_SECRET=${PORTAL_SESSION_SECRET}
       - API_SUPER_TOKEN=${API_SUPER_TOKEN}
+      - SECURE_COOKIES=${SECURE_COOKIES}
       - NODE_ENV=production
     volumes:
       - /etc/localtime:/etc/localtime:ro
