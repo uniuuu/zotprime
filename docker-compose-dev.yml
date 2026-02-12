@@ -83,7 +83,7 @@ services:
       - zotprime-minio:minio
     networks:
       zotprime:
-        ipv4_address: 10.5.5.14
+        ipv4_address: 10.5.5.15
 #          exec sleep inf;
 
   zotprime-dataserver:

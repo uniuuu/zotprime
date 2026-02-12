@@ -246,7 +246,7 @@ services:
       - zotprime-minio:minio
     networks:
       zotprime:
-        ipv4_address: 10.5.5.13
+        ipv4_address: 10.5.5.12
   zotprime-admin:
     profiles: ["admin"]
     image: "uniuu/zotprime-admin:${VER}"
@@ -268,7 +268,7 @@ services:
     restart: always
     networks:
       zotprime:
-        ipv4_address: 10.5.5.12
+        ipv4_address: 10.5.5.13
   zotprime-portal:
     profiles: ["portal"]
     image: "uniuu/zotprime-portal:${VER}"
@@ -289,7 +289,7 @@ services:
     restart: always
     networks:
       zotprime:
-        ipv4_address: 10.5.5.13
+        ipv4_address: 10.5.5.14
 volumes:
   dbdata:
    driver: local
@@ -303,5 +303,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.5.5.0/28
+        - subnet: 10.5.5.0/27
           gateway: 10.5.5.1
