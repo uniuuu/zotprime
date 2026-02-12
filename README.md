@@ -49,6 +49,12 @@ sudo apt update
 sudo apt install docker-compose-plugin
 ```
 
+Install required tools for secret generation:
+
+```bash
+sudo apt install openssl php-cli
+```
+
 ### 3. Clone Repository
 
 ```bash
