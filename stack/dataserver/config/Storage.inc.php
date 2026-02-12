@@ -112,12 +112,14 @@ class Zotero_Storage {
 			}
 		}
 		
-		$cmd = $s3Client->getCommand('GetObject', [
+		// Use public S3 client for presigned URL generation (client-accessible endpoint)
+		$s3ClientPublic = Z_Core::$AWS_PUBLIC->createS3();
+		$cmd = $s3ClientPublic->getCommand('GetObject', [
 			'Bucket' => Z_CONFIG::$S3_BUCKET,
 			'Key' => $key,
 			'ResponseContentType' => $info['zip'] ? 'application/zip' : $contentType
 		]);
-		return (string) $s3Client->createPresignedRequest($cmd, "+$ttl seconds")->getUri();
+		return (string) $s3ClientPublic->createPresignedRequest($cmd, "+$ttl seconds")->getUri();
 	}
 	
 	

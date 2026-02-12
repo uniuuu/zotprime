@@ -59,11 +59,14 @@ set -eux
 #find /var/www/zotero/ -type d -exec chmod 755 {} \;
 #chmod 644 /var/www/zotero/htdocs/.htaccess 
 
+# Replace SERVER_IP placeholder
 sed -i "s#http://localhost:8080/#http://$SERVER_IP/#g" /var/www/zotero/include/config/config.inc.php
-sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/config/config.inc.php
-sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/Zend/Service/Amazon/S3.php
 
-# Set public S3 endpoint for client uploads if provided
+# Replace S3_ENDPOINT placeholder (now uses minio:9000)
+sed -i "s#10.5.5.1:9000#$S3_ENDPOINT#g" /var/www/zotero/include/config/config.inc.php
+sed -i "s#minio:9000#$S3_ENDPOINT#g" /var/www/zotero/include/Zend/Service/Amazon/S3.php
+
+# Set S3_PUBLIC_ENDPOINT (auto-generated from SERVER_IP in docker-compose.yml)
 if [ -n "$S3_PUBLIC_ENDPOINT" ]; then
   sed -i "s#public static \\\$S3_PUBLIC_ENDPOINT = '';#public static \\\$S3_PUBLIC_ENDPOINT = '$S3_PUBLIC_ENDPOINT';#g" /var/www/zotero/include/config/config.inc.php
 fi

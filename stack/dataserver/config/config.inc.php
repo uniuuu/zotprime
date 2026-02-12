@@ -40,7 +40,7 @@ class Z_CONFIG {
 	public static $AWS_REGION = 'us-east-1';
 	public static $AWS_ACCESS_KEY;
 	public static $AWS_SECRET_KEY;
-	public static $S3_ENDPOINT = '10.5.5.1:9000';
+	public static $S3_ENDPOINT = 'minio:9000';
 	public static $S3_PUBLIC_ENDPOINT = '';
 	public static $S3_BUCKET = 'zotero';
 	public static $S3_BUCKET_CACHE = '';

@@ -15,7 +15,7 @@ authSecret:
 webAdminConfig:
   # Web Admin UI credentials (matches WEBADMIN_* in .env)
   username: ""  # plain text
-  password: ""  # base64: echo -n "admin" | base64
+  password: ""  # base64 encoded bcrypt hash: echo -n "$(php -r 'echo password_hash(\"your_password\", PASSWORD_BCRYPT);')" | base64
 minioConfig:
   minioRootUser: zotero
 minioSecret:

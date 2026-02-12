@@ -1,9 +1,0 @@
-# Override for localhost installations
-# Use with: docker compose -f docker-compose.yml -f docker-compose-localhost.yml up -d
-
-services:
-  zotprime-dataserver:
-    extra_hosts: []  # Remove extra_hosts for localhost
-    environment:
-      # Override S3_ENDPOINT to use Docker gateway IP for localhost
-      - S3_ENDPOINT=10.5.5.1:9000

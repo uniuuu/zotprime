@@ -57,22 +57,22 @@ then
   APP_KEY=$(openssl rand -hex 32)
   PORTAL_SESSION_SECRET=$(openssl rand -hex 32)
   
-  # Update .env
-  sed -i "s#MYSQLROOTPASSWORD=''#MYSQLROOTPASSWORD='$MYSQLROOTPASSWORD'#g" .env
-  sed -i "s#MYSQLUSER=''#MYSQLUSER='$MYSQLUSER'#g" .env
-  sed -i "s#MYSQLPASSWORD=''#MYSQLPASSWORD='$MYSQLPASSWORD'#g" .env
-  sed -i "s#MINIOROOTUSER=''#MINIOROOTUSER='$MINIOROOTUSER'#g" .env
-  sed -i "s#MINIOROOTPASSWORD=''#MINIOROOTPASSWORD='$MINIOROOTPASSWORD'#g" .env
-  sed -i "s#API_SUPER_TOKEN=''#API_SUPER_TOKEN='$API_SUPER_TOKEN'#g" .env
-  sed -i "s#API_SUPER_TOKEN_HASH=''#API_SUPER_TOKEN_HASH='$API_SUPER_TOKEN_HASH'#g" .env
-  sed -i "s#AUTH_SALT=''#AUTH_SALT='$AUTH_SALT'#g" .env
-  sed -i "s#ADMIN_USERNAME=''#ADMIN_USERNAME='$ADMIN_USERNAME'#g" .env
-  sed -i "s#ADMIN_PASSWORD=''#ADMIN_PASSWORD='$ADMIN_PASSWORD'#g" .env
-  sed -i "s#ADMIN_EMAIL=''#ADMIN_EMAIL='$ADMIN_EMAIL'#g" .env
-  sed -i "s#WEBADMIN_USERNAME=''#WEBADMIN_USERNAME='$WEBADMIN_USERNAME'#g" .env
-  sed -i "s#WEBADMIN_PASSWORD=''#WEBADMIN_PASSWORD='$WEBADMIN_PASSWORD'#g" .env
-  sed -i "s#APP_KEY=''#APP_KEY='$APP_KEY'#g" .env
-  sed -i "s#PORTAL_SESSION_SECRET=''#PORTAL_SESSION_SECRET='$PORTAL_SESSION_SECRET'#g" .env
+  # Update .env (use printf to preserve $ characters in bcrypt hashes)
+  printf "s#MYSQLROOTPASSWORD=''#MYSQLROOTPASSWORD='%s'#g\n" "$MYSQLROOTPASSWORD" | sed -i -f - .env
+  printf "s#MYSQLUSER=''#MYSQLUSER='%s'#g\n" "$MYSQLUSER" | sed -i -f - .env
+  printf "s#MYSQLPASSWORD=''#MYSQLPASSWORD='%s'#g\n" "$MYSQLPASSWORD" | sed -i -f - .env
+  printf "s#MINIOROOTUSER=''#MINIOROOTUSER='%s'#g\n" "$MINIOROOTUSER" | sed -i -f - .env
+  printf "s#MINIOROOTPASSWORD=''#MINIOROOTPASSWORD='%s'#g\n" "$MINIOROOTPASSWORD" | sed -i -f - .env
+  printf "s#API_SUPER_TOKEN=''#API_SUPER_TOKEN='%s'#g\n" "$API_SUPER_TOKEN" | sed -i -f - .env
+  printf "s#API_SUPER_TOKEN_HASH=''#API_SUPER_TOKEN_HASH='%s'#g\n" "$API_SUPER_TOKEN_HASH" | sed -i -f - .env
+  printf "s#AUTH_SALT=''#AUTH_SALT='%s'#g\n" "$AUTH_SALT" | sed -i -f - .env
+  printf "s#ADMIN_USERNAME=''#ADMIN_USERNAME='%s'#g\n" "$ADMIN_USERNAME" | sed -i -f - .env
+  printf "s#ADMIN_PASSWORD=''#ADMIN_PASSWORD='%s'#g\n" "$ADMIN_PASSWORD" | sed -i -f - .env
+  printf "s#ADMIN_EMAIL=''#ADMIN_EMAIL='%s'#g\n" "$ADMIN_EMAIL" | sed -i -f - .env
+  printf "s#WEBADMIN_USERNAME=''#WEBADMIN_USERNAME='%s'#g\n" "$WEBADMIN_USERNAME" | sed -i -f - .env
+  printf "s#WEBADMIN_PASSWORD=''#WEBADMIN_PASSWORD='%s'#g\n" "$WEBADMIN_PASSWORD" | sed -i -f - .env
+  printf "s#APP_KEY=''#APP_KEY='%s'#g\n" "$APP_KEY" | sed -i -f - .env
+  printf "s#PORTAL_SESSION_SECRET=''#PORTAL_SESSION_SECRET='%s'#g\n" "$PORTAL_SESSION_SECRET" | sed -i -f - .env
   
   echo ""
   echo "=========================================="
@@ -99,26 +99,14 @@ then
   echo ""
   
   # Docker deployment
-  if [[ $SERVER == 127.0.0.1 ]]
-  then
-    echo "Starting with localhost configuration..."
-    sudo docker compose -f docker-compose.yml -f docker-compose-localhost.yml up -d
-    echo ""
-    echo "To check container status: docker compose -f docker-compose.yml -f docker-compose-localhost.yml ps"
-    echo "To view logs: docker compose -f docker-compose.yml -f docker-compose-localhost.yml logs -f"
-    echo ""
-    echo "To shut down the server: docker compose -f docker-compose.yml -f docker-compose-localhost.yml down"
-    echo "To delete all data (IRREVERSIBLE): docker compose -f docker-compose.yml -f docker-compose-localhost.yml down -v"
-  else
-    echo "Starting with remote server configuration..."
-    sudo docker compose up -d
-    echo ""
-    echo "To check container status: docker compose ps"
-    echo "To view logs: docker compose logs -f"
-    echo ""
-    echo "To shut down the server: docker compose down"
-    echo "To delete all data (IRREVERSIBLE): docker compose down -v"
-  fi
+  echo "Starting ZotPrime..."
+  sudo docker compose up -d
+  echo ""
+  echo "To check container status: docker compose ps"
+  echo "To view logs: docker compose logs -f"
+  echo ""
+  echo "To shut down the server: docker compose down"
+  echo "To delete all data (IRREVERSIBLE): docker compose down -v"
 else
    echo "Exiting"
    exit 1

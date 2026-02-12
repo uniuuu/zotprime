@@ -141,6 +141,7 @@ COPY Zend /var/www/zotero/include/Zend
 COPY config/config.inc.php /var/www/zotero/include/config/
 COPY config/dbconnect.inc.php /var/www/zotero/include/config/
 COPY config/header.inc.php /var/www/zotero/include/
+COPY config/Core.inc.php /var/www/zotero/include/
 COPY config/Storage.inc.php /var/www/zotero/model/
 COPY config/FullText.inc.php /var/www/zotero/model/
 COPY config/ApiController.php /var/www/zotero/controllers/

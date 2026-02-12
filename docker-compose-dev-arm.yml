@@ -1,5 +1,5 @@
 # ARM64 development overrides - builds ARM images with separate tags
-# Use with: docker compose -f docker-compose.yml -f docker-compose-localhost.yml -f docker-compose-dev-arm.yml up -d --build
+# Use with: docker compose -f docker-compose.yml -f docker-compose-dev-arm.yml up -d --build
 
 services:
   zotprime-db:

@@ -23,6 +23,8 @@ spec:
         ports:
         - containerPort: {{ .Values.webAdmin.service.targetPort }}
         env:
+        - name: APP_URL
+          value: "https://{{ .Values.ingressHostnames.admin }}"
         - name: APP_KEY
           valueFrom:
             secretKeyRef:

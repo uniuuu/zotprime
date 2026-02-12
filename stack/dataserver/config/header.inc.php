@@ -238,7 +238,14 @@ else {
 	];
 }
 Z_Core::$AWS = new Aws\Sdk($awsConfig);
-unset($awsConfig);
+
+// Create second AWS SDK instance for public endpoint (presigned URLs only)
+$awsConfigPublic = $awsConfig;
+if (!empty(Z_CONFIG::$S3_PUBLIC_ENDPOINT)) {
+	$awsConfigPublic['endpoint'] = Z_CONFIG::$S3_PUBLIC_ENDPOINT;
+}
+Z_Core::$AWS_PUBLIC = new Aws\Sdk($awsConfigPublic);
+unset($awsConfig, $awsConfigPublic);
 
 // Elasticsearch
 $esConfig = [

@@ -106,15 +106,13 @@ services:
     image: "uniuu/zotprime-dataserver:${VER}"
     ports:
       - "8080:8080"
-    extra_hosts:
-      - "${SERVER_IP}:10.5.5.7"     # Map SERVER_IP to MinIO's internal Docker IP for remote deployments
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       - RUN_USER=apache
       - RUN_GROUP=apache
       - SERVER_IP=${SERVER_IP}
-      - S3_ENDPOINT=${S3_ENDPOINT:-${SERVER_IP}:9000} # Default to SERVER_IP:9000, allow override for external S3
+      - S3_ENDPOINT=minio:9000
       - S3_PUBLIC_ENDPOINT=http://${SERVER_IP}:9000
       - AUTH_SALT=${AUTH_SALT}
       - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
@@ -253,6 +251,7 @@ services:
     ports:
       - "8082:8080"
     environment:
+      - APP_URL=http://${SERVER_IP}:8082
       - APP_KEY=${APP_KEY}
       - WEBADMIN_USERNAME=${WEBADMIN_USERNAME}
       - WEBADMIN_PASSWORD=${WEBADMIN_PASSWORD}
