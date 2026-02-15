@@ -5,7 +5,7 @@ for i in db-updates/*/; do
     cd /var/www/zotero/misc/$i
     for j in *; do
         find . -type f \( ! -name *.sql \) -exec php {} \;
-        find . -type f -name *.sql -exec bash -c 'mariadb -h mysql -P 3306 -u root -pzotero zotero_master < {}' \;
+        find . -type f -name *.sql -exec bash -c 'mariadb -h mysql -P 3306 -u root -p${MYSQLROOTPASSWORD} zotero_master < {}' \;
     done    
 done;
 cd ../../
