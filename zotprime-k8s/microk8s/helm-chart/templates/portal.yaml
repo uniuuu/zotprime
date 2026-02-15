@@ -83,10 +83,6 @@ metadata:
   labels:
     {{- include "zotprime-k8s.labels" . | nindent 4 }}
     app.kubernetes.io/component: portal
-  annotations:
-    {{- if .Values.tls.enabled }}
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    {{- end }}
 spec:
   {{- if .Values.tls.enabled }}
   tls:
