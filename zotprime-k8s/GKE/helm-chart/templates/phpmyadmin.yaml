@@ -1,3 +1,4 @@
+{{- if .Values.zotprimePhpmyadmin.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,3 +14,4 @@ spec:
     apps: zotprime-phpmyadmin
   ports:
 	{{- .Values.phpmyadmin.ports | toYaml | nindent 2 -}}
+{{- end }}

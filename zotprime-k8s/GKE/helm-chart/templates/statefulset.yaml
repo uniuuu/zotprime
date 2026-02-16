@@ -31,12 +31,12 @@ spec:
         - name: MARIADB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: mysql-root-password
+              key: mariadb-root-password
               name: {{ include "zotprime-k8s.fullname" . }}-db-secret
         - name: MARIADB_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: mysql-password
+              key: mariadb-password
               name: {{ include "zotprime-k8s.fullname" . }}-db-secret
         - name: KUBERNETES_CLUSTER_DOMAIN
           value: {{ quote .Values.kubernetesClusterDomain }}

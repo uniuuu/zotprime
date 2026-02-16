@@ -10,34 +10,38 @@ authSecret:
   # Base64 encoded values
   # Generate: echo -n "your_value" | base64
   authSalt: ""  # openssl rand -hex 16 | base64
-  apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64
-  appKey: ""  # echo -n "base64:YOUR_KEY" | base64
+  apiSuperToken: ""  # openssl rand -hex 32 | base64
+  apiSuperTokenHash: ""  # php -r "echo password_hash('YOUR_TOKEN', PASSWORD_BCRYPT);" | base64  -w 0
+  appKey: ""  # php -r "echo 'base64:' . base64_encode(random_bytes(32)) . PHP_EOL;" # echo -n "base64:YOUR_KEY" | base64
 webAdminConfig:
   # Web Admin UI credentials (matches WEBADMIN_* in .env)
   username: ""  # plain text
+webAdminSecret:
   password: ""  # base64 encoded bcrypt hash: echo -n "$(php -r 'echo password_hash(\"your_password\", PASSWORD_BCRYPT);')" | base64
+webPortalSecret:
+  sessionSecret: ""  # Generate: openssl rand -hex 32 (plaintext, helm template will base64 encode it)
 minioConfig:
-  minioRootUser: zotero
+  minioRootUser: "zotero"
 minioSecret:
-  secretTxt: "TUlOSU9fUk9PVF9QQVNTV09SRD16b3Rlcm9kb2NrZXIK"  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
+  secretTxt: ""  # base64 of "MINIO_ROOT_PASSWORD=zoterodocker"
 blobSecret:
   # Blob storage credentials (for dataserver to connect to object storage)
   # When using MinIO: awsAccessKeyId=MINIOROOTUSER, awsSecretAccessKey=MINIOROOTPASSWORD
   # When using cloud blob storage: use your cloud provider's access key and secret
-  awsAccessKeyId: "em90ZXJv"  # base64 of "zotero"
-  awsSecretAccessKey: "em90ZXJvZG9ja2Vy"  # base64 of "zoterodocker"
+  awsAccessKeyId: ""  # base64 of "zotero"
+  awsSecretAccessKey: ""  # base64 of "zoterodocker"
 dbConfig:
-  mariadbDatabasename: zotprimeprod
-  mariadbUser: zotprimeprod
+  mariadbDatabasename: "zotprimeprod"
+  mariadbUser: "zotprimeprod"
 dbSecret:
-  mysqlRootPassword: "em90ZXJv"  # base64 of "zotero" (no newline)
-  mysqlPassword: "em90ZXJvdGVzdA=="  # base64 of "zoterotest" (no newline)
+  mariadbRootPassword: ""  # base64 of "zotero" (no newline)
+  mariadbPassword: ""  # base64 of "zoterotest" (no newline)
 zoteroConfig:
   # Zotero API admin credentials (matches ADMIN_* in .env)
-  adminUsername: admin
-  adminEmail: admin@zotero.org
+  adminUsername: "admin"
+  adminEmail: "admin@zotero.org"
 zoteroSecret:
-  adminPassword: "YWRtaW4="  # base64 of "admin"
+  adminPassword: ""  # base64 
 dataserver:
   ports:
   - name: dataserver-api
@@ -57,10 +61,6 @@ webAdmin:
     requests:
       cpu: "0.5"
       memory: 256Mi
-  # Generate: echo -n "your_username" | base64
-  username: ""
-  # Generate: php -r "echo password_hash('your_password', PASSWORD_BCRYPT, ['cost' => 12]);" | base64 -w 0
-  password: ""
   service:
     port: 80
     targetPort: 8080
@@ -77,8 +77,6 @@ webPortal:
     requests:
       cpu: "0.5"
       memory: 256Mi
-  # Generate: openssl rand -hex 32 | base64 -w 0
-  sessionSecret: ""
   service:
     port: 80
     targetPort: 3000
@@ -105,7 +103,7 @@ dataserverConfig:
     echo "ZotPrime Init Starting..."
     
     echo "Waiting for MariaDB..."
-    until mariadb -h mysql -u root -p${MYSQLROOTPASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
+    until mariadb -h mysql -u root -p${MARIADB_ROOT_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
         sleep 2
     done
     echo "MariaDB ready"
@@ -122,7 +120,7 @@ dataserverConfig:
     done
     echo "LocalStack ready"
     
-    if mariadb -h mysql -u root -p${MYSQLROOTPASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+    if mariadb -h mysql -u root -p${MARIADB_ROOT_PASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
         echo "Database already initialized, skipping..."
     else
         echo "Initializing database..."
@@ -329,6 +327,7 @@ zotprimeMemcached:
         memory: 2Gi
   replicas: 1
 zotprimeMinio:
+  enabled: true
   replicas: 1
   zotprimeMinio:
     args:
@@ -355,6 +354,7 @@ zotprimeMinio:
         cpu: 200m
         memory: 256Mi
 zotprimePhpmyadmin:
+  enabled: true
   phpmyadmin:
     env:
       pmaHost: mysql

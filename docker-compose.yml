@@ -3,15 +3,15 @@ services:
     image: "uniuu/zotprime-db:${VER}"
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=${MYSQLROOTPASSWORD}
-      - MARIADB_DATABASE=${MYSQLDATABASE}
-      - MARIADB_USER=${MYSQLUSER}
-      - MARIADB_PASSWORD=${MYSQLPASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
     volumes:
       - dbdata:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-p${MYSQLROOTPASSWORD}"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-p${MARIADB_ROOT_PASSWORD}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -116,8 +116,8 @@ services:
       - S3_PUBLIC_ENDPOINT=http://${SERVER_IP}:9000
       - AUTH_SALT=${AUTH_SALT}
       - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
-      - MYSQLUSER=${MYSQLUSER}
-      - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
       - MINIO_ROOT_USER=${MINIOROOTUSER}
       - MINIO_ROOT_PASSWORD=${MINIOROOTPASSWORD}
     depends_on:
@@ -202,10 +202,10 @@ services:
     command: ["/auto-init.sh"]
     restart: "no"
     environment:
-      - MYSQLROOTPASSWORD=${MYSQLROOTPASSWORD}
-      - MYSQLDATABASE=${MYSQLDATABASE}
-      - MYSQLUSER=${MYSQLUSER}
-      - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
       - AUTH_SALT=${AUTH_SALT}
       - API_SUPER_TOKEN_HASH=${API_SUPER_TOKEN_HASH}
       - MINIO_ROOT_USER=${MINIOROOTUSER}

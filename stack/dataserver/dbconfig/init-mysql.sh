@@ -3,7 +3,7 @@
 set -ux
 
 
-MYSQL="mariadb -h mysql -P 3306 -u root -p${MYSQLROOTPASSWORD}"
+MYSQL="mariadb -h mysql -P 3306 -u root -p${MARIADB_ROOT_PASSWORD}"
 
 echo "DROP DATABASE IF EXISTS zotero_master" | $MYSQL
 echo "DROP DATABASE IF EXISTS zotero_shard_1" | $MYSQL
@@ -56,10 +56,10 @@ echo "INSERT INTO shardLibraries VALUES (2, 'group', '0000-00-00 00:00:00', 0, 0
 $MYSQL zotero_ids < ids.sql
 
 # Grant permissions to application user
-echo "GRANT ALL PRIVILEGES ON zotero_master.* TO '${MYSQLUSER}'@'%'" | $MYSQL
-echo "GRANT ALL PRIVILEGES ON zotero_shard_1.* TO '${MYSQLUSER}'@'%'" | $MYSQL
-echo "GRANT ALL PRIVILEGES ON zotero_shard_2.* TO '${MYSQLUSER}'@'%'" | $MYSQL
-echo "GRANT ALL PRIVILEGES ON zotero_ids.* TO '${MYSQLUSER}'@'%'" | $MYSQL
-echo "GRANT ALL PRIVILEGES ON zotero_www.* TO '${MYSQLUSER}'@'%'" | $MYSQL
+echo "GRANT ALL PRIVILEGES ON zotero_master.* TO '${MARIADB_USER}'@'%'" | $MYSQL
+echo "GRANT ALL PRIVILEGES ON zotero_shard_1.* TO '${MARIADB_USER}'@'%'" | $MYSQL
+echo "GRANT ALL PRIVILEGES ON zotero_shard_2.* TO '${MARIADB_USER}'@'%'" | $MYSQL
+echo "GRANT ALL PRIVILEGES ON zotero_ids.* TO '${MARIADB_USER}'@'%'" | $MYSQL
+echo "GRANT ALL PRIVILEGES ON zotero_www.* TO '${MARIADB_USER}'@'%'" | $MYSQL
 echo "FLUSH PRIVILEGES" | $MYSQL
 

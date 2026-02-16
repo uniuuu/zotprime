@@ -44,7 +44,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
-              key: api-super-token-hash
+              key: api-super-token
         resources:
           {{- toYaml .Values.webAdmin.resources | nindent 10 }}
 ---
@@ -70,10 +70,6 @@ metadata:
   labels:
     app: zotprime-admin
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
-  annotations:
-    {{- if .Values.tls.enabled }}
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    {{- end }}
 spec:
   {{- if .Values.tls.enabled }}
   tls:

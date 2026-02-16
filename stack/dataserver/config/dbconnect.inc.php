@@ -4,11 +4,11 @@ function Zotero_dbConnectAuth($db) {
 	
 	$host = 'mysql';
 	$port = 3306;
-	$user = getenv('MYSQLUSER');
-	$pass = getenv('MYSQLPASSWORD');
+	$user = getenv('MARIADB_USER');
+	$pass = getenv('MARIADB_PASSWORD');
 	
 	if (!$user || !$pass) {
-		throw new Exception("MYSQLUSER and MYSQLPASSWORD must be set");
+		throw new Exception("MARIADB_USER and MARIADB_PASSWORD must be set");
 	}
 	
 	if ($db == 'master') {

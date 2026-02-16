@@ -35,21 +35,21 @@ spec:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
               key: api-super-token-hash
-        - name: MYSQLROOTPASSWORD
+        - name: MARIADB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-db-secret
-              key: mysql-root-password
-        - name: MYSQLUSER
+              key: mariadb-root-password
+        - name: MARIADB_USER
           valueFrom:
             configMapKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-db-config
               key: mariadb-user
-        - name: MYSQLPASSWORD
+        - name: MARIADB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-db-secret
-              key: mysql-password
+              key: mariadb-password
         - name: MINIO_ROOT_USER
           valueFrom:
             configMapKeyRef:
@@ -375,6 +375,7 @@ spec:
           }}
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
 ---
+{{- if .Values.zotprimeMinio.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -469,7 +470,9 @@ spec:
       - name: {{ include "zotprime-k8s.fullname" . }}-minio-secret
         secret:
           secretName: {{ include "zotprime-k8s.fullname" . }}-minio-secret
+{{- end }}
 ---
+{{- if .Values.zotprimePhpmyadmin.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -503,6 +506,7 @@ spec:
         - containerPort: 80
         resources: {{- toYaml .Values.zotprimePhpmyadmin.phpmyadmin.resources | nindent
           10 }}
+{{- end }}
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -88,7 +88,7 @@ The system will automatically initialize databases and services on first startup
 All credentials are configured in the `.env` file:
 - **Zotero API**: `ADMIN_USERNAME` / `ADMIN_PASSWORD`
 - **S3 Web UI**: `MINIOROOTUSER` / `MINIOROOTPASSWORD`
-- **PHPMyAdmin**: `root` / `MYSQLROOTPASSWORD`
+- **PHPMyAdmin**: `root` / `MARIADB_ROOT_PASSWORD`
 
 ---
 
@@ -210,7 +210,7 @@ Check the `ADDRESS` column and setup A records in your DNS hosting.
 Credentials are configured in the `.env` file:
 - **Zotero API**: `ADMIN_USERNAME` / `ADMIN_PASSWORD`
 - **S3 Web UI**: `MINIOROOTUSER` / `MINIOROOTPASSWORD`
-- **PHPMyAdmin**: `root` / `MYSQLROOTPASSWORD`
+- **PHPMyAdmin**: `root` / `MARIADB_ROOT_PASSWORD`
 
 ---
 

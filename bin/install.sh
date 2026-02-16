@@ -40,9 +40,9 @@ then
   
   # Generate secrets
   echo "Generating secrets..."
-  MYSQLROOTPASSWORD=$(openssl rand -hex 16)
-  MYSQLUSER="zotprimeprod"
-  MYSQLPASSWORD=$(openssl rand -hex 16)
+  MARIADB_ROOT_PASSWORD=$(openssl rand -hex 16)
+  MARIADB_USER="zotprimeprod"
+  MARIADB_PASSWORD=$(openssl rand -hex 16)
   MINIOROOTUSER="zotprimeminio"
   MINIOROOTPASSWORD=$(openssl rand -hex 16)
   API_SUPER_TOKEN=$(openssl rand -hex 32)
@@ -58,9 +58,9 @@ then
   PORTAL_SESSION_SECRET=$(openssl rand -hex 32)
   
   # Update .env (use printf to preserve $ characters in bcrypt hashes)
-  printf "s#MYSQLROOTPASSWORD=''#MYSQLROOTPASSWORD='%s'#g\n" "$MYSQLROOTPASSWORD" | sed -i -f - .env
-  printf "s#MYSQLUSER=''#MYSQLUSER='%s'#g\n" "$MYSQLUSER" | sed -i -f - .env
-  printf "s#MYSQLPASSWORD=''#MYSQLPASSWORD='%s'#g\n" "$MYSQLPASSWORD" | sed -i -f - .env
+  printf "s#MARIADB_ROOT_PASSWORD=''#MARIADB_ROOT_PASSWORD='%s'#g\n" "$MARIADB_ROOT_PASSWORD" | sed -i -f - .env
+  printf "s#MARIADB_USER=''#MARIADB_USER='%s'#g\n" "$MARIADB_USER" | sed -i -f - .env
+  printf "s#MARIADB_PASSWORD=''#MARIADB_PASSWORD='%s'#g\n" "$MARIADB_PASSWORD" | sed -i -f - .env
   printf "s#MINIOROOTUSER=''#MINIOROOTUSER='%s'#g\n" "$MINIOROOTUSER" | sed -i -f - .env
   printf "s#MINIOROOTPASSWORD=''#MINIOROOTPASSWORD='%s'#g\n" "$MINIOROOTPASSWORD" | sed -i -f - .env
   printf "s#API_SUPER_TOKEN=''#API_SUPER_TOKEN='%s'#g\n" "$API_SUPER_TOKEN" | sed -i -f - .env
@@ -93,7 +93,7 @@ then
   echo ""
   echo "PHPMyAdmin:"
   echo "  Username: root"
-  echo "  Password: $MYSQLROOTPASSWORD"
+  echo "  Password: $MARIADB_ROOT_PASSWORD"
   echo ""
   echo "=========================================="
   echo ""

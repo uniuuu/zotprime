@@ -5,7 +5,7 @@ echo "ZotPrime Auto-Init Starting..."
 
 # Wait for MariaDB to be ready
 echo "Waiting for MariaDB..."
-until mariadb -h zotprime-db -u root -p${MYSQLROOTPASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
+until mariadb -h zotprime-db -u root -p${MARIADB_ROOT_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
     sleep 2
 done
 echo "MariaDB ready"
@@ -25,7 +25,7 @@ done
 echo "LocalStack ready"
 
 # Check if already initialized
-if mariadb -h zotprime-db -u root -p${MYSQLROOTPASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+if mariadb -h zotprime-db -u root -p${MARIADB_ROOT_PASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
     echo "Database already initialized, skipping..."
     exit 0
 else

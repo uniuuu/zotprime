@@ -36,7 +36,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
-              key: apiSuperToken
+              key: api-super-token
         - name: NODE_ENV
           value: "production"
         {{- if .Values.tls.enabled }}
@@ -83,10 +83,6 @@ metadata:
   labels:
     {{- include "zotprime-k8s.labels" . | nindent 4 }}
     app.kubernetes.io/component: portal
-  annotations:
-    {{- if .Values.tls.enabled }}
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    {{- end }}
 spec:
   {{- if .Values.tls.enabled }}
   tls:
