@@ -84,13 +84,13 @@ ingressHostnames:
   api: yoursub1.yourdomain.tld
   streamserver: yoursub5.yourdomain.tld
   minios3Data: yoursub2.yourdomain.tld
-  phpmyadmin: yoursub3.yourdomain.tld
-  minios3Web: yoursub4.yourdomain.tld
+  admin: yoursub6.yourdomain.tld
+  portal: yoursub7.yourdomain.tld
 ```
 
 ## DNS
 
-Point all 5 subdomains to ingress IP:
+Point all subdomains to ingress IP:
 
 ```bash
 kubectl get ingress -n zotprime  # Get IP after deployment

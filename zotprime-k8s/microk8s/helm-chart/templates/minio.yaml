@@ -8,6 +8,9 @@ metadata:
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.minio.type }}
+  {{- if .Values.minio.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.minio.loadBalancerIP }}
+  {{- end }}
   {{- if .Values.minio.clusterIP }}
   clusterIP: {{ .Values.minio.clusterIP }}
   {{- end }}

@@ -8,6 +8,9 @@ metadata:
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.phpmyadmin.type }}
+  {{- if .Values.phpmyadmin.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.phpmyadmin.loadBalancerIP }}
+  {{- end }}
   selector:
     apps: zotprime-phpmyadmin
   ports:

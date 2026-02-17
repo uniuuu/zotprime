@@ -2,8 +2,6 @@ ingressHostnames:
   api: yoursub1.yourdomain.tld
   streamserver: yoursub5.yourdomain.tld
   minios3Data: yoursub2.yourdomain.tld # External URL clients use to access blob storage
-  phpmyadmin: yoursub3.yourdomain.tld
-  minios3Web: yoursub4.yourdomain.tld
   admin: yoursub6.yourdomain.tld
   portal: yoursub7.yourdomain.tld
 authSecret:
@@ -164,7 +162,6 @@ memcached:
     targetPort: 11211
   type: ClusterIP
 minio:
-  clusterIP: 10.30.11.11
   ports:
   - name: minio-ui
     port: 9001
@@ -175,7 +172,8 @@ minio:
   - name: minio-data2
     port: 80
     targetPort: 9000
-  type: ClusterIP
+  type: LoadBalancer
+  loadBalancerIP: 10.7.7.11
 mariadb:
   ports:
   - name: mariadb
@@ -187,7 +185,8 @@ phpmyadmin:
   - name: phpmyadmin
     port: 80
     targetPort: 80
-  type: ClusterIP
+  type: LoadBalancer
+  loadBalancerIP: 10.7.7.10
 pvc:
   dataminio:
     storageClass: standard-rwo

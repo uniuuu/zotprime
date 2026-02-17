@@ -201,9 +201,13 @@ Check the `ADDRESS` column and setup A records in your DNS hosting.
 |---------|-----|
 | Zotero API | `http://yoursub1.yourdomain.tld` |
 | S3 | `http://yoursub2.yourdomain.tld` |
-| PHPMyAdmin | `http://yoursub3.yourdomain.tld` |
-| S3 Web UI | `http://yoursub4.yourdomain.tld` |
 | Stream Server | `ws://yoursub5.yourdomain.tld` |
+| Web Admin | `http://yoursub6.yourdomain.tld` |
+| Web Portal | `http://yoursub7.yourdomain.tld` |
+
+**Admin Services (VPN-only):**
+- PHPMyAdmin: `http://10.7.7.10`
+- MinIO Web UI: `http://10.7.7.11`
 
 ### Default Credentials
 

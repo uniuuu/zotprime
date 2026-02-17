@@ -20,3 +20,11 @@ services:
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
+    networks:
+      zotprime-admin:
+        ipv4_address: {INTERNAL_SUBNET}.2
+
+networks:
+  zotprime-admin:
+    external: true
+

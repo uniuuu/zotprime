@@ -33,18 +33,13 @@ def gen_bcrypt_b64(password):
     """Generate bcrypt hash and base64 encode"""
     return b64(gen_bcrypt(password))
 
-def gen_htpasswd_b64(username, password):
-    """Generate htpasswd entry and base64 encode"""
-    htpasswd = run_cmd(f"htpasswd -nb {username} {password}")
-    return base64.b64encode(htpasswd.encode()).decode()
-
 def gen_laravel_key():
     """Generate Laravel app key in base64:XXX format"""
     return run_cmd("php -r \"echo 'base64:' . base64_encode(random_bytes(32));\"")
 
 def check_dependencies():
     """Check required commands are available"""
-    deps = ['openssl', 'php', 'htpasswd']
+    deps = ['openssl', 'php']
     missing = []
     for dep in deps:
         if subprocess.run(['which', dep], capture_output=True).returncode != 0:
@@ -52,8 +47,6 @@ def check_dependencies():
     
     if missing:
         print(f"Error: Missing required commands: {', '.join(missing)}")
-        if 'htpasswd' in missing:
-            print("Install with: sudo apt install apache2-utils")
         if 'php' in missing:
             print("Install with: sudo apt install php-cli")
         sys.exit(1)
@@ -92,8 +85,6 @@ def main():
         config = yaml.safe_load(f)
     
     # Generate plaintext credentials
-    basic_auth_user = "admin"
-    basic_auth_pass = gen_hex(12)
     api_super_token = gen_hex(32)
     webadmin_user = "webadmin"
     webadmin_pass = gen_hex(12)
@@ -104,10 +95,6 @@ def main():
     admin_pass = gen_hex(12)
     
     # Generate and populate secrets
-    # basicAuth
-    if 'basicAuth' in config:
-        config['basicAuth']['htpasswd'] = gen_htpasswd_b64(basic_auth_user, basic_auth_pass)
-    
     # authSecret
     config['authSecret']['authSalt'] = gen_b64(16)
     config['authSecret']['apiSuperToken'] = b64(api_super_token)
@@ -147,11 +134,6 @@ def main():
         f.write("=" * 50 + "\n")
         f.write("  ZotPrime Credentials\n")
         f.write("=" * 50 + "\n\n")
-        
-        if 'basicAuth' in config and config.get('basicAuth', {}).get('enabled'):
-            f.write("HTTP Basic Auth (Ingress):\n")
-            f.write(f"  Username: {basic_auth_user}\n")
-            f.write(f"  Password: {basic_auth_pass}\n\n")
         
         f.write("Zotero Client:\n")
         f.write(f"  Username: {config['zoteroConfig']['adminUsername']}\n")
