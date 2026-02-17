@@ -32,8 +32,12 @@ export default function LoginPage() {
         throw new Error(error.error || 'Login failed');
       }
 
-      const { qrCode, secret } = await response.json();
-      sessionStorage.setItem('totp', JSON.stringify({ qrCode, secret }));
+      const result = await response.json();
+      
+      if (result.showQR) {
+        sessionStorage.setItem('totp', JSON.stringify({ qrCode: result.qrCode, secret: result.secret }));
+      }
+      
       router.push('/verify');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');

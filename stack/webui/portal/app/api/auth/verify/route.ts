@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { getUserKeys } from '@/lib/api';
 import { verifyTOTP } from '@/lib/totp';
+import { markTOTPVerified } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +21,9 @@ export async function POST(request: NextRequest) {
     if (!apiKey) {
       return NextResponse.json({ error: 'No API key found' }, { status: 500 });
     }
+
+    // Mark TOTP as verified in database
+    await markTOTPVerified(session.username!);
 
     session.apiKey = apiKey;
     session.totpVerified = true;

@@ -1,0 +1,19 @@
+{{- if .Values.webAdmin.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-webadmin-db
+  labels:
+  {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  {{- if .Values.pvc.webadminDb.keepOnUninstall }}
+  annotations:
+    helm.sh/resource-policy: keep
+  {{- end }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.pvc.webadminDb.storageRequest | quote }}
+  storageClassName: {{ .Values.pvc.webadminDb.storageClass | quote }}
+{{- end }}

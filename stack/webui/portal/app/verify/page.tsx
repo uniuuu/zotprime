@@ -19,14 +19,12 @@ export default function VerifyPage() {
 
   useEffect(() => {
     const data = sessionStorage.getItem('totp');
-    if (!data) {
-      router.push('/login');
-      return;
+    if (data) {
+      const { qrCode, secret } = JSON.parse(data);
+      setQrCode(qrCode || '');
+      setSecret(secret || '');
     }
-    const { qrCode, secret } = JSON.parse(data);
-    setQrCode(qrCode);
-    setSecret(secret);
-  }, [router]);
+  }, []);
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
@@ -56,9 +54,14 @@ export default function VerifyPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
-        <h1 className="text-2xl font-bold mb-2 text-gray-900">Setup Authenticator</h1>
+        <h1 className="text-2xl font-bold mb-2 text-gray-900">
+          {qrCode ? 'Setup Authenticator' : 'Enter Verification Code'}
+        </h1>
         <p className="text-gray-800 mb-6">
-          Scan QR code with Google Authenticator or similar app
+          {qrCode 
+            ? 'Scan QR code with Google Authenticator or similar app'
+            : 'Enter the 6-digit code from your authenticator app'
+          }
         </p>
 
         {qrCode && (

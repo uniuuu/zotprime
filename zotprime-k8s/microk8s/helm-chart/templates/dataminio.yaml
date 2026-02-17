@@ -1,9 +1,14 @@
+{{- if .Values.zotprimeMinio.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ include "zotprime-k8s.fullname" . }}-dataminio
   labels:
   {{- include "zotprime-k8s.labels" . | nindent 4 }}
+  {{- if .Values.pvc.dataminio.keepOnUninstall }}
+  annotations:
+    helm.sh/resource-policy: keep
+  {{- end }}
 spec:
   accessModes:
   - ReadWriteOnce
@@ -11,3 +16,4 @@ spec:
     requests:
       storage: {{ .Values.pvc.dataminio.storageRequest | quote }}
   storageClassName: {{ .Values.pvc.dataminio.storageClass | quote }}
+{{- end }}

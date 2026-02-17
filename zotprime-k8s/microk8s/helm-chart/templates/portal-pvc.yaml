@@ -1,0 +1,20 @@
+{{- if .Values.webPortal.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zotprime-k8s.fullname" . }}-portal-data
+  labels:
+    {{- include "zotprime-k8s.labels" . | nindent 4 }}
+    app.kubernetes.io/component: portal
+  {{- if .Values.pvc.portalData.keepOnUninstall }}
+  annotations:
+    helm.sh/resource-policy: keep
+  {{- end }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.pvc.portalData.storageRequest | quote }}
+  storageClassName: {{ .Values.pvc.portalData.storageClass | quote }}
+{{- end }}

@@ -85,6 +85,11 @@ echo 'building image zotprime-admin'
 
 DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f admin.Dockerfile -t zotprime-admin .
 
+cd ../webui
+echo 'building image zotprime-portal'
+
+DOCKER_BUILDKIT=1 ${CONTAINER_RUNTIME} build -f webui.Dockerfile -t zotprime-portal .
+
 cd ../elasticsearch
 echo 'building image zotprime-elasticsearch'
 

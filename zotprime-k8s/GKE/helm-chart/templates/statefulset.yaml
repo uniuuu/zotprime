@@ -72,18 +72,13 @@ spec:
           name: datadb
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       volumes:
+      - name: datadb
+        persistentVolumeClaim:
+          claimName: {{ include "zotprime-k8s.fullname" . }}-datadb
       - name: {{ include "zotprime-k8s.fullname" . }}-db-secret
         secret:
           secretName: {{ include "zotprime-k8s.fullname" . }}-db-secret
   updateStrategy: {}
-  volumeClaimTemplates:
-  - metadata:
-      creationTimestamp: null
-      name: datadb
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources: {{ .Values.zotprimeDb.volumeClaims.datadb | toYaml | nindent 8 }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -252,6 +247,9 @@ spec:
       priorityClassName: {{ include "zotprime-k8s.fullname" . }}-high-priority
       terminationGracePeriodSeconds: 20
       volumes:
+      - name: dataredis
+        persistentVolumeClaim:
+          claimName: {{ include "zotprime-k8s.fullname" . }}-dataredis
       - configMap:
           defaultMode: 493
           name: {{ include "zotprime-k8s.fullname" . }}-redis-config
@@ -261,12 +259,3 @@ spec:
           name: {{ include "zotprime-k8s.fullname" . }}-redis-probes
         name: probes
   updateStrategy: {}
-  volumeClaimTemplates:
-  - metadata:
-      creationTimestamp: null
-      name: dataredis
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources: {{ .Values.zotprimeRedis.volumeClaims.dataredis | toYaml | nindent
-        8 }}

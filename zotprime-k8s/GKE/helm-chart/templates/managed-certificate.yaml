@@ -8,8 +8,12 @@ spec:
   - {{ .Values.ingressHostnames.api }}
   - {{ .Values.ingressHostnames.streamserver }}
   - {{ .Values.ingressHostnames.minios3Data }}
+  {{- if .Values.zotprimePhpmyadmin.enabled }}
   - {{ .Values.ingressHostnames.phpmyadmin }}
+  {{- end }}
+  {{- if .Values.zotprimeMinio.exposeWebUI }}
   - {{ .Values.ingressHostnames.minios3Web }}
+  {{- end }}
   - {{ .Values.ingressHostnames.admin }}
   - {{ .Values.ingressHostnames.portal }}
 {{- end }}

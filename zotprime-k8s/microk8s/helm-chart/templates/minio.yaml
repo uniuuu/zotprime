@@ -14,5 +14,15 @@ spec:
   selector:
     apps: zotprime-minio
   ports:
-	{{- .Values.minio.ports | toYaml | nindent 2 -}}
+  {{- if .Values.zotprimeMinio.exposeWebUI }}
+  - name: minio-ui
+    port: 9001
+    targetPort: 9001
+  {{- end }}
+  - name: minio-data
+    port: 9000
+    targetPort: 9000
+  - name: minio-data2
+    port: 80
+    targetPort: 9000
 {{- end }}

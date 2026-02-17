@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
-import { generateTOTPSecret, generateTOTPUri, generateQRCode } from '@/lib/totp';
+import { generateTOTPUri, generateQRCode } from '@/lib/totp';
 import { getConfig } from '@/lib/config';
+import { getTOTPSecret } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,19 +26,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const secret = generateTOTPSecret();
-    const uri = generateTOTPUri(username, secret);
-    const qrCode = await generateQRCode(uri);
+    // Fetch existing TOTP secret from database
+    const totpRecord = await getTOTPSecret(username);
+    
+    if (!totpRecord) {
+      return NextResponse.json({ error: 'TOTP not configured' }, { status: 400 });
+    }
 
     const session = await getSession();
     session.userId = user.userID;
     session.username = user.username;
     session.email = user.email;
-    session.totpSecret = secret;
+    session.totpSecret = totpRecord.secret;
     session.totpVerified = false;
     await session.save();
 
-    return NextResponse.json({ qrCode, secret });
+    // Only return QR code if not yet verified
+    if (!totpRecord.verified) {
+      const uri = generateTOTPUri(username, totpRecord.secret);
+      const qrCode = await generateQRCode(uri);
+      return NextResponse.json({ qrCode, secret: totpRecord.secret, showQR: true });
+    }
+
+    return NextResponse.json({ showQR: false });
   } catch (error) {
     console.error('Login error:', error);
     return NextResponse.json({ error: 'Login failed' }, { status: 500 });

@@ -9,7 +9,7 @@ metadata:
 data:
   config.yaml: |
     dataserver:
-      url: http://{{ include "zotprime-k8s.fullname" . }}-dataserver
+      url: http://dataserver:8080
       api_super_token: ${API_SUPER_TOKEN}
     session:
       max_age: 1800

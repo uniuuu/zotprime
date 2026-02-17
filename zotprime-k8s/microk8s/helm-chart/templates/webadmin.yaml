@@ -45,8 +45,15 @@ spec:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
               key: api-super-token
+        volumeMounts:
+        - mountPath: /var/lib/admin-data/sqlite
+          name: webadmin-db
         resources:
           {{- toYaml .Values.webAdmin.resources | nindent 10 }}
+      volumes:
+      - name: webadmin-db
+        persistentVolumeClaim:
+          claimName: {{ include "zotprime-k8s.fullname" . }}-webadmin-db
 ---
 apiVersion: v1
 kind: Service

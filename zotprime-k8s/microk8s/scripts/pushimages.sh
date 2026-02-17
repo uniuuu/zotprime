@@ -80,6 +80,10 @@ echo 'pushing image db-zotprime-admin'
 ${CONTAINER_RUNTIME} tag zotprime-admin ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-admin
 ${CONTAINER_RUNTIME} push ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-admin
 
+echo 'pushing image db-zotprime-portal'
+${CONTAINER_RUNTIME} tag zotprime-portal ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-portal
+${CONTAINER_RUNTIME} push ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-portal
+
 echo 'pushing image db-zotprime-redis'
 ${CONTAINER_RUNTIME} tag zotprime-redis ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-redis
 ${CONTAINER_RUNTIME} push ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/zotprime-redis

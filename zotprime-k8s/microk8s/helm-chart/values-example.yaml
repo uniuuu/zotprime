@@ -202,6 +202,22 @@ pvc:
   dataminio:
     storageClass: nfs
     storageRequest: 10Gi
+    keepOnUninstall: true
+  webadminDb:
+    storageClass: nfs
+    storageRequest: 500Mi
+    keepOnUninstall: true
+  datadb:
+    storageClass: nfs
+    storageRequest: 2Gi
+    keepOnUninstall: true
+  dataredis:
+    storageClass: nfs
+    storageRequest: 1Gi
+  portalData:
+    storageClass: nfs
+    storageRequest: 1Gi
+    keepOnUninstall: true
 redis:
   ports:
   - name: redis
@@ -269,10 +285,6 @@ zotprimeDb:
     image:
       repository: alpine
       tag: "3"
-  volumeClaims:
-    datadb:
-      requests:
-        storage: 2Gi
 zotprimeElasticsearch:
   elasticsearch:
     env:
@@ -335,6 +347,7 @@ zotprimeMemcached:
   replicas: 1
 zotprimeMinio:
   enabled: true
+  exposeWebUI: true  # Set to false to disable MinIO web console access
   replicas: 1
   zotprimeMinio:
     args:
@@ -391,10 +404,6 @@ zotprimeRedis:
         cpu: 100m
         memory: 100Mi
   replicas: 1
-  volumeClaims:
-    dataredis:
-      requests:
-        storage: 1Gi
 zotprimeStreamserver:
   replicas: 1
   zotprimeStreamserver:

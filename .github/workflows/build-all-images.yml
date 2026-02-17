@@ -35,4 +35,4 @@ jobs:
       - name: Bootstrap config
         run: cp .env_example .env
       - name: Build the stack
-        run: BUILDKIT_PROGRESS=plain docker buildx bake -f docker-compose.yml -f docker-compose-dev.yml --set *.platform=linux/amd64,linux/arm64
+        run: BUILDKIT_PROGRESS=plain COMPOSE_PROFILES=admin,portal docker buildx bake -f docker-compose.yml -f docker-compose-dev.yml --set *.platform=linux/amd64,linux/arm64

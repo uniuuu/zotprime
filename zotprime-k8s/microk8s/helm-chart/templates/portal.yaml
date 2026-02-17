@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-portal
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-portal
   labels:
     {{- include "zotprime-k8s.labels" . | nindent 4 }}
     app.kubernetes.io/component: portal
@@ -36,7 +36,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ include "zotprime-k8s.fullname" . }}-auth-secret
-              key: apiSuperToken
+              key: api-super-token
         - name: NODE_ENV
           value: "production"
         {{- if .Values.tls.enabled }}
@@ -51,17 +51,22 @@ spec:
           mountPath: /app/config.yaml
           subPath: config.yaml
           readOnly: true
+        - name: data
+          mountPath: /app/data
         resources:
           {{- toYaml .Values.webPortal.resources | nindent 10 }}
       volumes:
       - name: config
         configMap:
           name: {{ include "zotprime-k8s.fullname" . }}-portal-config
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ include "zotprime-k8s.fullname" . }}-portal-data
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-portal
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-portal
   labels:
     {{- include "zotprime-k8s.labels" . | nindent 4 }}
     app.kubernetes.io/component: portal
@@ -79,7 +84,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "zotprime-k8s.fullname" . }}-portal
+  name: {{ include "zotprime-k8s.fullname" . }}-zotprime-portal
   labels:
     {{- include "zotprime-k8s.labels" . | nindent 4 }}
     app.kubernetes.io/component: portal
@@ -98,7 +103,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ include "zotprime-k8s.fullname" . }}-portal
+            name: {{ include "zotprime-k8s.fullname" . }}-zotprime-portal
             port:
               number: {{ .Values.webPortal.service.port }}
 {{- end }}

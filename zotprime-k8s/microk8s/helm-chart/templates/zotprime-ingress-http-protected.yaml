@@ -19,10 +19,15 @@ spec:
   tls:
   - secretName: {{ include "zotprime-k8s.fullname" . }}-tls
     hosts:
+    {{- if .Values.zotprimeMinio.exposeWebUI }}
     - {{ .Values.ingressHostnames.minios3Web }}
+    {{- end }}
+    {{- if .Values.zotprimePhpmyadmin.enabled }}
     - {{ .Values.ingressHostnames.phpmyadmin }}
+    {{- end }}
   {{- end }}
   rules:
+  {{- if .Values.zotprimeMinio.exposeWebUI }}
   - host: {{ .Values.ingressHostnames.minios3Web }}
     http:
       paths:
@@ -33,6 +38,8 @@ spec:
               name: minio-ui
         path: /
         pathType: Prefix
+  {{- end }}
+  {{- if .Values.zotprimePhpmyadmin.enabled }}
   - host: {{ .Values.ingressHostnames.phpmyadmin }}
     http:
       paths:
@@ -43,4 +50,5 @@ spec:
               number: 80
         path: /
         pathType: Prefix
+  {{- end }}
 {{- end }}

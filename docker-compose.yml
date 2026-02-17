@@ -281,6 +281,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./stack/webui/portal/config.yaml:/app/config.yaml:ro
+      - ./stack/webui/portal/data:/app/data
     depends_on:
       zotprime-dataserver:
         condition: service_started
