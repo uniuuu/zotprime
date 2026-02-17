@@ -30,7 +30,7 @@ if mariadb -h zotprime-db -u root -p${MARIADB_ROOT_PASSWORD} -e "USE zotero_mast
     exit 0
 else
     echo "Initializing database..."
-    cd /var/www/zotero/misc && MYSQL_HOST=zotprime-db ./init-mysql.sh
+    cd /var/www/zotero/misc && MYSQL_HOST=zotprime-db ./init-database.sh
 fi
 
 # Check and create S3 buckets

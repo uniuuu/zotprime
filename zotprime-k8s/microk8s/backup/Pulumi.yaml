@@ -1,0 +1,3 @@
+name: kopia-backup
+runtime: python
+description: Kopia backup solution for ZotPrime MicroK8s

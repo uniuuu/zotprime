@@ -112,7 +112,7 @@ dataserverConfig:
     echo "ZotPrime Init Starting..."
     
     echo "Waiting for MariaDB..."
-    until mariadb -h mysql -u root -p${MARIADB_ROOT_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
+    until mariadb -h mariadb -u root -p${MARIADB_ROOT_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
         sleep 2
     done
     echo "MariaDB ready"
@@ -129,14 +129,13 @@ dataserverConfig:
     done
     echo "LocalStack ready"
     
-    if mariadb -h mysql -u root -p${MARIADB_ROOT_PASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
+    if mariadb -h mariadb -u root -p${MARIADB_ROOT_PASSWORD} -e "USE zotero_master; SHOW TABLES;" 2>/dev/null | grep -q "users"; then
         echo "Database already initialized, skipping..."
     else
         echo "Initializing database..."
-        cd /var/www/zotero/misc && ./init-mysql.sh
+        cd /var/www/zotero/misc && ./init-database.sh
         # cd /var/www/zotero/misc && ./db_update.sh  # Obsolete: master.sql already has hasData column
     fi
-    
     echo "Updating database schema..."
     cd /var/www/zotero/admin && php schema_update
     
@@ -186,7 +185,7 @@ minio:
     port: 80
     targetPort: 9000
   type: ClusterIP
-mysql:
+mariadb:
   ports:
   - name: mariadb
     port: 3306
@@ -377,7 +376,7 @@ zotprimePhpmyadmin:
   enabled: true
   phpmyadmin:
     env:
-      pmaHost: mysql
+      pmaHost: mariadb
       pmaPort: "3306"
     image:
       repository: localhost:32000/zotprime-k8s/zotprime-phpmyadmin

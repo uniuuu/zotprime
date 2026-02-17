@@ -1,0 +1,10 @@
+name: zotprime-wireguard
+runtime: python
+description: WireGuard VPN for ZotPrime admin access
+
+config:
+  zotprime-wireguard:serverUrl: "192.168.1.100"
+  zotprime-wireguard:serverPort: "51820"
+  zotprime-wireguard:peers: "admin1,admin2,admin3"
+  zotprime-wireguard:internalSubnet: "10.7.7.0"
+  zotprime-wireguard:peerDns: "auto"

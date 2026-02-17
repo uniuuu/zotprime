@@ -136,7 +136,7 @@ services:
       zotprime-streamserver:
         condition: service_started
     links:
-      - zotprime-db:mysql
+      - zotprime-db:mariadb
       - zotprime-elasticsearch:elasticsearch
       - zotprime-redis:redis
       - zotprime-memcached:memcached
@@ -187,9 +187,9 @@ services:
     ports:
       - "8083:80"
     environment:
-      - PMA_HOST=mysql
+      - PMA_HOST=mariadb
     links:
-      - zotprime-db:mysql
+      - zotprime-db:mariadb
     volumes:
       - /etc/localtime:/etc/localtime:ro
     networks:
@@ -239,7 +239,7 @@ services:
       zotprime-streamserver:
         condition: service_started
     links:
-      - zotprime-db:mysql
+      - zotprime-db:mariadb
       - zotprime-localstack:localstack
       - zotprime-minio:minio
     networks:

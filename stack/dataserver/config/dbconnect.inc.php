@@ -2,7 +2,7 @@
 function Zotero_dbConnectAuth($db) {
 	$charset = '';
 	
-	$host = 'mysql';
+	$host = 'mariadb';
 	$port = 3306;
 	$user = getenv('MARIADB_USER');
 	$pass = getenv('MARIADB_PASSWORD');

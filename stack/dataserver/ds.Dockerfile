@@ -148,7 +148,7 @@ COPY config/ApiController.php /var/www/zotero/controllers/
 COPY config/AdminController.php /var/www/zotero/controllers/
 COPY config/ItemsController.php /var/www/zotero/controllers/
 COPY config/routes.inc.php /var/www/zotero/include/config/
-COPY dbconfig/init-mysql.sh /var/www/zotero/misc/
+COPY dbconfig/init-database.sh /var/www/zotero/misc/
 COPY dbconfig/db_update.sh /var/www/zotero/misc/
 COPY dbconfig/www.sql /var/www/zotero/misc/
 

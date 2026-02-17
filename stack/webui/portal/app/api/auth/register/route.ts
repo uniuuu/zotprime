@@ -9,11 +9,8 @@ export async function POST(request: NextRequest) {
   try {
     const { username, email, password } = await request.json();
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user in dataserver
-    const user = await createUser(username, email, hashedPassword);
+    // Create user in dataserver (send plain password, dataserver will hash with MD5)
+    const user = await createUser(username, email, password);
 
     // Create API key for user
     const apiKey = await createApiKey(user.userID, 'Portal Access');

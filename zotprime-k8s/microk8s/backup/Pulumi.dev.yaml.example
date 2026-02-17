@@ -1,0 +1,45 @@
+config:
+  # Backend storage type: s3, sftp, or filesystem
+  kopia-backup:backend: s3
+  
+  # Kubernetes settings
+  kopia-backup:namespace: zotprime
+  
+  # Backup schedule (24-hour format)
+  kopia-backup:backupTime: "02:00"
+  
+  # Retention policy
+  kopia-backup:keepDaily: "7"
+  kopia-backup:keepWeekly: "4"
+  kopia-backup:keepMonthly: "6"
+  kopia-backup:keepYearly: "2"
+  
+  # MinIO data path on host
+  kopia-backup:minioDataPath: /var/lib/microk8s/storage/minio-pv
+  
+  # Kopia UI settings
+  kopia-backup:enableUI: true
+  kopia-backup:uiPort: "51515"
+  kopia-backup:uiUsername: admin
+  kopia-backup:uiPassword:
+    secure: AAABA...  # Set with: pulumi config set --secret kopia-backup:uiPassword <password>
+  
+  # Repository encryption password
+  kopia-backup:repoPassword:
+    secure: AAABA...  # Set with: pulumi config set --secret kopia-backup:repoPassword <password>
+  
+  # S3 backend settings (if backend=s3)
+  kopia-backup:s3Bucket: my-backup-bucket
+  kopia-backup:s3Endpoint: s3.amazonaws.com
+  kopia-backup:s3AccessKey: AKIAIOSFODNN7EXAMPLE
+  kopia-backup:s3SecretKey:
+    secure: AAABA...  # Set with: pulumi config set --secret kopia-backup:s3SecretKey <key>
+  
+  # SFTP backend settings (if backend=sftp)
+  # kopia-backup:sftpHost: backup-server.com
+  # kopia-backup:sftpPath: /backups/zotprime
+  # kopia-backup:sftpUsername: backupuser
+  # kopia-backup:sftpKeyFile: /root/.ssh/id_rsa
+  
+  # Filesystem backend settings (if backend=filesystem)
+  # kopia-backup:filesystemPath: /mnt/nfs-backups/zotprime

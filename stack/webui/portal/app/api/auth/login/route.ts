@@ -26,6 +26,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    // Verify password (dataserver stores MD5 hashes)
+    const crypto = require('crypto');
+    const passwordHash = crypto.createHash('md5').update(password).digest('hex');
+    
+    if (user.password !== passwordHash) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
     // Fetch existing TOTP secret from database
     const totpRecord = await getTOTPSecret(username);
     

@@ -3,7 +3,7 @@
 set -ux
 
 
-MYSQL="mariadb -h mysql -P 3306 -u root -p${MARIADB_ROOT_PASSWORD}"
+MYSQL="mariadb -h mariadb -P 3306 -u root -p${MARIADB_ROOT_PASSWORD}"
 
 echo "DROP DATABASE IF EXISTS zotero_master" | $MYSQL
 echo "DROP DATABASE IF EXISTS zotero_shard_1" | $MYSQL
@@ -23,7 +23,7 @@ $MYSQL zotero_master < coredata.sql
 #$MYSQL zotero_master < events.sql
 
 # Set up shard info
-echo "INSERT INTO shardHosts VALUES (1, 'mysql', 3306, 'up');" | $MYSQL zotero_master
+echo "INSERT INTO shardHosts VALUES (1, 'mariadb', 3306, 'up');" | $MYSQL zotero_master
 echo "INSERT INTO shards VALUES (1, 1, 'zotero_shard_1', 'up', '1');" | $MYSQL zotero_master
 echo "INSERT INTO shards VALUES (2, 1, 'zotero_shard_2', 'up', '1');" | $MYSQL zotero_master
 
