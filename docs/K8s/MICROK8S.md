@@ -112,8 +112,48 @@ kubectl get pods -n zotprime         # All should be Running
 
 ## Update
 
+### Pull Latest Code
+
 ```bash
-helm upgrade zotprime-k8s helm-chart --namespace zotprime
+cd /path/to/zotprime
+git pull origin main
+```
+
+### Rebuild Images
+
+```bash
+cd zotprime-k8s/microk8s/scripts
+./buildimages.sh
+./pushimages.sh
+```
+
+### Update Deployment
+
+**Compatible changes (no config changes needed):**
+
+```bash
+cd ../helm-chart
+helm upgrade zotprime-k8s . --namespace zotprime
+kubectl rollout restart deployment -n zotprime
+kubectl rollout restart statefulset -n zotprime
+```
+
+**Non-compatible changes (config changes required):**
+
+1. Edit `values.yaml` with new configuration
+2. Run upgrade:
+
+```bash
+helm upgrade zotprime-k8s . --namespace zotprime
+kubectl rollout restart deployment -n zotprime
+kubectl rollout restart statefulset -n zotprime
+```
+
+### Verify Update
+
+```bash
+kubectl get pods -n zotprime
+kubectl logs -n zotprime deployment/dataserver
 ```
 
 ## Multiple Environments

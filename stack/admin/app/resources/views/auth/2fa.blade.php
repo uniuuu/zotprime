@@ -9,7 +9,7 @@
             <h2 class="text-center text-3xl font-bold text-primary-600 italic">
                 Two-Factor Authentication
             </h2>
-            @if($isFirstTime)
+            @if($qrCodeUrl)
             <p class="mt-2 text-center text-sm text-gray-600">
                 Scan the QR code with Google Authenticator
             </p>
@@ -20,7 +20,7 @@
             @endif
         </div>
         <div class="bg-white p-8 rounded-lg shadow space-y-6">
-            @if($isFirstTime)
+            @if($qrCodeUrl)
             <div class="flex justify-center">
                 <img src="{{ $qrCodeUrl }}" alt="QR Code" class="border-4 border-primary-100 rounded-lg">
             </div>

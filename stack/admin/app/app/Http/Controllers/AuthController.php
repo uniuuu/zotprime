@@ -72,10 +72,12 @@ class AuthController extends Controller
             return redirect()->route('login');
         }
         
+        // Check if user has ever successfully authenticated with 2FA
+        $has2faCompleted = \DB::table('admin_settings')->where('key', '2fa_completed')->value('value');
+        
         // Check if 2FA secret exists in database
         $secret = \DB::table('admin_settings')->where('key', '2fa_secret')->value('value');
         
-        $isFirstTime = false;
         if (!$secret) {
             // Generate new secret (first time setup)
             $secret = $this->google2fa->generateSecretKey();
@@ -85,12 +87,11 @@ class AuthController extends Controller
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
-            $isFirstTime = true;
         }
         
         $qrCodeUrl = null;
-        if ($isFirstTime) {
-            // Generate QR code URL only for first time
+        if (!$has2faCompleted) {
+            // Generate QR code until first successful authentication
             $config = yaml_parse_file(base_path('../config.yaml'));
             $qrCodeUrl = $this->google2fa->getQRCodeUrl(
                 $config['security']['2fa']['issuer'],
@@ -109,7 +110,7 @@ class AuthController extends Controller
             $qrCodeUrl = 'data:image/svg+xml;base64,' . base64_encode($qrCodeSvg);
         }
         
-        return view('auth.2fa', compact('qrCodeUrl', 'secret', 'isFirstTime'));
+        return view('auth.2fa', compact('qrCodeUrl', 'secret'));
     }
     
     public function verify2fa(Request $request)
@@ -128,6 +129,16 @@ class AuthController extends Controller
         
         if (!$valid) {
             return back()->withErrors(['error' => 'Invalid 2FA code.']);
+        }
+        
+        // Mark 2FA as completed
+        if (!\DB::table('admin_settings')->where('key', '2fa_completed')->exists()) {
+            \DB::table('admin_settings')->insert([
+                'key' => '2fa_completed',
+                'value' => '1',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
         }
         
         // Create authenticated session

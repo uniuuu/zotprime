@@ -1,0 +1,9 @@
+# Pulumi
+Pulumi.*.yaml
+!Pulumi.*.yaml.example
+.pulumi/
+__pycache__/
+*.pyc
+
+# Config
+config/
