@@ -2,7 +2,7 @@
 
 **Self-hosted platform for Zotero**
 
-ZotPrime is a fully packaged repository aimed to make self-hosted [Zotero](https://www.zotero.org) deployment easier with the last versions of both Zotero client and server. This is the result of sleepless nights spent to deploy Zotero within my organization on a disconnected network. 
+ZotPrime2 is a fully packaged repository aimed to make self-hosted [Zotero](https://www.zotero.org) deployment easier with the last versions of both Zotero client and server. This is the result of sleepless nights spent to deploy Zotero within my organization on a disconnected network. 
 
 Feel free to open issues or pull requests if you did not manage to use it.
 

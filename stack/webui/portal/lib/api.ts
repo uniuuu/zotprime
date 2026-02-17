@@ -1,4 +1,3 @@
-import api from 'zotero-api-client';
 import { getConfig } from './config';
 import { ZoteroItem } from '@/types';
 
@@ -60,19 +59,46 @@ export async function getUserKeys(userId: number): Promise<string | null> {
 }
 
 export async function getUserGroups(userId: number, apiKey: string) {
-  const client = api(apiKey, { base: config.dataserver.url });
-  const response = await client.library('user', userId).groups().get();
-  return response.getData();
+  const response = await fetch(`${config.dataserver.url}/users/${userId}/groups?format=json`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Zotero-API-Version': '3',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch groups: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 export async function getGroupItems(groupId: number, apiKey: string): Promise<ZoteroItem[]> {
-  const client = api(apiKey, { base: config.dataserver.url });
-  const response = await client.library('group', groupId).items().get();
-  return response.getData() as ZoteroItem[];
+  const response = await fetch(`${config.dataserver.url}/groups/${groupId}/items?format=json`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Zotero-API-Version': '3',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch group items: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 export async function getItem(groupId: number, itemKey: string, apiKey: string): Promise<ZoteroItem> {
-  const client = api(apiKey, { base: config.dataserver.url });
-  const response = await client.library('group', groupId).items(itemKey).get();
-  return response.getData() as ZoteroItem;
+  const response = await fetch(`${config.dataserver.url}/groups/${groupId}/items/${itemKey}?format=json`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Zotero-API-Version': '3',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch item: ${response.statusText}`);
+  }
+
+  return response.json();
 }

@@ -51,13 +51,16 @@ class GroupController extends Controller
             'owner_id' => 'required|integer',
         ]);
         
-        // Build XML payload with default permissions (from test suite defaults)
+        // Set fileEditing based on type (PublicOpen groups cannot have file editing per dataserver rules)
+        $fileEditing = ($validated['type'] == 'PublicOpen') ? 'none' : 'members';
+        
+        // Build XML payload with default permissions
         $xml = '<group name="' . htmlspecialchars($validated['name']) . '" '
              . 'type="' . $validated['type'] . '" '
              . 'owner="' . $validated['owner_id'] . '" '
              . 'libraryEditing="members" '
-             . 'libraryReading="members" '
-             . 'fileEditing="none"/>';
+             . 'libraryReading="all" '
+             . 'fileEditing="' . $fileEditing . '"/>';
         
         $response = $this->apiCall('post', '/groups', $xml, true);
         
