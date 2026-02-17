@@ -12,6 +12,7 @@ metadata:
     networking.gke.io/managed-certificates: {{ include "zotprime-k8s.fullname" . }}-cert
     {{- end }}
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
 spec:
   {{- if .Values.tls.enabled }}
   tls:

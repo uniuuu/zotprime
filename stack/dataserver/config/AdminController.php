@@ -50,6 +50,8 @@ class AdminController extends ApiController {
 	}
 	
 	// PUT /admin/users/{id}/status
+	// NOTE: Disabled functionality - Zotero only supports 'normal' and 'deleted' roles
+	// There is no 'disabled' state in the core system
 	public function userStatus() {
 		if (!$this->permissions->isSuper()) {
 			$this->e403("Super user access required");
@@ -64,6 +66,10 @@ class AdminController extends ApiController {
 			$this->e400("User ID required");
 		}
 		
+		// Disabled: Zotero doesn't support enable/disable, only normal/deleted
+		$this->e501("Enable/disable not supported. Use delete instead.");
+		
+		/* Original code - commented out
 		try {
 			$data = json_decode($this->body, true);
 			if (!isset($data['enabled'])) {
@@ -80,6 +86,7 @@ class AdminController extends ApiController {
 		catch (Exception $e) {
 			$this->handleException($e);
 		}
+		*/
 	}
 	
 	// GET /admin/groups - List all groups
@@ -264,6 +271,7 @@ class AdminController extends ApiController {
 			$sql = "SELECT u.userID, u.username, e.email, u.role 
 					FROM users u 
 					LEFT JOIN users_email e ON u.userID = e.userID 
+					WHERE u.role != 'deleted'
 					ORDER BY u.userID";
 			$rows = Zotero_WWW_DB_1::query($sql);
 			
@@ -273,7 +281,7 @@ class AdminController extends ApiController {
 					'userID' => $row['userID'],
 					'username' => $row['username'],
 					'email' => $row['email'],
-					'enabled' => $row['role'] != 'deleted'
+					'enabled' => ($row['role'] == 'normal')
 				];
 			}
 			

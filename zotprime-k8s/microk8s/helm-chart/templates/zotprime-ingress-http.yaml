@@ -10,6 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     {{- end }}
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
 spec:
   {{- if .Values.tls.enabled }}
   tls:

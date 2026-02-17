@@ -9,6 +9,7 @@ logs
 docker-compose-test.yml
 **/cred.json
 .vscode/
+.venv
 
 # Credentials
 **/credentials.txt

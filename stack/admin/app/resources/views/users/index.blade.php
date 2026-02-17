@@ -35,13 +35,14 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user['username'] }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user['email'] }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ ($user['status'] ?? 'enabled') === 'enabled' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                        {{ $user['status'] ?? 'enabled' }}
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        active
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                     <button onclick="openQuotaModal({{ $user['id'] ?? $user['userID'] }})"
                             class="text-primary-600 hover:text-primary-900">Manage Quota</button>
+                    {{-- Disable/Enable commented out - Zotero only supports active/deleted states
                     @if($user['enabled'] ?? true)
                     <form method="POST" action="{{ route('users.disable', $user['id'] ?? $user['userID']) }}" class="inline">
                         @csrf
@@ -54,11 +55,12 @@
                         <button type="submit" class="text-green-600 hover:text-green-900">Enable</button>
                     </form>
                     @endif
+                    --}}
                     <form method="POST" action="{{ route('users.destroy', $user['id'] ?? $user['userID']) }}" class="inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-600 hover:text-red-900"
-                                onclick="return confirm('PERMANENTLY DELETE this user? This cannot be undone!')">Delete</button>
+                                onclick="return confirm('Are you sure you want to DELETE this user? This cannot be undone!')">Delete</button>
                     </form>
                 </td>
             </tr>
