@@ -29,7 +29,6 @@ class AdminController extends ApiController {
 	// POST /admin/users - Create user
 	// GET /admin/users - List all users
 	// DELETE /admin/users/{id} - Delete user
-	// PUT /admin/users/{id}/status - Enable/disable user
 	public function users() {
 		if (!$this->permissions->isSuper()) {
 			$this->e403("Super user access required");
@@ -49,46 +48,7 @@ class AdminController extends ApiController {
 		}
 	}
 	
-	// PUT /admin/users/{id}/status
-	// NOTE: Disabled functionality - Zotero only supports 'normal' and 'deleted' roles
-	// There is no 'disabled' state in the core system
-	public function userStatus() {
-		if (!$this->permissions->isSuper()) {
-			$this->e403("Super user access required");
-		}
-		
-		if ($this->method != 'PUT') {
-			$this->e405();
-		}
-		
-		$userID = $this->objectUserID;
-		if (!$userID) {
-			$this->e400("User ID required");
-		}
-		
-		// Disabled: Zotero doesn't support enable/disable, only normal/deleted
-		$this->e501("Enable/disable not supported. Use delete instead.");
-		
-		/* Original code - commented out
-		try {
-			$data = json_decode($this->body, true);
-			if (!isset($data['enabled'])) {
-				$this->e400("enabled field required (true/false)");
-			}
-			
-			$role = $data['enabled'] ? 'normal' : 'deleted';
-			
-			$sql = "UPDATE users SET role = ? WHERE userID = ?";
-			Zotero_WWW_DB_1::query($sql, [$role, $userID]);
-			
-			$this->e204();
-		}
-		catch (Exception $e) {
-			$this->handleException($e);
-		}
-		*/
-	}
-	
+
 	// GET /admin/groups - List all groups
 	public function groups() {
 		if (!$this->permissions->isSuper()) {

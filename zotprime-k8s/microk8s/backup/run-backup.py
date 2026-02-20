@@ -18,10 +18,11 @@ def backup_database():
     """Backup MariaDB databases."""
     namespace = os.environ["NAMESPACE"]
     password = os.environ["MARIADB_ROOT_PASSWORD"]
+    db_pod = os.environ["DB_POD_NAME"]
     
     print(f"[{datetime.now()}] Backing up MariaDB databases...")
     
-    cmd = f"""kubectl exec -n {namespace} mariadb-0 -- \
+    cmd = f"""kubectl exec -n {namespace} {db_pod} -- \
         mysqldump -u root -p'{password}' --all-databases --single-transaction --quick \
         | kopia snapshot create --stdin \
         --stdin-filename=zotprime-databases.sql \

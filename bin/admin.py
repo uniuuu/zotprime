@@ -47,8 +47,6 @@ Options:
 Resources and Actions:
   user create <username> <email> <password>   Create a new user
   user list                                   List all users
-  user disable <username>                     Disable a user
-  user enable <username>                      Enable a user
   user quota <user_id>                        Show user storage quota
   user set-quota <user_id> <quota_mb>         Set user storage quota (in MB)
 
@@ -65,7 +63,7 @@ Examples:
   admin.py group create 1 "My Group" PublicOpen
   admin.py group add-user 123 456 admin
 
-Environment Variables (required):
+Environment Variables (required in .env file):
   SERVER_IP           Server IP address (default: 127.0.0.1)
   API_SUPER_TOKEN     API super user token
 """)
@@ -111,12 +109,11 @@ def user_list(dshost: str):
     
     users = response.json()
     
-    print(f"{'UserID':<6}  {'Username':<18}  {'Email':<26}  {'Status':<8}")
-    print(f"{'------':<6}  {'------------------':<18}  {'--------------------------':<26}  {'--------':<8}")
+    print(f"{'UserID':<6}  {'Username':<18}  {'Email':<26}")
+    print(f"{'------':<6}  {'------------------':<18}  {'--------------------------':<26}")
     
     for user in users:
-        status = "enabled" if user.get('enabled', True) else "disabled"
-        print(f"{user['userID']:<6}  {user['username']:<18}  {user['email']:<26}  {status:<8}")
+        print(f"{user['userID']:<6}  {user['username']:<18}  {user['email']:<26}")
 
 def get_user_id(username: str, dshost: str) -> Optional[int]:
     """Get user ID from username"""
@@ -130,38 +127,6 @@ def get_user_id(username: str, dshost: str) -> Optional[int]:
         if user['username'] == username:
             return user['userID']
     return None
-
-def user_disable(username: str, dshost: str):
-    """Disable a user"""
-    user_id = get_user_id(username, dshost)
-    if not user_id:
-        print(f"ERROR: User '{username}' not found", file=sys.stderr)
-        sys.exit(1)
-    
-    data = json.dumps({"enabled": False})
-    response = api_call('PUT', f"admin/users/{user_id}/status", dshost, data, 'application/json')
-    
-    if response.status_code == 204:
-        print(f"User '{username}' (ID: {user_id}) disabled")
-    else:
-        print(f"ERROR: {response.text}", file=sys.stderr)
-        sys.exit(1)
-
-def user_enable(username: str, dshost: str):
-    """Enable a user"""
-    user_id = get_user_id(username, dshost)
-    if not user_id:
-        print(f"ERROR: User '{username}' not found", file=sys.stderr)
-        sys.exit(1)
-    
-    data = json.dumps({"enabled": True})
-    response = api_call('PUT', f"admin/users/{user_id}/status", dshost, data, 'application/json')
-    
-    if response.status_code == 204:
-        print(f"User '{username}' (ID: {user_id}) enabled")
-    else:
-        print(f"ERROR: {response.text}", file=sys.stderr)
-        sys.exit(1)
 
 def user_quota(user_id: int, dshost: str):
     """Show user storage quota"""
@@ -314,16 +279,17 @@ def main():
         print_usage()
         sys.exit(0)
     
-    # Parse --host flag
+    # Parse --host flag (can be anywhere in args)
     args = sys.argv[1:]
     dshost = None
     
-    if args[0] == '--host':
-        if len(args) < 2:
+    if '--host' in args:
+        idx = args.index('--host')
+        if idx + 1 >= len(args):
             print("ERROR: --host requires a URL argument", file=sys.stderr)
             sys.exit(1)
-        dshost = args[1]
-        args = args[2:]
+        dshost = args[idx + 1]
+        args = args[:idx] + args[idx + 2:]
     
     if len(args) < 2:
         print_usage()
@@ -348,16 +314,6 @@ def main():
                 user_create(action_args[0], action_args[1], action_args[2], dshost)
             elif action == 'list':
                 user_list(dshost)
-            elif action == 'disable':
-                if len(action_args) != 1:
-                    print("Usage: admin.py user disable <username>", file=sys.stderr)
-                    sys.exit(1)
-                user_disable(action_args[0], dshost)
-            elif action == 'enable':
-                if len(action_args) != 1:
-                    print("Usage: admin.py user enable <username>", file=sys.stderr)
-                    sys.exit(1)
-                user_enable(action_args[0], dshost)
             elif action == 'quota':
                 if len(action_args) != 1:
                     print("Usage: admin.py user quota <user_id>", file=sys.stderr)

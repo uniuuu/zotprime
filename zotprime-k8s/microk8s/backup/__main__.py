@@ -16,11 +16,18 @@ backup_time = config.require("backupTime")
 enable_ui = config.require_bool("enableUI")
 ui_port = config.require("uiPort")
 minio_data_path = config.require("minioDataPath")
-keep_daily = config.require("keepDaily")
-keep_weekly = config.require("keepWeekly")
-keep_monthly = config.require("keepMonthly")
-keep_yearly = config.require("keepYearly")
+db_pod_name = config.require("dbPodName")
 repo_password = config.require_secret("repoPassword")
+
+# Retention policy - either keepLatest OR granular settings
+keep_latest = config.get("keepLatest")
+keep_daily = config.get("keepDaily")
+keep_weekly = config.get("keepWeekly")
+keep_monthly = config.get("keepMonthly")
+keep_yearly = config.get("keepYearly")
+
+if not keep_latest and not (keep_daily or keep_weekly or keep_monthly or keep_yearly):
+    raise Exception("Must set either keepLatest OR at least one of keepDaily/keepWeekly/keepMonthly/keepYearly")
 
 # Paths
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -46,11 +53,20 @@ env = {
     "REPO_PASSWORD": repo_password,
     "MARIADB_ROOT_PASSWORD": mariadb_root_password,
     "MINIO_DATA_PATH": minio_data_path,
-    "KEEP_DAILY": keep_daily,
-    "KEEP_WEEKLY": keep_weekly,
-    "KEEP_MONTHLY": keep_monthly,
-    "KEEP_YEARLY": keep_yearly,
+    "DB_POD_NAME": db_pod_name,
 }
+
+# Add retention settings
+if keep_latest:
+    env["KEEP_LATEST"] = keep_latest
+if keep_daily:
+    env["KEEP_DAILY"] = keep_daily
+if keep_weekly:
+    env["KEEP_WEEKLY"] = keep_weekly
+if keep_monthly:
+    env["KEEP_MONTHLY"] = keep_monthly
+if keep_yearly:
+    env["KEEP_YEARLY"] = keep_yearly
 
 # Backend-specific config
 if backend == "s3":

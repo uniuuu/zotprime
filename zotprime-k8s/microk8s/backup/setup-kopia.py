@@ -86,13 +86,21 @@ def set_policy():
     """Set Kopia retention policy (idempotent)."""
     print("Setting retention policy...")
     
-    cmd = f"""kopia policy set --global \
-        --keep-daily={os.environ['KEEP_DAILY']} \
-        --keep-weekly={os.environ['KEEP_WEEKLY']} \
-        --keep-monthly={os.environ['KEEP_MONTHLY']} \
-        --keep-yearly={os.environ['KEEP_YEARLY']} \
-        --compression=zstd \
-        --keep-latest=3"""
+    # Build policy command based on available env vars
+    policy_args = ["--compression=zstd"]
+    
+    if "KEEP_LATEST" in os.environ:
+        policy_args.append(f"--keep-latest={os.environ['KEEP_LATEST']}")
+    if "KEEP_DAILY" in os.environ:
+        policy_args.append(f"--keep-daily={os.environ['KEEP_DAILY']}")
+    if "KEEP_WEEKLY" in os.environ:
+        policy_args.append(f"--keep-weekly={os.environ['KEEP_WEEKLY']}")
+    if "KEEP_MONTHLY" in os.environ:
+        policy_args.append(f"--keep-monthly={os.environ['KEEP_MONTHLY']}")
+    if "KEEP_YEARLY" in os.environ:
+        policy_args.append(f"--keep-yearly={os.environ['KEEP_YEARLY']}")
+    
+    cmd = f"kopia policy set --global {' '.join(policy_args)}"
     
     run_cmd(cmd)
     print("✓ Retention policy set")
@@ -116,6 +124,7 @@ ExecStart=/usr/bin/python3 {script_dir}/run-backup.py
 Environment="NAMESPACE={os.environ['NAMESPACE']}"
 Environment="MARIADB_ROOT_PASSWORD={os.environ['MARIADB_ROOT_PASSWORD']}"
 Environment="MINIO_DATA_PATH={os.environ['MINIO_DATA_PATH']}"
+Environment="DB_POD_NAME={os.environ['DB_POD_NAME']}"
 StandardOutput=journal
 StandardError=journal
 

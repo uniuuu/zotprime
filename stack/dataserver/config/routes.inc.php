@@ -9,7 +9,6 @@ $router->map('/', ['controller' => 'Api', 'action' => 'noop']);
 // Admin endpoints (must be before other routes)
 $router->map('/admin/users', ['controller' => 'Admin', 'action' => 'users']);
 $router->map('/admin/users/i:objectUserID', ['controller' => 'Admin', 'action' => 'users']);
-$router->map('/admin/users/i:objectUserID/status', ['controller' => 'Admin', 'action' => 'userStatus']);
 $router->map('/admin/groups', ['controller' => 'Admin', 'action' => 'groups']);
 $router->map('/admin/items', ['controller' => 'Admin', 'action' => 'items']);
 

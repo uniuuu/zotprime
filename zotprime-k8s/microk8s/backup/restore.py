@@ -48,7 +48,7 @@ def get_latest_snapshot(component):
     latest = sorted(snapshots, key=lambda x: x['startTime'], reverse=True)[0]
     return latest['id']
 
-def restore_database(snapshot_id, namespace, dry_run=False):
+def restore_database(snapshot_id, namespace, dry_run=False, db_pod="zotprime-k8s-zotprime-db-0"):
     """Restore MariaDB databases."""
     print(f"[{datetime.now()}] Restoring MariaDB databases...")
     
@@ -56,14 +56,16 @@ def restore_database(snapshot_id, namespace, dry_run=False):
         print(f"DRY RUN: Would restore database from snapshot {snapshot_id}")
         return True
     
+    password = os.environ["MARIADB_ROOT_PASSWORD"]
+    
     # Scale down dataserver to prevent writes
     print("Scaling down dataserver...")
-    run_cmd(f"kubectl scale -n {namespace} deployment/zotprime-dataserver --replicas=0")
+    run_cmd(f"kubectl scale -n {namespace} deployment/zotprime-k8s-zotprime-dataserver --replicas=0")
     
     # Restore database
     cmd = f"""kopia snapshot restore {snapshot_id} - \
-        | kubectl exec -i -n {namespace} mariadb-0 -- \
-        mysql -u root -p'$MARIADB_ROOT_PASSWORD'"""
+        | kubectl exec -i -n {namespace} {db_pod} -- \
+        mysql -u root -p'{password}'"""
     
     if run_cmd(cmd, check=False) == 0:
         print("✓ Database restore complete")
@@ -88,7 +90,7 @@ def restore_s3(snapshot_id, minio_path, namespace, dry_run=False):
     
     # Scale down minio to prevent writes
     print("Scaling down MinIO...")
-    run_cmd(f"kubectl scale -n {namespace} deployment/minio --replicas=0")
+    run_cmd(f"kubectl scale -n {namespace} deployment/zotprime-k8s-zotprime-minio --replicas=0")
     
     # Restore S3 data
     cmd = f"kopia snapshot restore {snapshot_id} {minio_path}"
@@ -102,7 +104,7 @@ def restore_s3(snapshot_id, minio_path, namespace, dry_run=False):
     
     # Scale back up
     print("Scaling up MinIO...")
-    run_cmd(f"kubectl scale -n {namespace} deployment/minio --replicas=1")
+    run_cmd(f"kubectl scale -n {namespace} deployment/zotprime-k8s-zotprime-minio --replicas=1")
     
     return success
 
@@ -115,7 +117,8 @@ def main():
     parser.add_argument('--snapshot-id', help='Specific snapshot ID to restore')
     parser.add_argument('--dry-run', action='store_true', help='Preview only, no actual restore')
     parser.add_argument('--namespace', default='zotprime', help='Kubernetes namespace')
-    parser.add_argument('--minio-path', default='/var/lib/microk8s/storage/minio-pv', help='MinIO data path')
+    parser.add_argument('--minio-path', default='/mnt/nfs/dataminio', help='MinIO data path on host')
+    parser.add_argument('--db-pod', default='zotprime-k8s-zotprime-db-0', help='MariaDB pod name')
     
     args = parser.parse_args()
     
@@ -138,7 +141,7 @@ def main():
             db_snapshot = get_latest_snapshot('database')
         
         print(f"Database snapshot: {db_snapshot}")
-        if not restore_database(db_snapshot, args.namespace, args.dry_run):
+        if not restore_database(db_snapshot, args.namespace, args.dry_run, args.db_pod):
             success = False
     
     # Restore S3

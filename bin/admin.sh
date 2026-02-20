@@ -6,11 +6,10 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Load .env if it exists
 if [ -f "$PROJECT_DIR/.env" ]; then
-    export $(grep -v '^#' "$PROJECT_DIR/.env" | xargs)
+    while IFS= read -r line; do
+        [[ -n "$line" && ! "$line" =~ ^# ]] && export "$line"
+    done < <(grep -v '#' "$PROJECT_DIR/.env")
 fi
-
-# Default DSHOST from SERVER_IP
-DSHOST="http://${SERVER_IP:-127.0.0.1}:8080"
 
 # Validate required env vars
 check_env() {
@@ -32,8 +31,6 @@ Options:
 Resources and Actions:
   user create <username> <email> <password>   Create a new user
   user list                                   List all users
-  user disable <username>                     Disable a user
-  user enable <username>                      Enable a user
   user quota <user_id>                        Show user storage quota
   user set-quota <user_id> <quota_mb>         Set user storage quota (in MB)
 
@@ -103,68 +100,12 @@ user_list() {
     local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
         "${DSHOST}/admin/users")
     
-    echo "UserID  Username            Email                       Status"
-    echo "------  ------------------  --------------------------  --------"
-    echo "$response" | jq -r '.[] | "\(.userID)|\(.username)|\(.email)|\(if .enabled then "enabled" else "disabled" end)"' | \
-        while IFS='|' read -r uid uname email status; do
-            printf "%-6s  %-18s  %-26s  %s\n" "$uid" "$uname" "$email" "$status"
+    echo "UserID  Username            Email"
+    echo "------  ------------------  --------------------------"
+    echo "$response" | jq -r '.[] | "\(.userID)|\(.username)|\(.email)"' | \
+        while IFS='|' read -r uid uname email; do
+            printf "%-6s  %-18s  %-26s\n" "$uid" "$uname" "$email"
         done
-}
-
-user_disable() {
-    local username=$1
-
-    if [ -z "$username" ]; then
-        echo "Usage: $0 user disable <username>" >&2
-        exit 1
-    fi
-
-    # Get user ID from username
-    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
-        "${DSHOST}/admin/users")
-    
-    local user_id=$(echo "$response" | jq -r ".[] | select(.username==\"$username\") | .userID")
-    
-    if [ -z "$user_id" ]; then
-        echo "ERROR: User '$username' not found" >&2
-        exit 1
-    fi
-
-    curl -s -X PUT \
-        -H "Authorization: Bearer $API_SUPER_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d '{"enabled":false}' \
-        "${DSHOST}/admin/users/${user_id}/status"
-    
-    echo "User '$username' (ID: $user_id) disabled"
-}
-
-user_enable() {
-    local username=$1
-
-    if [ -z "$username" ]; then
-        echo "Usage: $0 user enable <username>" >&2
-        exit 1
-    fi
-
-    # Get user ID from username
-    local response=$(curl -s -H "Authorization: Bearer $API_SUPER_TOKEN" \
-        "${DSHOST}/admin/users")
-    
-    local user_id=$(echo "$response" | jq -r ".[] | select(.username==\"$username\") | .userID")
-    
-    if [ -z "$user_id" ]; then
-        echo "ERROR: User '$username' not found" >&2
-        exit 1
-    fi
-
-    curl -s -X PUT \
-        -H "Authorization: Bearer $API_SUPER_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d '{"enabled":true}' \
-        "${DSHOST}/admin/users/${user_id}/status"
-    
-    echo "User '$username' (ID: $user_id) enabled"
 }
 
 user_quota() {
@@ -351,12 +292,27 @@ group_members() {
 }
 
 # Main
+# Parse --host flag (can be anywhere)
+DSHOST=""
+temp_args=()
+i=0
+while [ $i -lt $# ]; do
+    i=$((i + 1))
+    arg="${!i}"
+    if [ "$arg" = "--host" ]; then
+        i=$((i + 1))
+        DSHOST="${!i}"
+    else
+        temp_args+=("$arg")
+    fi
+done
+set -- "${temp_args[@]}"
+
 [ $# -lt 2 ] && usage
 
-# Parse --host flag
-if [ "$1" = "--host" ]; then
-    DSHOST="$2"
-    shift 2
+# Set default DSHOST if not provided
+if [ -z "$DSHOST" ]; then
+    DSHOST="http://${SERVER_IP:-127.0.0.1}:8080"
 fi
 
 RESOURCE=$1
@@ -370,8 +326,6 @@ case "$RESOURCE" in
         case "$ACTION" in
             create)     user_create "$@" ;;
             list)       user_list ;;
-            disable)    user_disable "$@" ;;
-            enable)     user_enable "$@" ;;
             quota)      user_quota "$@" ;;
             set-quota)  user_set_quota "$@" ;;
             *)          echo "Unknown user action: $ACTION" >&2; usage ;;
