@@ -54,7 +54,7 @@ then
   WEBADMIN_USERNAME="webadmin"
   WEBADMIN_PASSWORD_PLAIN=$(openssl rand -hex 12)
   WEBADMIN_PASSWORD=$(php -r "echo password_hash('$WEBADMIN_PASSWORD_PLAIN', PASSWORD_BCRYPT, ['cost' => 12]);")
-  APP_KEY=$(openssl rand -hex 32)
+  APP_KEY=$(echo -n "base64:"; openssl rand -base64 32)
   PORTAL_SESSION_SECRET=$(openssl rand -hex 32)
   
   # Update .env (use printf to preserve $ characters in bcrypt hashes)
